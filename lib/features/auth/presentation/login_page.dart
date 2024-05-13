@@ -1,9 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:neclicensepreperation/core/app_pallete.dart';
+import 'package:neclicensepreperation/features/auth/presentation/signup_page.dart';
 import 'package:neclicensepreperation/features/auth/presentation/widgets/auth_feild.dart';
 import 'package:neclicensepreperation/features/auth/presentation/widgets/auth_gradient_button.dart';
 
 class LoginPage extends StatefulWidget {
+  static route() => MaterialPageRoute(
+        builder: (context) => const LoginPage(),
+      );
+
   const LoginPage({super.key});
 
   @override
@@ -66,19 +73,27 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(
                 height: 20,
               ),
-              RichText(
-                text: TextSpan(
-                  text: "Don\'t have an account ? ",
-                  style: Theme.of(context).textTheme.titleMedium,
-                  children: [
-                    TextSpan(
-                      text: "Sign Up",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium
-                          ?.copyWith(color: AppPallete.gradient2),
-                    ),
-                  ],
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    SignUpPage.route(),
+                  );
+                },
+                child: RichText(
+                  text: TextSpan(
+                    text: "Don\'t have an account ? ",
+                    style: Theme.of(context).textTheme.titleMedium,
+                    children: [
+                      TextSpan(
+                        text: "Sign Up",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(color: AppPallete.gradient2),
+                      ),
+                    ],
+                  ),
                 ),
               )
             ],
