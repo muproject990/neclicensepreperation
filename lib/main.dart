@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:neclicensepreperation/core/secrets/supabase_secret.dart';
 import 'package:neclicensepreperation/core/theme.dart';
 import 'package:neclicensepreperation/features/auth/presentation/signup_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+void main() async {
+  final supabase = Supabase.initialize(
+    url: AppSecrets.supabaseAnonKey,
+    anonKey: AppSecrets.supabaseUrl,
+  );
   runApp(const MyApp());
 }
 
