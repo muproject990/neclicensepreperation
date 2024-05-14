@@ -19,7 +19,7 @@ abstract interface class AuthRemoteDataSource {
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final SupabaseClient supabaseClient;
 
-  AuthRemoteDataSourceImpl({required this.supabaseClient});
+  AuthRemoteDataSourceImpl(this.supabaseClient);
 
 // !loginWithEmailPassword
   @override
@@ -39,14 +39,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
   }) async {
     try {
+      print("i am here at authremote_Datasourse");
       final response = await supabaseClient.auth.signUp(
-          password: password,
-          email: email,
-          //! data proprty to store additional data of user
-          data: {
-            // key  value
-            'name': name,
-          });
+        password: password,
+        email: email,
+        //! data proprty to store additional data of user
+        data: {
+          // key  value
+          'name': name,
+        }
+      );
+
+      print("i am here at authremote_Datasourse");
+      print(response);
 
       if (response.user == null) {
         throw ServerException(message: "User is nulll");
