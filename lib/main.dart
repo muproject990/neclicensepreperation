@@ -13,16 +13,17 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final supabase = await Supabase.initialize(
-    url: AppSecrets.supabaseAnonKey,
-    anonKey: AppSecrets.supabaseUrl,
+    url: AppSecrets.supabaseUrl,
+    anonKey: AppSecrets.supabaseAnonKey,
   );
+
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider(
         create: (_) => AuthBloc(
           userSignUp: UserSignUp(
             AuthRepositoryImpl(
-              AuthRemoteDataSourceImpl(supabase.client),
+              AuthRemoteDataSourceImpl(supabaseClient: supabase.client),
             ),
           ),
         ),
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Blog App',
+      title: 'License Preperation Applications',
       theme: AppTheme.darkThemeMode,
       home: const SignUpPage(),
     );

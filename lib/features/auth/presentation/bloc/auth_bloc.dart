@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neclicensepreperation/core/error/failure.dart';
 import 'package:neclicensepreperation/features/auth/domain/usecases/user_sign_up.dart';
-
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -21,6 +19,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           name: event.name,
         ),
       );
+      print("here");
+      // print(response);
 
       response.fold(
         (l) => emit(AuthFailure(l.message)),

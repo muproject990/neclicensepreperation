@@ -5,8 +5,8 @@ import 'package:neclicensepreperation/features/auth/domain/auth-repository.dart'
 
 class UserSignUp implements UseCase<String, UserSignUpParams> {
   final AuthRepository authRepository;
-  
-  const UserSignUp( this.authRepository);
+
+  const UserSignUp(this.authRepository);
 
   @override
   Future<Either<Failure, String>> call(UserSignUpParams params) async {

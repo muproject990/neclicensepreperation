@@ -30,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     // it will validate every form feild
 
@@ -64,22 +65,23 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(
                 height: 20,
               ),
-              const AuthGradientBtn(
+              AuthGradientBtn(
                 buttonText: 'Sign In',
+                onPressed: () {},
               ),
               const SizedBox(
                 height: 20,
               ),
               GestureDetector(
-                onTap: () { 
-                   Navigator.push(
+                onTap: () {
+                  Navigator.push(
                     context,
                     SignUpPage.route(),
                   );
                 },
                 child: RichText(
                   text: TextSpan(
-                    text: "Don\'t have an account ? ",
+                    text: "Don't have an account ? ",
                     style: Theme.of(context).textTheme.titleMedium,
                     children: [
                       TextSpan(

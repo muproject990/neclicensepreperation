@@ -3,7 +3,9 @@ import 'package:neclicensepreperation/core/app_pallete.dart';
 
 class AuthGradientBtn extends StatelessWidget {
   final String buttonText;
-  const AuthGradientBtn({super.key, required this.buttonText});
+  final VoidCallback onPressed;
+  const AuthGradientBtn(
+      {super.key, required this.buttonText, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class AuthGradientBtn extends StatelessWidget {
         borderRadius: BorderRadius.circular(7),
       ),
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
             fixedSize: const Size(396, 55),
             backgroundColor: AppPallete.transparentColor,
