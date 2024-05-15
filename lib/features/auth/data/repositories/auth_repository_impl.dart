@@ -4,6 +4,7 @@ import 'package:neclicensepreperation/core/error/failure.dart';
 import 'package:neclicensepreperation/features/auth/data/datasource/auth_remote_data_source.dart';
 import 'package:neclicensepreperation/features/auth/data/models/user_model.dart';
 import 'package:neclicensepreperation/features/auth/domain/auth-repository.dart';
+import 'package:neclicensepreperation/features/auth/domain/entities/user.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
@@ -11,10 +12,19 @@ class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<Failure, String>> loginWithEmailPassword(
-      {required String email, required String password}) {
-    // TODO: implement loginWithEmailPassword
-    throw UnimplementedError();
+  Future<Either<Failure, UserModel>> loginWithEmailPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final user = await remoteDataSource.loginWithEmailPassword(
+        email: email,
+        password: password,
+      );
+      return right(user as UserModel);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
   }
 
 // ! signUpWithEmailPassword
@@ -36,4 +46,7 @@ class AuthRepositoryImpl implements AuthRepository {
       return left(Failure(e.message));
     }
   }
+
+
+
 }

@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:neclicensepreperation/core/error/failure.dart';
+import 'package:neclicensepreperation/features/auth/data/models/user_model.dart';
 import 'package:neclicensepreperation/features/auth/domain/entities/user.dart';
 
 abstract interface class AuthRepository {
@@ -8,7 +9,7 @@ abstract interface class AuthRepository {
     required String email,
     required String password,
   });
-  Future<Either<Failure, String>> loginWithEmailPassword({
+  Future<Either<Failure, User>> loginWithEmailPassword({
     required String email,
     required String password,
   });
