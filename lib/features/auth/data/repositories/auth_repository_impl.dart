@@ -5,6 +5,7 @@ import 'package:neclicensepreperation/features/auth/data/datasource/auth_remote_
 import 'package:neclicensepreperation/features/auth/data/models/user_model.dart';
 import 'package:neclicensepreperation/features/auth/domain/auth-repository.dart';
 import 'package:neclicensepreperation/features/auth/domain/entities/user.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
@@ -12,41 +13,43 @@ class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<Failure, UserModel>> loginWithEmailPassword({
+  Future<Either<Failure, User>> loginWithEmailPassword({
     required String email,
     required String password,
   }) async {
-    try {
-      final user = await remoteDataSource.loginWithEmailPassword(
+    return _getUser(
+      () async => await remoteDataSource.loginWithEmailPassword(
         email: email,
         password: password,
-      );
-      return right(user as UserModel);
-    } on ServerException catch (e) {
-      return left(Failure(e.message));
-    }
+      ),
+    );
   }
 
 // ! signUpWithEmailPassword
   @override
-  Future<Either<Failure, UserModel>> signUpWithEmailPassword({
+  Future<Either<Failure, User>> signUpWithEmailPassword({
     required String name,
     required String email,
     required String password,
   }) async {
+    return _getUser(() async => await remoteDataSource.signUpWithEmailPassword(
+          name: name,
+          email: email,
+          password: password,
+        ));
+  }
+
+  Future<Either<Failure, User>> _getUser(
+    Future<User> Function() fn,
+  ) async {
     try {
-      final user = await remoteDataSource.signUpWithEmailPassword(
-        name: name,
-        email: email,
-        password: password,
-      );
-      // print(userId);
+      final user = await fn();
+
       return right(user);
+    } on sb.AuthException catch (e) {
+      return left(Failure(e.message));
     } on ServerException catch (e) {
       return left(Failure(e.message));
     }
   }
-
-
-
 }
