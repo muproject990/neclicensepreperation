@@ -2,14 +2,15 @@ import 'package:fpdart/fpdart.dart';
 import 'package:neclicensepreperation/core/error/failure.dart';
 import 'package:neclicensepreperation/core/usecase/usercase.dart';
 import 'package:neclicensepreperation/features/auth/domain/auth-repository.dart';
+import 'package:neclicensepreperation/features/auth/domain/entities/user.dart';
 
-class UserSignUp implements UseCase<String, UserSignUpParams> {
+class UserSignUp implements UseCase<User, UserSignUpParams> {
   final AuthRepository authRepository;
 
   const UserSignUp(this.authRepository);
 
   @override
-  Future<Either<Failure, String>> call(UserSignUpParams params) async {
+  Future<Either<Failure, User>> call(UserSignUpParams params) async {
     // dont forget to use await becoz sometimes it will takes some time
     return await authRepository.signUpWithEmailPassword(
       name: params.name,

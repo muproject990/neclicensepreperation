@@ -1,8 +1,9 @@
 import 'package:neclicensepreperation/core/error/exception.dart';
+import 'package:neclicensepreperation/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class AuthRemoteDataSource {
-  Future<String> signUpWithEmailPassword({
+  Future<UserModel> signUpWithEmailPassword({
     required String name,
     required String email,
     required String password,
@@ -33,7 +34,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
 // !signUpWithEmailPassword
   @override
-  Future<String> signUpWithEmailPassword({
+  Future<UserModel> signUpWithEmailPassword({
     required String name,
     required String email,
     required String password,
@@ -41,22 +42,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       print("i am here at authremote_Datasourse");
       final response = await supabaseClient.auth.signUp(
-        password: password,
-        email: email,
-        //! data proprty to store additional data of user
-        data: {
-          // key  value
-          'name': name,
-        }
-      );
+          password: password,
+          email: email,
+          //! data proprty to store additional data of user
+          data: {
+            // key  value
+            'name': name,
+          });
 
       print("i am here at authremote_Datasourse");
-      print(response);
 
       if (response.user == null) {
         throw ServerException(message: "User is nulll");
       }
-      return response.user!.id;
+      print(response.user!.toJson());
+      return UserModel.fromJson(
+        response.user!.toJson(),
+      );
     } catch (e) {
       throw ServerException(message: e.toString());
     }
