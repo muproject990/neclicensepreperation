@@ -7,6 +7,8 @@ import 'package:neclicensepreperation/features/auth/domain/usecases/user_sign_up
 import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'features/auth/domain/usecases/user_login.dart';
+
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
@@ -42,11 +44,11 @@ void _initAuth() {
         serviceLocator(),
       ),
     )
-    // ..registerFactory(
-    //   () => UserLogin(
-    //     serviceLocator(),
-    //   ),
-    // )
+    ..registerFactory(
+      () => UserLogin(
+        serviceLocator(),
+      ),
+    )
     // ..registerFactory(
     //   () => CurrentUser(
     //     serviceLocator(),
