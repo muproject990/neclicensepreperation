@@ -22,7 +22,7 @@ Future<void> initDependencies() async {
 
 void _initAuth() {
   serviceLocator
-    // core
+    // ! core
     // ..registerLazySingleton(
     //   () => AppUserCubit(),
     // )
@@ -32,7 +32,7 @@ void _initAuth() {
         serviceLocator<SupabaseClient>(),
       ),
     )
-    // Repository
+    //! Repository
     ..registerFactory<AuthRepository>(
       () => AuthRepositoryImpl(
         serviceLocator(),
@@ -54,7 +54,8 @@ void _initAuth() {
     //     serviceLocator(),
     //   ),
     // )
-    // Block
+
+    //! Block
     ..registerLazySingleton(
       () => AuthBloc(
         userSignUp: serviceLocator(),
