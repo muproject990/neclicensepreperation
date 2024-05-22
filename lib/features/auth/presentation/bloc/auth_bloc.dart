@@ -33,7 +33,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final res = await _currentUser(NoParams());
     res.fold(
       (l) => emit(AuthFailure(l.message)),
-      (r) => emit(AuthSuccess(user: r)),
+      (r) {
+        print(" Hello ur id is:  ${r.id}");
+        print(" Hello ur email id is:  ${r.email}");
+
+        emit(AuthSuccess(user: r));
+      },
     );
   }
 

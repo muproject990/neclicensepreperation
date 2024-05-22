@@ -7,6 +7,7 @@ import 'package:neclicensepreperation/features/auth/domain/usecases/user_sign_up
 import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'features/auth/domain/usecases/current_user.dart';
 import 'features/auth/domain/usecases/user_login.dart';
 
 final serviceLocator = GetIt.instance;
@@ -49,17 +50,20 @@ void _initAuth() {
         serviceLocator(),
       ),
     )
-    // ..registerFactory(
-    //   () => CurrentUser(
-    //     serviceLocator(),
-    //   ),
-    // )
+
+    // Current User getting
+    ..registerFactory(
+      () => CurrentUser(
+        serviceLocator(),
+      ),
+    )
 
     //! Block
     ..registerLazySingleton(
       () => AuthBloc(
         userSignUp: serviceLocator(),
         userLogin: serviceLocator(),
+        currentUser: serviceLocator(),
         // userLogin: serviceLocator(),
         // currentUser: serviceLocator(),
         // appUserCubit: serviceLocator(),

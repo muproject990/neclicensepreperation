@@ -20,7 +20,8 @@ class AuthRepositoryImpl implements AuthRepository {
       }
       return right(user);
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      return left(Failure(
+          "Error on current User in authRepository Implementataions ${e.message}"));
     }
   }
 
