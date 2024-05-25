@@ -4,7 +4,7 @@ import 'package:neclicensepreperation/core/error/failure.dart';
 import 'package:neclicensepreperation/features/auth/data/datasource/auth_remote_data_source.dart';
 import 'package:neclicensepreperation/features/auth/data/models/user_model.dart';
 import 'package:neclicensepreperation/features/auth/domain/auth-repository.dart';
-import 'package:neclicensepreperation/features/auth/domain/entities/user.dart';
+import 'package:neclicensepreperation/core/common/entities/user.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 class AuthRepositoryImpl implements AuthRepository {

@@ -1,0 +1,312 @@
+[
+  {
+    "question": "What is the capital of Australia?",
+    "options": [
+      "Melbourne",
+      "Sydney",
+      "Canberra",
+      "Brisbane"
+    ],
+    "answer": 2
+  },
+  {
+    "question": "Which planet in our solar system is known as the 'Red Planet'?",
+    "options": [
+      "Mars",
+      "Venus",
+      "Jupiter",
+      "Saturn"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "Who wrote the famous novel 'Pride and Prejudice'?",
+    "options": [
+      "Jane Austen",
+      "Charlotte Bronte",
+      "Emily Bronte",
+      "Mary Shelley"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "What is the largest ocean on Earth?",
+    "options": [
+      "Atlantic Ocean",
+      "Indian Ocean",
+      "Arctic Ocean",
+      "Pacific Ocean"
+    ],
+    "answer": 3
+  },
+  {
+    "question": "Which ancient civilization built the Pyramids of Giza?",
+    "options": [
+      "Mayans",
+      "Aztecs",
+      "Egyptians",
+      "Greeks"
+    ],
+    "answer": 2
+  },
+  {
+    "question": "Which is the smallest continent by land area?",
+    "options": [
+      "Asia",
+      "Africa",
+      "North America",
+      "Australia"
+    ],
+    "answer": 3
+  },
+  {
+    "question": "Who painted the famous artwork 'Mona Lisa'?",
+    "options": [
+      "Pablo Picasso",
+      "Vincent van Gogh",
+      "Leonardo da Vinci",
+      "Michelangelo"
+    ],
+    "answer": 2
+  },
+  {
+    "question": "What is the largest mammal on Earth?",
+    "options": [
+      "Elephant",
+      "Giraffe",
+      "Hippopotamus",
+      "Blue Whale"
+    ],
+    "answer": 3
+  },
+  {
+    "question": "Which country is known as the 'Land of the Rising Sun'?",
+    "options": [
+      "China",
+      "Japan",
+      "South Korea",
+      "Thailand"
+    ],
+    "answer": 1
+  },
+  {
+    "question": "What is the currency of Japan?",
+    "options": [
+      "Dollar",
+      "Euro",
+      "Yen",
+      "Pound"
+    ],
+    "answer": 2
+  },
+  {
+    "question": "What is the largest planet in our solar system?",
+    "options": [
+      "Earth",
+      "Mars",
+      "Jupiter",
+      "Saturn"
+    ],
+    "answer": 2
+  },
+  {
+    "question": "Which is the longest river in the world?",
+    "options": [
+      "Nile",
+      "Amazon",
+      "Mississippi",
+      "Yangtze"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "What is the rarest blood type?",
+    "options": [
+      "O",
+      "A",
+      "B",
+      "AB"
+    ],
+    "answer": 3
+  },
+  {
+    "question": "Which scientist developed the theory of relativity?",
+    "options": [
+      "Isaac Newton",
+      "Albert Einstein",
+      "Galileo Galilei",
+      "Niels Bohr"
+    ],
+    "answer": 1
+  },
+  {
+    "question": "What is the currency of the United Kingdom?",
+    "options": [
+      "Euro",
+      "Dollar",
+      "Yen",
+      "Pound"
+    ],
+    "answer": 3
+  },
+  {
+    "question": "Which is the world's tallest mammal?",
+    "options": [
+      "Giraffe",
+      "Elephant",
+      "Hippopotamus",
+      "Camel"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "Who invented the telephone?",
+    "options": [
+      "Thomas Edison",
+      "Alexander Graham Bell",
+      "Nikola Tesla",
+      "Benjamin Franklin"
+    ],
+    "answer": 1
+  },
+  {
+    "question": "What is the largest desert in the world?",
+    "options": [
+      "Sahara Desert",
+      "Gobi Desert",
+      "Arabian Desert",
+      "Antarctic Desert"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "Which is the hottest planet in our solar system?",
+    "options": [
+      "Mercury",
+      "Venus",
+      "Earth",
+      "Mars"
+    ],
+    "answer": 1
+  },
+  {
+    "question": "Who wrote the play 'Romeo and Juliet'?",
+    "options": [
+      "William Shakespeare",
+      "Oscar Wilde",
+      "George Bernard Shaw",
+      "Tennessee Williams"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "What is the largest bone in the human body?",
+    "options": [
+      "Femur",
+      "Tibia",
+      "Humerus",
+      "Skull"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "Which is the smallest ocean in the world?",
+    "options": [
+      "Arctic Ocean",
+      "Indian Ocean",
+      "Atlantic Ocean",
+      "Southern Ocean"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "What is the chemical symbol for gold?",
+    "options": [
+      "Au",
+      "Ag",
+      "Cu",
+      "Fe"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "Which country is known as the 'Land of the Midnight Sun'?",
+    "options": [
+      "Norway",
+      "Sweden",
+      "Finland",
+      "Iceland"
+    ],
+    "answer": 3
+  },
+  {
+    "question": "What is the largest bone in the human face?",
+    "options": [
+      "Mandible",
+      "Maxilla",
+      "Zygomatic",
+      "Nasal"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "Which is the world's highest waterfall?",
+    "options": [
+      "Angel Falls",
+      "Niagara Falls",
+      "Victoria Falls",
+      "Iguazu Falls"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "What is the rarest M&M color?",
+    "options": [
+      "Brown",
+      "Red",
+      "Yellow",
+      "Green"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "Which planet in our solar system has the most moons?",
+    "options": [
+      "Jupiter",
+      "Saturn",
+      "Uranus",
+      "Neptune"
+    ],
+    "answer": 1
+  },
+  {
+    "question": "What is the smallest country in the world?",
+    "options": [
+      "Vatican City",
+      "Monaco",
+      "Nauru",
+      "Tuvalu"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "Which is the world's largest ocean?",
+    "options": [
+      "Atlantic Ocean",
+      "Indian Ocean",
+      "Pacific Ocean",
+      "Southern Ocean"
+    ],
+    "answer": 2
+  },
+  {
+    "question": "What is the chemical symbol for sodium?",
+    "options": [
+      "Na",
+      "S",
+      "Si",
+      "Sn"
+    ],
+    "answer": 0
+  }
+]

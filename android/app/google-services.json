@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "786294607486",
+    "project_id": "quizwithchatbot",
+    "storage_bucket": "quizwithchatbot.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786294607486:android:546d332a16a617a243922f",
+        "android_client_info": {
+          "package_name": "com.example.neclicensepreperation"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8-MzigZv6GkFR3-KJBqPcmv_Eiz8kKrs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

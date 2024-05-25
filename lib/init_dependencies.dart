@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:neclicensepreperation/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:neclicensepreperation/core/secrets/supabase_secret.dart';
 import 'package:neclicensepreperation/features/auth/data/datasource/auth_remote_data_source.dart';
 import 'package:neclicensepreperation/features/auth/data/repositories/auth_repository_impl.dart';
@@ -24,9 +25,9 @@ Future<void> initDependencies() async {
 void _initAuth() {
   serviceLocator
     // ! core
-    // ..registerLazySingleton(
-    //   () => AppUserCubit(),
-    // )
+    ..registerLazySingleton(
+      () => AppUserCubit(),
+    )
     // DataSource
     ..registerFactory<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(
@@ -64,6 +65,7 @@ void _initAuth() {
         userSignUp: serviceLocator(),
         userLogin: serviceLocator(),
         currentUser: serviceLocator(),
+        appUserCubit: serviceLocator(),
         // userLogin: serviceLocator(),
         // currentUser: serviceLocator(),
         // appUserCubit: serviceLocator(),
