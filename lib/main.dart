@@ -6,11 +6,14 @@ import 'package:neclicensepreperation/core/theme.dart';
 import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:neclicensepreperation/features/auth/presentation/signup_page.dart';
 import 'package:neclicensepreperation/features/mcq/presentation/pages/MCQPage.dart';
+import 'package:neclicensepreperation/features/mcq/presentation/widgets/Questions.dart';
 import 'package:neclicensepreperation/init_dependencies.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDependencies();
+  await Firebase.initializeApp();
 
   runApp(MultiBlocProvider(
     providers: [
@@ -52,7 +55,7 @@ class _MyAppState extends State<MyApp> {
         },
         builder: (context, isLoggedIn) {
           if (isLoggedIn) {
-            return MCQPage();
+            return QuestionPage();
           }
           return const SignUpPage();
         },

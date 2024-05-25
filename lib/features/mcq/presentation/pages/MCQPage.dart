@@ -11,7 +11,7 @@ class MCQPage extends StatefulWidget {
 class _MCQPageState extends State<MCQPage> {
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
+    return SafeArea(
       child: Scaffold(
           body: Column(
         children: [
