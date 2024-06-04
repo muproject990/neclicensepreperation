@@ -6,6 +6,11 @@ import 'package:neclicensepreperation/features/auth/data/repositories/auth_repos
 import 'package:neclicensepreperation/features/auth/domain/auth-repository.dart';
 import 'package:neclicensepreperation/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:neclicensepreperation/features/main/data/datasources/question_remote_data_source.dart';
+import 'package:neclicensepreperation/features/main/data/repository/question_repo_impl.dart';
+import 'package:neclicensepreperation/features/main/domain/repositories/question_repo.dart';
+import 'package:neclicensepreperation/features/main/domain/usecases/upload_question.dart';
+import 'package:neclicensepreperation/features/main/presentation/bloc/question_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'features/auth/domain/usecases/current_user.dart';
@@ -15,6 +20,7 @@ final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
   _initAuth();
+  _initQuestion();
   final supabase = await Supabase.initialize(
     url: AppSecrets.supabaseUrl,
     anonKey: AppSecrets.supabaseAnonKey,
@@ -71,4 +77,33 @@ void _initAuth() {
         // appUserCubit: serviceLocator(),
       ),
     );
+}
+
+void _initQuestion() {
+  // datasource
+  serviceLocator
+    ..registerFactory<QuestionRemoteDataSource>(
+      () => QuestionRemoteDataSourceImpl(
+        supabaseClient: serviceLocator(),
+      ),
+    )
+    // Repository
+    ..registerFactory<QuestionRepository>(
+      () => QuestionRepositoryImpl(
+        serviceLocator(),
+      ),
+    )
+    // Usecase
+    ..registerFactory(
+      () => UploadQuestion(
+        questionRepository: serviceLocator(),
+      ),
+    )
+    // Blog
+    ..registerLazySingleton(
+      () => QuestionBloc(
+        serviceLocator(),
+      ),
+    );
+  ;
 }

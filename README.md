@@ -1,22 +1,3 @@
-# neclicensepreperation
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-
-
 # Nec License Preperation
 
 ## Mainsection 
@@ -79,3 +60,9 @@ Use single Child scrool view to put all list in row in scrollable form and then 
 
 Yespaxi maile theme.dart ma gayerw Chip ko default property lai overwrite gare 
 
+
+aba top ma list banauna parxa so that i can put all the emement inside list which i can access leter to put inside the chip
+
+
+
+domain layer ma question vanne # entity  banaiyo ani teslai pheri data layer ma model banayerw extend gariyo
