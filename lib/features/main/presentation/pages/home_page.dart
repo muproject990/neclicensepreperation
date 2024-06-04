@@ -21,7 +21,7 @@ class MainPage extends StatelessWidget {
           )
         ],
       ),
-      body: Center(
+      body: const Center(
         child: Text("Login"),
       ),
     );

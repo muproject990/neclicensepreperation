@@ -5,7 +5,7 @@ import 'package:neclicensepreperation/core/theme.dart';
 
 import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:neclicensepreperation/features/auth/presentation/signup_page.dart';
-import 'package:neclicensepreperation/features/main/presentation/pages/main_page.dart';
+import 'package:neclicensepreperation/features/main/presentation/pages/home_page.dart';
 import 'package:neclicensepreperation/init_dependencies.dart';
 
 void main() async {
