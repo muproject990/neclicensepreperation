@@ -5,6 +5,7 @@ import 'package:neclicensepreperation/core/theme.dart';
 
 import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:neclicensepreperation/features/auth/presentation/signup_page.dart';
+import 'package:neclicensepreperation/features/main/presentation/pages/main_page.dart';
 import 'package:neclicensepreperation/init_dependencies.dart';
 
 void main() async {
@@ -51,11 +52,7 @@ class _MyAppState extends State<MyApp> {
         },
         builder: (context, isLoggedIn) {
           if (isLoggedIn) {
-            return const Scaffold(
-              body: Center(
-                child: Text("Login"),
-              ),
-            );
+            return const MainPage();
           }
           return const SignUpPage();
         },
