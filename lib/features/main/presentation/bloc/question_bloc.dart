@@ -9,10 +9,11 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   final UploadQuestion uploadQuestion;
   QuestionBloc(this.uploadQuestion) : super(QuestionInitial()) {
     on<QuestionEvent>((event, emit) => emit(QuestionLoading()));
-    on<QuestionUpload>(_onBlogUpload);
+    on<QuestionUpload>(_onQuestionUpload);
   }
 
-  void _onBlogUpload(QuestionUpload event, Emitter<QuestionState> emit) async {
+  void _onQuestionUpload(
+      QuestionUpload event, Emitter<QuestionState> emit) async {
     final res = await uploadQuestion(
       UploadQuestionParams(
           question: event.question,

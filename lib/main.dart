@@ -41,6 +41,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     context.read<AuthBloc>().add(AuthIsUserLoggedIn());
+ 
   }
 
   // This widget is the root of your application.
@@ -58,6 +59,7 @@ class _MyAppState extends State<MyApp> {
           if (isLoggedIn) {
             return const MainPage();
           }
+          // setState(() {});
           return const SignUpPage();
         },
       ),

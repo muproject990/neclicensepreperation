@@ -11,9 +11,16 @@ class QuestionEditor extends StatelessWidget {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        
         hintText: hintText,
       ),
+      maxLines: null,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "$hintText is empty";
+        }
+
+        return null;
+      },
     );
   }
 }

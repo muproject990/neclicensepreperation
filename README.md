@@ -66,3 +66,8 @@ aba top ma list banauna parxa so that i can put all the emement inside list whic
 
 
 domain layer ma question vanne # entity  banaiyo ani teslai pheri data layer ma model banayerw extend gariyo
+
+
+5.24
+        Form Validation logic in add_new_question.dart
+        
