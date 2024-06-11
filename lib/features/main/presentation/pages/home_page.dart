@@ -1,10 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:neclicensepreperation/features/main/presentation/pages/add_new_question.dart';
+import 'package:neclicensepreperation/features/main/presentation/pages/topics/microprocessor.dart';
 
-class MainPage extends StatelessWidget {
-  const MainPage({super.key});
+class MCQMainPage extends StatefulWidget {
+  const MCQMainPage({super.key});
 
+  @override
+  State<MCQMainPage> createState() => _MCQMainPageState();
+}
+
+class _MCQMainPageState extends State<MCQMainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,8 +27,18 @@ class MainPage extends StatelessWidget {
           )
         ],
       ),
-      body: const Center(
-        child: Text("Login"),
+      body: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                Microprocessor.route(),
+              );
+            },
+            child: const Text("Microprocessor"),
+          ),
+        ],
       ),
     );
   }

@@ -15,6 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'features/auth/domain/usecases/current_user.dart';
 import 'features/auth/domain/usecases/user_login.dart';
+import 'features/main/domain/usecases/get_all_questio.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -99,10 +100,18 @@ void _initQuestion() {
         questionRepository: serviceLocator(),
       ),
     )
+    // get all blogs
+    ..registerFactory(
+      () => GetAllQuestions(
+        serviceLocator(),
+      ),
+    )
+
     // Blog
     ..registerLazySingleton(
       () => QuestionBloc(
-        serviceLocator(),
+        uploadQuestion: serviceLocator(),
+        getAllQuestion: serviceLocator(),
       ),
     );
   ;

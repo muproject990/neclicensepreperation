@@ -1,11 +1,11 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neclicensepreperation/core/app_pallete.dart';
 import 'package:neclicensepreperation/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:neclicensepreperation/core/common/widgets/loader.dart';
 import 'package:neclicensepreperation/core/utils/show_snackbar.dart';
+import 'package:neclicensepreperation/core/utils/topics.dart';
 import 'package:neclicensepreperation/features/main/presentation/bloc/question_bloc.dart';
 import 'package:neclicensepreperation/features/main/widgets/question_editor.dart';
 
@@ -30,6 +30,24 @@ class _AddNewQuestionState extends State<AddNewQuestion> {
 
   List<String> seletedTopice = [];
 
+  void uploadQuestion() {
+    if (formKey.currentState!.validate() && seletedTopice.length == 1) {
+      final userId =
+          (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
+      context.read<QuestionBloc>().add(QuestionUpload(
+          question: questioncontroller.text,
+          option1: op1controller.text.trim(),
+          option2: op2controller.text.trim(),
+          option3: op3controller.text.trim(),
+          userId: userId,
+          option4: op4controller.text.trim(),
+          answer: answercontroller.text.trim(),
+          topics: seletedTopice));
+
+      // showSnackBar(context, " Data Uploaded Sucessfully");
+    }
+  }
+
   @override
   void dispose() {
     questioncontroller.dispose();
@@ -47,26 +65,7 @@ class _AddNewQuestionState extends State<AddNewQuestion> {
       appBar: AppBar(
         actions: [
           IconButton(
-            onPressed: () {
-              if (formKey.currentState!.validate() &&
-                  seletedTopice.length == 1) {
-                final userId =
-                    (context.read<AppUserCubit>().state as AppUserLoggedIn)
-                        .user
-                        .id;
-                context.read<QuestionBloc>().add(QuestionUpload(
-                    question: questioncontroller.text,
-                    option1: op1controller.text.trim(),
-                    option2: op2controller.text.trim(),
-                    option3: op3controller.text.trim(),
-                    userId: userId,
-                    option4: op4controller.text.trim(),
-                    answer: answercontroller.text.trim(),
-                    topics: seletedTopice));
-
-                // showSnackBar(context, " Data Uploaded Sucessfully");
-              }
-            },
+            onPressed: uploadQuestion,
             icon: const Icon(
               Icons.done_rounded,
             ),
@@ -77,6 +76,8 @@ class _AddNewQuestionState extends State<AddNewQuestion> {
         listener: (context, state) {
           if (state is QuestionFailure) {
             showSnackBar(context, state.error);
+          } else if (state is QuestionUploadSuccess) {
+            showSnackBar(context, "Added Sucessfully");
           }
         },
         builder: (context, state) {
@@ -102,7 +103,7 @@ class _AddNewQuestionState extends State<AddNewQuestion> {
                           child: Column(
                             children: [
                               Icon(Icons.question_answer_outlined),
-                              Text("Please Enter Questions ?")
+                              Text("Select Any Topics ?")
                             ],
                           ),
                         ),
@@ -111,13 +112,7 @@ class _AddNewQuestionState extends State<AddNewQuestion> {
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: [
-                          "Technology",
-                          "Tech",
-                          "logy",
-                          "Tlogy",
-                          "no",
-                        ]
+                        children: Topics.children
                             .map(
                               (e) => Padding(
                                 padding: const EdgeInsets.all(6.0),
@@ -159,7 +154,7 @@ class _AddNewQuestionState extends State<AddNewQuestion> {
                       ),
                       child: QuestionEditor(
                         controller: questioncontroller,
-                        hintText: "Question 1",
+                        hintText: "Enter Question here",
                       ),
                     ),
                     const SizedBox(
@@ -174,21 +169,21 @@ class _AddNewQuestionState extends State<AddNewQuestion> {
                     ),
                     QuestionEditor(
                       controller: op2controller,
-                      hintText: "Option 1",
+                      hintText: "Option 2",
                     ),
                     const SizedBox(
                       height: 15,
                     ),
                     QuestionEditor(
                       controller: op3controller,
-                      hintText: "Option 1",
+                      hintText: "Option 3",
                     ),
                     const SizedBox(
                       height: 15,
                     ),
                     QuestionEditor(
                       controller: op4controller,
-                      hintText: "Option 1",
+                      hintText: "Option 4",
                     ),
                     const SizedBox(
                       height: 15,

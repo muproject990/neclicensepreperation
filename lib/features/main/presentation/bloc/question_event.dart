@@ -23,3 +23,5 @@ final class QuestionUpload extends QuestionEvent {
       required this.answer,
       required this.topics});
 }
+
+final class QuestionFetchAllQuestions extends QuestionEvent {}

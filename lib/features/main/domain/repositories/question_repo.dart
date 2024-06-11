@@ -4,7 +4,7 @@ import 'package:neclicensepreperation/features/main/domain/entities/question.dar
 
 abstract interface class QuestionRepository {
   Future<Either<Failure, Question>> uploadQuestion({
-    required String question,
+    required String question, 
     required String option1,
     required String option2,
     required String option3,
@@ -13,4 +13,6 @@ abstract interface class QuestionRepository {
     required String answer,
     required List<String> topics,
   });
+
+  Future<Either<Failure, List<Question >>> getAllQuestion();
 }

@@ -7,6 +7,7 @@ import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.
 import 'package:neclicensepreperation/features/auth/presentation/signup_page.dart';
 import 'package:neclicensepreperation/features/main/presentation/bloc/question_bloc.dart';
 import 'package:neclicensepreperation/features/main/presentation/pages/home_page.dart';
+import 'package:neclicensepreperation/features/main/widgets/question_options.dart';
 import 'package:neclicensepreperation/init_dependencies.dart';
 
 void main() async {
@@ -41,7 +42,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     context.read<AuthBloc>().add(AuthIsUserLoggedIn());
- 
   }
 
   // This widget is the root of your application.
@@ -57,10 +57,10 @@ class _MyAppState extends State<MyApp> {
         },
         builder: (context, isLoggedIn) {
           if (isLoggedIn) {
-            return const MainPage();
+            return const MCQMainPage();
           }
           // setState(() {});
-          return const SignUpPage();
+          return const QuestionWithOptions();
         },
       ),
     );

@@ -13,4 +13,10 @@ final class QuestionFailure extends QuestionState {
   QuestionFailure(this.error);
 }
 
-final class QuestionSuccess extends QuestionState {}
+final class QuestionUploadSuccess extends QuestionState {}
+
+final class QuestionDisplaySuccess extends QuestionState {
+  final List<Question> questions;
+
+  QuestionDisplaySuccess(this.questions);
+}

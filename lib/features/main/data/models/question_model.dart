@@ -39,7 +39,12 @@ class QuestionModel extends Question {
         option3: map['option3'] as String,
         option4: map['option4'] as String,
         answer: map['answer'] as String,
-        topics: List<String>.from((map['topics'] as List<String>)),
-        updatedAt: DateTime.parse(map['updated_at']));
+        topics: map['topics'] == null
+            ? []
+            : List<String>.from(
+                (map['topics'] as List<dynamic>).map((e) => e.toString())),
+        updatedAt: map['updated_at'] == null
+            ? DateTime.now()
+            : DateTime.parse(map['updated_at']));
   }
 }
