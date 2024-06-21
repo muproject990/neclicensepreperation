@@ -36,12 +36,12 @@ class _AddNewQuestionState extends State<AddNewQuestion> {
           (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
       context.read<QuestionBloc>().add(QuestionUpload(
           question: questioncontroller.text,
-          option1: op1controller.text.trim(),
-          option2: op2controller.text.trim(),
-          option3: op3controller.text.trim(),
+          option1: op1controller.text.toLowerCase().trim(),
+          option2: op2controller.text.toLowerCase().trim(),
+          option3: op3controller.text.toLowerCase().trim(),
           userId: userId,
-          option4: op4controller.text.trim(),
-          answer: answercontroller.text.trim(),
+          option4: op4controller.text.toLowerCase().trim(),
+          answer: answercontroller.text.toLowerCase().trim(),
           topics: seletedTopice));
 
       // showSnackBar(context, " Data Uploaded Sucessfully");

@@ -25,3 +25,9 @@ final class QuestionUpload extends QuestionEvent {
 }
 
 final class QuestionFetchAllQuestions extends QuestionEvent {}
+
+final class QuestionFetchTocQuestions extends QuestionEvent {}
+
+final class QuestionFetchDsaQuestions extends QuestionEvent {}
+
+final class QuestionFetchProgrammingQuestions extends QuestionEvent {}

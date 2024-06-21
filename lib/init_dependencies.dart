@@ -9,6 +9,7 @@ import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.
 import 'package:neclicensepreperation/features/main/data/datasources/question_remote_data_source.dart';
 import 'package:neclicensepreperation/features/main/data/repository/question_repo_impl.dart';
 import 'package:neclicensepreperation/features/main/domain/repositories/question_repo.dart';
+import 'package:neclicensepreperation/features/main/domain/usecases/get_dsa_questios.dart';
 import 'package:neclicensepreperation/features/main/domain/usecases/upload_question.dart';
 import 'package:neclicensepreperation/features/main/presentation/bloc/question_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -16,6 +17,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/domain/usecases/current_user.dart';
 import 'features/auth/domain/usecases/user_login.dart';
 import 'features/main/domain/usecases/get_all_questio.dart';
+import 'features/main/domain/usecases/get_toc_question.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -100,18 +102,33 @@ void _initQuestion() {
         questionRepository: serviceLocator(),
       ),
     )
-    // get all blogs
+    // get all questions
     ..registerFactory(
       () => GetAllQuestions(
         serviceLocator(),
       ),
     )
 
-    // Blog
+    // get all Toc Questions
+    ..registerFactory(
+      () => GetTocQuestions(
+        serviceLocator(),
+      ),
+    )
+    // get all DSA Questions
+    ..registerFactory(
+      () => GetDsaQuestions(
+        serviceLocator(),
+      ),
+    )
+
     ..registerLazySingleton(
       () => QuestionBloc(
         uploadQuestion: serviceLocator(),
         getAllQuestion: serviceLocator(),
+        get_toc_question: serviceLocator(),
+        get_dsa_questions: serviceLocator(),
+        // getdsa: serviceLocator(),
       ),
     );
   ;

@@ -3,7 +3,6 @@ class Topics {
     "Microprocessor",
     "TOC",
     "DSA",
-    "Digital Logic",
     "Programming",
   ];
 }
