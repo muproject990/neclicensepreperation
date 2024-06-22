@@ -1,14 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neclicensepreperation/features/main/presentation/pages/add_new_question.dart';
 import 'package:neclicensepreperation/features/main/presentation/pages/topics/DL/DL.dart';
 import 'package:neclicensepreperation/features/main/presentation/pages/topics/DSA/dsa.dart';
+import 'package:neclicensepreperation/features/main/presentation/pages/topics/Programming/programming.dart';
 import 'package:neclicensepreperation/features/main/presentation/pages/topics/TOC/toc.dart';
 import 'package:neclicensepreperation/features/main/widgets/gradient_button.dart';
-import 'package:neclicensepreperation/features/main/widgets/transition_logo.dart';
 
 class MCQMainPage extends StatefulWidget {
+  static route() =>
+      MaterialPageRoute(builder: (context) => const MCQMainPage());
   const MCQMainPage({super.key});
 
   @override
@@ -36,7 +37,6 @@ class _MCQMainPageState extends State<MCQMainPage> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            const LogoTransition(),
             GradientBtn(
               buttonText: "Digital Logic And Microprocessor",
               onPressed: () {
@@ -63,6 +63,16 @@ class _MCQMainPageState extends State<MCQMainPage> {
                 Navigator.push(
                   context,
                   Dsa.route(),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            GradientBtn(
+              buttonText: "Programming",
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  Programming.route(),
                 );
               },
             ),

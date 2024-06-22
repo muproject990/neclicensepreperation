@@ -1,10 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:neclicensepreperation/core/common/cubits/main_mcq/correctAns_cubit.dart';
-import 'package:neclicensepreperation/core/utils/show_snackbar.dart';
 
 class MqcQuestionAnswer extends StatefulWidget {
   final String text;

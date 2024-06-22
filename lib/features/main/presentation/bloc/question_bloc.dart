@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:neclicensepreperation/core/usecase/usercase.dart';
 import 'package:neclicensepreperation/features/main/domain/entities/question.dart';
 import 'package:neclicensepreperation/features/main/domain/usecases/get_all_questio.dart';
