@@ -1,16 +1,35 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CorrectansCubit extends Cubit<int> {
-  CorrectansCubit() : super(0);
+class CorrectAnsCubit extends Cubit<Map<String, int>> {
+  CorrectAnsCubit() : super({'answered': 0, 'correct': 0});
 
-  void increment() {
-    emit(state + 1);
+  void incrementAnswered() {
+    emit({
+      'answered': state['answered']! + 1,
+      'correct': state['correct']!,
+    });
   }
 
-  void decrement() {
-    if (state == 0) {
-      return;
-    }
-    emit(state - 1);
+  void incrementCorrect() {
+    emit({
+      'answered': state['answered']!,
+      'correct': state['correct']! + 1,
+    });
   }
+
+  void decrementAnswered() {
+    emit({
+      'answered': state['answered']! - 1,
+      'correct': state['correct']!,
+    });
+  }
+
+  void decrementCorrect() {
+    emit({
+      'answered': state['answered']!,
+      'correct': state['correct']! - 1,
+    });
+  }
+
+  void increment() {}
 }

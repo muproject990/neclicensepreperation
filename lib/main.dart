@@ -6,7 +6,6 @@ import 'package:neclicensepreperation/core/theme.dart';
 import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:neclicensepreperation/features/auth/presentation/signup_page.dart';
 import 'package:neclicensepreperation/features/questions/presentation/bloc/question_bloc.dart';
-import 'package:neclicensepreperation/features/questions/presentation/pages/home_page.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/logo-page.dart';
 import 'package:neclicensepreperation/init_dependencies.dart';
 
@@ -26,7 +25,7 @@ void main() async {
         create: (_) => serviceLocator<QuestionBloc>(),
       ),
       BlocProvider(
-        create: (_) => CorrectansCubit(),
+        create: (_) => CorrectAnsCubit(),
       ),
     ],
     child: const MyApp(),

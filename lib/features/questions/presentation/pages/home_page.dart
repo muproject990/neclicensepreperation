@@ -61,30 +61,30 @@ class _MCQMainPageState extends State<MCQMainPage> {
                 GradientBtn(
                   buttonText: "Theory Of Computation",
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      TOC.route(),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   TOC.route(),
+                    // );
                   },
                 ),
                 const SizedBox(height: 20),
                 GradientBtn(
                   buttonText: "DataStructure and Algorithms",
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      Dsa.route(),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   Dsa.route(),
+                    // );
                   },
                 ),
                 const SizedBox(height: 20),
                 GradientBtn(
                   buttonText: "Programming",
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      Programming.route(),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   Programming.route(),
+                    // );
                   },
                 ),
               ],

@@ -1,26 +1,26 @@
-import 'package:flutter/material.dart';
-import 'package:neclicensepreperation/features/questions/widgets/pdf-viewer.dart';
+// import 'package:flutter/material.dart';
+// import 'package:neclicensepreperation/features/questions/widgets/pdf-viewer.dart';
 
-class LearnDsa extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context) => const LearnDsa());
+// class LearnDsa extends StatefulWidget {
+//   static route() => MaterialPageRoute(builder: (context) => const LearnDsa());
 
-  final bool progressExample;
+//   final bool progressExample;
 
-  const LearnDsa({super.key, this.progressExample = false});
+//   const LearnDsa({super.key, this.progressExample = false});
 
-  @override
-  State<LearnDsa> createState() => _LearnDsaState();
-}
+//   @override
+//   State<LearnDsa> createState() => _LearnDsaState();
+// }
 
-class _LearnDsaState extends State<LearnDsa> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  // }
+// class _LearnDsaState extends State<LearnDsa> {
+//   // @override
+//   // void initState() {
+//   //   super.initState();
+//   // }
 
-  @override
-  Widget build(BuildContext context) {
-    return const PdfView(
-        assetPath: 'assets/pdf/Digitallogic .pdf', title: "DigitalLogic");
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return const PdfView(
+//         assetPath: 'assets/pdf/Digitallogic .pdf', title: "DigitalLogic");
+//   }
+// }

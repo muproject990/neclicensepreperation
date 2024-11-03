@@ -1,14 +1,62 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:neclicensepreperation/features/questions/widgets/pie_chart.dart';
+import 'package:path_provider/path_provider.dart';
+// import 'pie_chart_widget.dart'; // Ensure this is your PieChartWidget file
 
-class BioChartPage extends StatelessWidget {
-  const BioChartPage({super.key});
+class StatisticsPage extends StatefulWidget {
+  const StatisticsPage({Key? key}) : super(key: key);
+
+  @override
+  _StatisticsPageState createState() => _StatisticsPageState();
+}
+
+class _StatisticsPageState extends State<StatisticsPage> {
+  int correctAnswers = 0;
+  int incorrectAnswers = 0;
+  double averagePercentage = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    loadStatistics();
+  }
+
+  Future<void> loadStatistics() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final statsFile = File('${directory.path}/statistics.txt');
+
+    if (await statsFile.exists()) {
+      String fileContent = await statsFile.readAsString();
+      List<String> lines = fileContent.split('\n');
+
+      int totalQuestions = 0;
+
+      for (String line in lines) {
+        if (line.startsWith('Total Correct Answers:')) {
+          correctAnswers += int.parse(line.split(':')[1].trim());
+        } else if (line.startsWith('Total Questions:')) {
+          totalQuestions += int.parse(line.split(':')[1].trim());
+        }
+      }
+
+      incorrectAnswers =
+          totalQuestions - correctAnswers; // Calculate incorrect answers
+
+      if (totalQuestions > 0) {
+        averagePercentage = (correctAnswers / totalQuestions) *
+            100; // Calculate average percentage
+      }
+
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bio Chart'),
+        title: const Text("Statistics"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -16,54 +64,13 @@ class BioChartPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Your Performance',
+              'Statistics',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            AspectRatio(
-              aspectRatio: 1.5,
-              child: LineChart(
-                LineChartData(
-                  gridData: FlGridData(show: false),
-                  titlesData: FlTitlesData(
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true),
-                    ),
-                  ),
-                  borderData: FlBorderData(
-                    show: true,
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  minX: 0,
-                  maxX: 6,
-                  minY: 0,
-                  maxY: 100,
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: [
-                        FlSpot(0, 30),
-                        FlSpot(1, 70),
-                        FlSpot(2, 50),
-                        FlSpot(3, 90),
-                        FlSpot(4, 40),
-                        FlSpot(5, 80),
-                        FlSpot(6, 60),
-                      ],
-                      isCurved: true,
-                      dotData: FlDotData(show: true),
-                      belowBarData: BarAreaData(show: false),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
-            Text(
-              'Statistics',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            PieChartWidget(
+              correctAnswers: correctAnswers,
+              incorrectAnswers: incorrectAnswers,
             ),
             const SizedBox(height: 16),
             Card(
@@ -73,11 +80,12 @@ class BioChartPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Total Questions Attempted: 150'),
-                    SizedBox(height: 8),
-                    Text('Average Score: 75%'),
-                    SizedBox(height: 8),
-                    Text('Highest Score: 90%'),
+                    Text('Total Correct Answers: $correctAnswers'),
+                    const SizedBox(height: 8),
+                    Text('Total Incorrect Answers: $incorrectAnswers'),
+                    const SizedBox(height: 8),
+                    Text(
+                        'Average Percentage: ${averagePercentage.toStringAsFixed(2)}%'), // Display average percentage
                   ],
                 ),
               ),
