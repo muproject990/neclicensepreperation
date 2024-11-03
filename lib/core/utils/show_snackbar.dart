@@ -6,6 +6,9 @@ void showSnackBar(BuildContext context, String content) {
     ..showSnackBar(
       SnackBar(
         content: Text(content),
+        duration:
+            const Duration(seconds: 1), // Optional: Adjust duration as needed
+        behavior: SnackBarBehavior.floating, // Optional: Change behavior
       ),
     );
 }

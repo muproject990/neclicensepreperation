@@ -6,18 +6,18 @@ import 'package:neclicensepreperation/features/auth/data/repositories/auth_repos
 import 'package:neclicensepreperation/features/auth/domain/auth-repository.dart';
 import 'package:neclicensepreperation/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:neclicensepreperation/features/main/data/datasources/question_remote_data_source.dart';
-import 'package:neclicensepreperation/features/main/data/repository/question_repo_impl.dart';
-import 'package:neclicensepreperation/features/main/domain/repositories/question_repo.dart';
-import 'package:neclicensepreperation/features/main/domain/usecases/get_dsa_questios.dart';
-import 'package:neclicensepreperation/features/main/domain/usecases/upload_question.dart';
-import 'package:neclicensepreperation/features/main/presentation/bloc/question_bloc.dart';
+import 'package:neclicensepreperation/features/questions/data/datasources/question_remote_data_source.dart';
+import 'package:neclicensepreperation/features/questions/data/repository/question_repo_impl.dart';
+import 'package:neclicensepreperation/features/questions/domain/repositories/question_repo.dart';
+import 'package:neclicensepreperation/features/questions/domain/usecases/get_dsa_questios.dart';
+import 'package:neclicensepreperation/features/questions/domain/usecases/upload_question.dart';
+import 'package:neclicensepreperation/features/questions/presentation/bloc/question_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'features/auth/domain/usecases/current_user.dart';
 import 'features/auth/domain/usecases/user_login.dart';
-import 'features/main/domain/usecases/get_all_questio.dart';
-import 'features/main/domain/usecases/get_toc_question.dart';
+import 'features/questions/domain/usecases/get_all_questio.dart';
+import 'features/questions/domain/usecases/get_toc_question.dart';
 
 final serviceLocator = GetIt.instance;
 
