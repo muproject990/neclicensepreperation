@@ -64,7 +64,7 @@ class _DLState extends State<DL> {
               .questions;
 
       // Shuffle and select only 50 questions
-      selectedQuestions = selectRandomQuestions(questions, 50);
+      selectedQuestions = selectRandomQuestions(questions, 5);
 
       userAnswers = List<String?>.filled(selectedQuestions.length, null);
       correctAnswers = selectedQuestions.map((q) => q.answer).toList();
@@ -75,19 +75,18 @@ class _DLState extends State<DL> {
 
   void _startTimer(int totalQuestions) {
     _remainingTime =
-        totalQuestions * 60; // Set duration based on total questions
+        totalQuestions * 2; // Set duration based on total questions
     _updateTimerDisplay();
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingTime <= 0) {
         timer.cancel();
-        if (userAnswers.isNotEmpty) {
+        if (userAnswers.isNotEmpty && userAnswers.length != totalQuestions) {
           showSnackBar(
               context, "Time is up! Your answers have not been submitted.");
+          // userAnswers.clear();
+          Navigator.push(context, MCQMainPage.route());
         }
-        userAnswers.clear();
-
-        Navigator.push(context, MCQMainPage.route());
       } else {
         _remainingTime--;
         _updateTimerDisplay();
@@ -159,8 +158,6 @@ class _DLState extends State<DL> {
     showSnackBar(context, "Statistics updated successfully!");
   }
 
-
-
   Future<void> saveResultsToFile(
       int totalQuestions, int totalCorrectAnswers) async {
     final directory = await getApplicationDocumentsDirectory();
@@ -221,8 +218,8 @@ class _DLState extends State<DL> {
       }).length;
 
       saveResultsToFile(userAnswers.length, totalCorrectAnswers);
-      appendResultsToStatisticsFile(userAnswers.length, totalCorrectAnswers);
       showResults();
+      appendResultsToStatisticsFile(userAnswers.length, totalCorrectAnswers);
     } else {
       showSnackBar(
           context, "Error: Answers and correct answers length mismatch.");
@@ -235,7 +232,11 @@ class _DLState extends State<DL> {
       appBar: AppBar(
         title: BlocBuilder<CorrectAnsCubit, Map<String, int>>(
           builder: (context, state) {
-            return Text(' Correct: ${state['correct']}');
+            return const Expanded(
+              child: Text(
+                ' Choose correct Ans..',
+              ),
+            );
           },
         ),
         actions: [
