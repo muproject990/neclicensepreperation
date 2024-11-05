@@ -81,10 +81,10 @@ class _MCQMainPageState extends State<MCQMainPage> {
                 GradientBtn(
                   buttonText: "Programming",
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   Programming.route(),
-                    // );
+                    Navigator.push(
+                      context,
+                      Programming.route(),
+                    );
                   },
                 ),
               ],

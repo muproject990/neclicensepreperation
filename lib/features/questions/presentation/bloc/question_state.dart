@@ -1,7 +1,9 @@
 part of 'question_bloc.dart';
 
 @immutable
-sealed class QuestionState {}
+sealed class QuestionState {
+  get questions => null;
+}
 
 final class QuestionInitial extends QuestionState {}
 

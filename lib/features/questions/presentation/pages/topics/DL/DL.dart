@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neclicensepreperation/core/common/cubits/main_mcq/correctAns_cubit.dart';
 import 'package:neclicensepreperation/core/common/widgets/loader.dart';
 import 'package:neclicensepreperation/core/utils/show_snackbar.dart';
+import 'package:neclicensepreperation/features/questions/domain/entities/question.dart';
 import 'package:neclicensepreperation/features/questions/presentation/bloc/question_bloc.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/home_page.dart';
 import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
 import 'package:neclicensepreperation/features/questions/widgets/optionbutton.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,7 +23,90 @@ class DL extends StatefulWidget {
 
 class _DLState extends State<DL> {
   List<String?> userAnswers = [];
-  List<String> correctAnswers = []; // List to hold correct answers
+  List<String> correctAnswers = [];
+  List<Question> selectedQuestions = [];
+
+  Timer? _timer;
+  int _remainingTime = 0;
+  ValueNotifier<String> _timerDisplay = ValueNotifier<String>("");
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<QuestionBloc>().add(QuestionFetchAllQuestions());
+  }
+
+  List<Question> selectRandomQuestions(
+      List<Question> allQuestions, int numberOfQuestions) {
+    if (allQuestions.length <= numberOfQuestions) {
+      // If there are fewer than or equal to `numberOfQuestions`, return all questions
+      return List<Question>.from(allQuestions);
+    }
+
+    // Copy the list so that the original list is not modified
+    List<Question> questionsCopy = List<Question>.from(allQuestions);
+
+    // Shuffle the list to get a random order
+    questionsCopy.shuffle(Random());
+
+    // Take the first `numberOfQuestions` items
+    return questionsCopy.take(numberOfQuestions).toList();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Assuming BlocConsumer builds the widget after questions are loaded
+    if (context.read<QuestionBloc>().state is QuestionDisplaySuccess) {
+      final questions =
+          (context.read<QuestionBloc>().state as QuestionDisplaySuccess)
+              .questions;
+
+      // Shuffle and select only 50 questions
+      selectedQuestions = selectRandomQuestions(questions, 50);
+
+      userAnswers = List<String?>.filled(selectedQuestions.length, null);
+      correctAnswers = selectedQuestions.map((q) => q.answer).toList();
+
+      _startTimer(selectedQuestions.length);
+    }
+  }
+
+  void _startTimer(int totalQuestions) {
+    _remainingTime =
+        totalQuestions * 60; // Set duration based on total questions
+    _updateTimerDisplay();
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingTime <= 0) {
+        timer.cancel();
+        if (userAnswers.isNotEmpty) {
+          showSnackBar(
+              context, "Time is up! Your answers have not been submitted.");
+        }
+        userAnswers.clear();
+
+        Navigator.push(context, MCQMainPage.route());
+      } else {
+        _remainingTime--;
+        _updateTimerDisplay();
+      }
+    });
+  }
+
+  void _updateTimerDisplay() {
+    int minutes = _remainingTime ~/ 60;
+    int seconds = _remainingTime % 60;
+    _timerDisplay.value =
+        "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   Future<void> showStatistics() async {
     final directory = await getApplicationDocumentsDirectory();
@@ -28,7 +115,6 @@ class _DLState extends State<DL> {
     if (await statsFile.exists()) {
       String fileContent = await statsFile.readAsString();
 
-      // Display the content in a dialog
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -41,7 +127,7 @@ class _DLState extends State<DL> {
             ),
             actions: <Widget>[
               TextButton(
-                child: Text("OK"),
+                child: const Text("OK"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -55,42 +141,32 @@ class _DLState extends State<DL> {
     }
   }
 
-// appendResultsToStatisticsFile
-
   Future<void> appendResultsToStatisticsFile(
       int totalQuestions, int totalCorrectAnswers) async {
     final directory = await getApplicationDocumentsDirectory();
     final statsFile = File('${directory.path}/statistics.txt');
 
     StringBuffer content = StringBuffer();
-
-    // Calculate percentage correct
     double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
 
-    // Append current result
     content.writeln('Total Questions: $totalQuestions');
     content.writeln('Total Correct Answers: $totalCorrectAnswers');
     content.writeln(
         'Percentage Correct: ${percentageCorrect.toStringAsFixed(2)}%');
-    content.writeln('---'); // Separator for each entry
+    content.writeln('---');
 
-    // Append to the file
     await statsFile.writeAsString(content.toString(), mode: FileMode.append);
     showSnackBar(context, "Statistics updated successfully!");
   }
 
 
-  
 
-  // Function to save user answers to a file
   Future<void> saveResultsToFile(
       int totalQuestions, int totalCorrectAnswers) async {
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/results.txt');
 
     StringBuffer content = StringBuffer();
-
-    // Save total number of questions and percentage of correct answers
     content.writeln('Total Questions: $totalQuestions');
     content.writeln('Total Correct Answers: $totalCorrectAnswers');
 
@@ -109,18 +185,17 @@ class _DLState extends State<DL> {
     if (await file.exists()) {
       String fileContent = await file.readAsString();
 
-      // Display the content in a dialog
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Results"),
+            title: const Text("Results"),
             content: SingleChildScrollView(
               child: Text(fileContent),
             ),
             actions: <Widget>[
               TextButton(
-                child: Text("OK"),
+                child: const Text("OK"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -134,10 +209,24 @@ class _DLState extends State<DL> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    context.read<QuestionBloc>().add(QuestionFetchAllQuestions());
+  void _submitResults() {
+    _timer?.cancel();
+
+    // Ensure the lengths match before proceeding
+    if (userAnswers.length == correctAnswers.length) {
+      int totalCorrectAnswers = userAnswers.asMap().entries.where((entry) {
+        int index = entry.key;
+        String? answer = entry.value;
+        return answer == correctAnswers[index];
+      }).length;
+
+      saveResultsToFile(userAnswers.length, totalCorrectAnswers);
+      appendResultsToStatisticsFile(userAnswers.length, totalCorrectAnswers);
+      showResults();
+    } else {
+      showSnackBar(
+          context, "Error: Answers and correct answers length mismatch.");
+    }
   }
 
   @override
@@ -149,11 +238,33 @@ class _DLState extends State<DL> {
             return Text(' Correct: ${state['correct']}');
           },
         ),
+        actions: [
+          ValueListenableBuilder<String>(
+            valueListenable: _timerDisplay,
+            builder: (context, value, child) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: BlocConsumer<QuestionBloc, QuestionState>(
         listener: (context, state) {
           if (state is QuestionFailure) {
             showSnackBar(context, state.error);
+          } else if (state is QuestionDisplaySuccess) {
+            // Only initialize answers if questions are loaded
+            if (userAnswers.isEmpty) {
+              userAnswers = List<String?>.filled(state.questions.length, null);
+              correctAnswers = state.questions.map((q) => q.answer).toList();
+              _startTimer(state.questions.length);
+            }
           }
         },
         builder: (context, state) {
@@ -162,15 +273,14 @@ class _DLState extends State<DL> {
           }
 
           if (state is QuestionDisplaySuccess) {
-            if (userAnswers.isEmpty) {
-              userAnswers = List<String?>.filled(state.questions.length, null);
-              correctAnswers = state.questions.map((q) => q.answer).toList();
+            if (state.questions.isEmpty) {
+              return const Center(child: Text("No questions available."));
             }
-
             return ListView.builder(
-              itemCount: state.questions.length,
+              itemCount:
+                  selectedQuestions.length, // Now displays only 50 questions
               itemBuilder: (context, index) {
-                final question = state.questions[index];
+                final question = selectedQuestions[index];
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -192,8 +302,6 @@ class _DLState extends State<DL> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    // Use the updated OptionButton
-
                     OptionButton(
                       text: question.option1,
                       isSelected: userAnswers[index] == question.option1,
@@ -263,24 +371,7 @@ class _DLState extends State<DL> {
               showSnackBar(
                   context, "Please answer all questions before submitting.");
             } else {
-              // Calculate total correct answers
-              int totalCorrectAnswers =
-                  userAnswers.asMap().entries.where((entry) {
-                int index = entry.key;
-                String? answer = entry.value;
-                return answer == correctAnswers[index];
-              }).length;
-
-              // Save results to a file
-              saveResultsToFile(userAnswers.length, totalCorrectAnswers);
-
-              // Append results to the statistics file
-              appendResultsToStatisticsFile(
-                  userAnswers.length, totalCorrectAnswers);
-
-              // Show results dialog
-              showResults();
-              // showStatistics();
+              _submitResults();
             }
           },
         ),
@@ -290,26 +381,13 @@ class _DLState extends State<DL> {
 
   void _handleOptionSelection(int index, String selectedOption) {
     setState(() {
-      // Check if the answer for this question is already set
-      if (userAnswers[index] != null) {
-        // If already answered, do nothing and return
-        return;
-      }
-
-      // Update the user's answer for this question
+      if (userAnswers[index] != null) return; // Prevent re-selection
       userAnswers[index] = selectedOption;
 
-      // Update the answered count
       context.read<CorrectAnsCubit>().incrementAnswered();
 
-      // Check if the selected option is correct or not
       if (selectedOption == correctAnswers[index]) {
         context.read<CorrectAnsCubit>().incrementCorrect();
-      } else {
-        // If the previous answer was correct, decrement the count
-        if (userAnswers[index] == correctAnswers[index]) {
-          context.read<CorrectAnsCubit>().decrementCorrect();
-        }
       }
     });
   }
