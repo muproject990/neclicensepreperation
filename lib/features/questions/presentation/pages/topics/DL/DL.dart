@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neclicensepreperation/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:neclicensepreperation/core/common/cubits/main_mcq/correctAns_cubit.dart';
 import 'package:neclicensepreperation/core/common/widgets/loader.dart';
 import 'package:neclicensepreperation/core/utils/show_snackbar.dart';
@@ -22,9 +23,11 @@ class DL extends StatefulWidget {
 }
 
 class _DLState extends State<DL> {
+  int desiredQuestions = 50;
   List<String?> userAnswers = [];
   List<String> correctAnswers = [];
   List<Question> selectedQuestions = [];
+  late String user;
 
   Timer? _timer;
   int _remainingTime = 0;
@@ -39,18 +42,33 @@ class _DLState extends State<DL> {
   List<Question> selectRandomQuestions(
       List<Question> allQuestions, int numberOfQuestions) {
     if (allQuestions.length <= numberOfQuestions) {
-      // If there are fewer than or equal to `numberOfQuestions`, return all questions
       return List<Question>.from(allQuestions);
     }
 
-    // Copy the list so that the original list is not modified
+    int numberOfParts = 5;
+    int partSize = (allQuestions.length / numberOfParts).ceil();
+
     List<Question> questionsCopy = List<Question>.from(allQuestions);
 
-    // Shuffle the list to get a random order
-    questionsCopy.shuffle(Random());
+    List<Question> selectedQuestions = [];
 
-    // Take the first `numberOfQuestions` items
-    return questionsCopy.take(numberOfQuestions).toList();
+    for (int i = 0; i < numberOfParts; i++) {
+      int start = i * partSize;
+      int end = start + partSize > questionsCopy.length
+          ? questionsCopy.length
+          : start + partSize;
+
+      List<Question> part = questionsCopy.sublist(start, end);
+      part.shuffle(Random());
+
+      int questionsPerPart = (numberOfQuestions / numberOfParts).ceil();
+
+      selectedQuestions.addAll(part.take(questionsPerPart));
+
+      if (selectedQuestions.length >= numberOfQuestions) break;
+    }
+
+    return selectedQuestions.take(numberOfQuestions).toList();
   }
 
   @override
@@ -63,8 +81,8 @@ class _DLState extends State<DL> {
           (context.read<QuestionBloc>().state as QuestionDisplaySuccess)
               .questions;
 
-      // Shuffle and select only 50 questions
-      selectedQuestions = selectRandomQuestions(questions, 5);
+      //! Shuffle and select only 50 questions
+      selectedQuestions = selectRandomQuestions(questions, desiredQuestions);
 
       userAnswers = List<String?>.filled(selectedQuestions.length, null);
       correctAnswers = selectedQuestions.map((q) => q.answer).toList();
@@ -81,7 +99,7 @@ class _DLState extends State<DL> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingTime <= 0) {
         timer.cancel();
-        if (userAnswers.isNotEmpty && userAnswers.length != totalQuestions) {
+        if (userAnswers.isNotEmpty) {
           showSnackBar(
               context, "Time is up! Your answers have not been submitted.");
           // userAnswers.clear();
@@ -109,70 +127,77 @@ class _DLState extends State<DL> {
 
   Future<void> showStatistics() async {
     final directory = await getApplicationDocumentsDirectory();
-    final statsFile = File('${directory.path}/statistics.txt');
 
-    if (await statsFile.exists()) {
-      String fileContent = await statsFile.readAsString();
+    // Access user information from AppUserCubit
+    final appUserState = context.read<AppUserCubit>().state;
+    if (appUserState is AppUserLoggedIn) {
+      final userId = appUserState.user.id;
 
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Statistics"),
-            content: SingleChildScrollView(
-              child: Text(fileContent.isNotEmpty
-                  ? fileContent
-                  : "No statistics found."),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text("OK"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
+      // Use the user ID to dynamically find the file
+      final statsFile = File('${directory.path}/statistics_$userId.txt');
+
+      try {
+        if (await statsFile.exists()) {
+          String fileContent = await statsFile.readAsString();
+
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text("Statistics"),
+                content: SingleChildScrollView(
+                  child: Text(fileContent.isNotEmpty
+                      ? fileContent
+                      : "No statistics found."),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text("OK"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
           );
-        },
-      );
+        } else {
+          showSnackBar(context, "No statistics file found for this user.");
+        }
+      } catch (e) {
+        showSnackBar(context, "Error reading statistics: ${e.toString()}");
+      }
     } else {
-      showSnackBar(context, "No statistics file found.");
+      showSnackBar(context, "Error: User not authenticated.");
     }
   }
 
   Future<void> appendResultsToStatisticsFile(
       int totalQuestions, int totalCorrectAnswers) async {
     final directory = await getApplicationDocumentsDirectory();
-    final statsFile = File('${directory.path}/statistics.txt');
 
-    StringBuffer content = StringBuffer();
-    double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
+    // Access user information from AppUserCubit
+    final appUserState = context.read<AppUserCubit>().state;
+    if (appUserState is AppUserLoggedIn) {
+      final userId = appUserState.user.id; // assuming `user.id` exists
 
-    content.writeln('Total Questions: $totalQuestions');
-    content.writeln('Total Correct Answers: $totalCorrectAnswers');
-    content.writeln(
-        'Percentage Correct: ${percentageCorrect.toStringAsFixed(2)}%');
-    content.writeln('---');
+      // Use the user ID to dynamically name the file
+      final statsFile = File('${directory.path}/statistics_$userId.txt');
 
-    await statsFile.writeAsString(content.toString(), mode: FileMode.append);
-    showSnackBar(context, "Statistics updated successfully!");
-  }
+      StringBuffer content = StringBuffer();
+      double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
 
-  Future<void> saveResultsToFile(
-      int totalQuestions, int totalCorrectAnswers) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/results.txt');
+      content.writeln('Total Questions: $totalQuestions');
+      content.writeln('Total Correct Answers: $totalCorrectAnswers');
+      content.writeln(
+          'Percentage Correct: ${percentageCorrect.toStringAsFixed(2)}%');
+      content.writeln('---');
 
-    StringBuffer content = StringBuffer();
-    content.writeln('Total Questions: $totalQuestions');
-    content.writeln('Total Correct Answers: $totalCorrectAnswers');
-
-    double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
-    content.writeln(
-        'Percentage Correct: ${percentageCorrect.toStringAsFixed(2)}%');
-
-    await file.writeAsString(content.toString());
-    showSnackBar(context, "Results saved to file successfully!");
+      await statsFile.writeAsString(content.toString(), mode: FileMode.append);
+      showSnackBar(context, "Statistics updated successfully!");
+    } else {
+      showSnackBar(context, "Error: User not authenticated.");
+    }
   }
 
   Future<void> showResults() async {
@@ -217,8 +242,6 @@ class _DLState extends State<DL> {
         return answer == correctAnswers[index];
       }).length;
 
-      saveResultsToFile(userAnswers.length, totalCorrectAnswers);
-      showResults();
       appendResultsToStatisticsFile(userAnswers.length, totalCorrectAnswers);
     } else {
       showSnackBar(
@@ -278,8 +301,7 @@ class _DLState extends State<DL> {
               return const Center(child: Text("No questions available."));
             }
             return ListView.builder(
-              itemCount:
-                  selectedQuestions.length, // Now displays only 50 questions
+              itemCount: selectedQuestions.length,
               itemBuilder: (context, index) {
                 final question = selectedQuestions[index];
                 return Column(

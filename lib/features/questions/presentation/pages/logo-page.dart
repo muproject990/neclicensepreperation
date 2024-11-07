@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neclicensepreperation/features/auth/presentation/signup_page.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/biochart.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/profile.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/home_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -16,9 +17,8 @@ class _IntroPageState extends State<IntroPage> {
 
   final List<Widget> _pages = [
     const MCQMainPage(), // Assuming HomePage is your existing home page
-    const StatisticsPage(),
-    const ProfilePage(),
-    // No separate LogoutPage here
+    StatisticsChart(),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -67,7 +67,7 @@ class _IntroPageState extends State<IntroPage> {
               Icons.pie_chart,
               color: Colors.white,
             ),
-            label: 'Bio Chart',
+            label: 'Chart',
           ),
           BottomNavigationBarItem(
             icon: Icon(
@@ -87,18 +87,6 @@ class _IntroPageState extends State<IntroPage> {
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
       ),
-    );
-  }
-}
-
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Profile')),
-      body: Center(child: Text('This is the Profile page.')),
     );
   }
 }
