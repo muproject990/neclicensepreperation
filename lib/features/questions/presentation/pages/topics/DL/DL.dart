@@ -35,34 +35,106 @@ class _DLState extends State<DL> {
   // Performance Tracking
   int totalQuestions = 0;
   int correctAnswersCount = 0;
+  double userAccuracy = 0.0; // Dynamic user accuracy
   List<int> responseTimes = [];
   DateTime? questionStartTime;
+
+  int consecutiveCorrectAnswers = 0;
+  int consecutiveIncorrectAnswers = 0;
+  int difficultyThreshold = 4; // Increase difficulty after 4 correct answers
+  int decreaseDifficultyThreshold =
+      39; // Decrease difficulty after 3 incorrect answers
 
   @override
   void initState() {
     super.initState();
+    // _loadUserStatistics();
     context.read<QuestionBloc>().add(QuestionFetchAllQuestions());
   }
 
+  // Load user's statistics and analyze recent performance
+  Future<void> _loadUserStatistics() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final appUserState = context.read<AppUserCubit>().state;
+    if (appUserState is AppUserLoggedIn) {
+      final userId = appUserState.user.id;
+      final statsFile = File('${directory.path}/statistics_$userId.txt');
+
+      if (await statsFile.exists()) {
+        final stats = await statsFile.readAsString();
+        // Extract previous stats; this is just a sample way to calculate.
+        final totalCorrect =
+            RegExp(r'Total Correct Answers: (\d+)').firstMatch(stats)?.group(1);
+        final totalQuestions =
+            RegExp(r'Total Questions: (\d+)').firstMatch(stats)?.group(1);
+
+        if (totalCorrect != null && totalQuestions != null) {
+          final accuracy =
+              int.parse(totalCorrect) / int.parse(totalQuestions) * 100;
+          setState(() {
+            userAccuracy = accuracy;
+          });
+        }
+      }
+    }
+  }
+
+  void _updateDifficultyBasedOnPerformance() {
+    if (consecutiveCorrectAnswers >= difficultyThreshold) {
+      setState(() {
+        consecutiveCorrectAnswers = 0; // Reset after reaching threshold
+        userAccuracy = 90.0; // Adjust this based on real user performance
+      });
+      _loadNewQuestions();
+    }
+  }
+
+  void _loadNewQuestions() {
+    final questions =
+        (context.read<QuestionBloc>().state as QuestionDisplaySuccess)
+            .questions;
+    setState(() {
+      selectedQuestions =
+          selectQuestionsByDifficulty(questions, desiredQuestions);
+      userAnswers = List<String?>.filled(selectedQuestions.length, null);
+      correctAnswers = selectedQuestions.map((q) => q.answer).toList();
+      _startTimer(selectedQuestions.length); // Restart timer for new questions
+    });
+  }
+
   List<Question> selectQuestionsByDifficulty(
-      List<Question> allQuestions, int numberOfQuestions, double userAccuracy) {
+      List<Question> allQuestions, int numberOfQuestions) {
     double easyThreshold = 70.0;
+    double mediumThreshold = 80.0;
     double hardThreshold = 90.0;
 
-    List<Question> selectedQuestions;
+    List<Question> filteredQuestions;
+
+    // Adjust questions based on user accuracy
     if (userAccuracy < easyThreshold) {
-      selectedQuestions =
+      // For lower accuracy, select mostly easy questions
+      filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'easy').toList();
+      print("Selected Easy Questions - User Accuracy: $userAccuracy");
+    } else if (userAccuracy < mediumThreshold) {
+      // For mid-range accuracy, select medium questions
+      filteredQuestions =
+          allQuestions.where((q) => q.difficulty == 'medium').toList();
+      print("Selected Medium Questions - User Accuracy: $userAccuracy");
     } else if (userAccuracy < hardThreshold) {
-      selectedQuestions =
-          allQuestions.where((q) => q.difficulty != 'hard').toList();
-    } else {
-      selectedQuestions =
+      // For high accuracy but below the hardest level, include hard questions
+      filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'hard').toList();
+      print("Selected Hard Questions - User Accuracy: $userAccuracy");
+    } else {
+      // Highest accuracy users get very hard questions
+      filteredQuestions =
+          allQuestions.where((q) => q.difficulty == 'very_hard').toList();
     }
 
-    selectedQuestions.shuffle(Random());
-    return selectedQuestions.take(numberOfQuestions).toList();
+    // Shuffle and take only the desired number of questions
+    filteredQuestions.shuffle(Random());
+    return filteredQuestions.take(numberOfQuestions).toList();
   }
 
   @override
@@ -73,12 +145,8 @@ class _DLState extends State<DL> {
       final questions =
           (context.read<QuestionBloc>().state as QuestionDisplaySuccess)
               .questions;
-
-      double userAccuracy = correctAnswersCount /
-          (totalQuestions == 0 ? 1 : totalQuestions) *
-          100;
-      selectedQuestions = selectQuestionsByDifficulty(
-          questions, desiredQuestions, userAccuracy);
+      selectedQuestions =
+          selectQuestionsByDifficulty(questions, desiredQuestions);
 
       userAnswers = List<String?>.filled(selectedQuestions.length, null);
       correctAnswers = selectedQuestions.map((q) => q.answer).toList();
@@ -93,7 +161,7 @@ class _DLState extends State<DL> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingTime <= 0) {
         timer.cancel();
-        if (userAnswers.isNotEmpty && mounted) {
+        if (userAnswers.isNotEmpty) {
           showSnackBar(
               context, "Time is up! Your answers have not been submitted.");
           Navigator.push(context, MCQMainPage.route());
@@ -118,86 +186,29 @@ class _DLState extends State<DL> {
     super.dispose();
   }
 
-  Future<void> showStatistics() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final appUserState = context.read<AppUserCubit>().state;
-    if (appUserState is AppUserLoggedIn) {
-      final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/statistics_$userId.txt');
-
-      if (await statsFile.exists()) {
-        String fileContent = await statsFile.readAsString();
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Statistics"),
-              content: SingleChildScrollView(
-                child: Text(fileContent.isNotEmpty
-                    ? fileContent
-                    : "No statistics found."),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text("OK"),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        showSnackBar(context, "No statistics file found for this user.");
-      }
-    } else {
-      showSnackBar(context, "Error: User not authenticated.");
-    }
-  }
-
-  Future<void> appendResultsToStatisticsFile(
-      int totalQuestions, int totalCorrectAnswers) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final appUserState = context.read<AppUserCubit>().state;
-    if (appUserState is AppUserLoggedIn) {
-      final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/statistics_$userId.txt');
-
-      double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
-      await statsFile.writeAsString(
-        'Total Questions: $totalQuestions\nTotal Correct Answers: $totalCorrectAnswers\nPercentage Correct: ${percentageCorrect.toStringAsFixed(2)}%\n---\n',
-        mode: FileMode.append,
-      );
-      showSnackBar(context, "Statistics updated successfully!");
-    } else {
-      showSnackBar(context, "Error: User not authenticated.");
-    }
-  }
-
-  void _submitResults() {
-    _timer?.cancel();
-
-    if (userAnswers.length == correctAnswers.length) {
-      int totalCorrectAnswers = userAnswers.asMap().entries.where((entry) {
-        int index = entry.key;
-        String? answer = entry.value;
-        return answer == correctAnswers[index];
-      }).length;
-
-      appendResultsToStatisticsFile(userAnswers.length, totalCorrectAnswers);
-      showStatistics();
-    } else {
-      showSnackBar(
-          context, "Error: Answers and correct answers length mismatch.");
-    }
-  }
-
+  // Handle option selection, updating userAnswers list
   void _handleOptionSelection(int index, String selectedOption) {
     setState(() {
-      if (userAnswers[index] != null) return;
       userAnswers[index] = selectedOption;
 
       if (selectedOption == correctAnswers[index]) {
-        correctAnswersCount++;
+        consecutiveCorrectAnswers++;
+        consecutiveIncorrectAnswers = 0; // Reset incorrect counter
+        // Increase difficulty if threshold reached
+        if (consecutiveCorrectAnswers >= difficultyThreshold) {
+          consecutiveCorrectAnswers = 0;
+          userAccuracy += 5; // Increase accuracy to select harder questions
+          _loadNewQuestions();
+        }
+      } else {
+        consecutiveIncorrectAnswers++;
+        consecutiveCorrectAnswers = 0; // Reset correct counter
+        // Decrease difficulty if threshold reached
+        if (consecutiveIncorrectAnswers >= decreaseDifficultyThreshold) {
+          consecutiveIncorrectAnswers = 0;
+          userAccuracy -= 5; // Decrease accuracy to select easier questions
+          _loadNewQuestions();
+        }
       }
     });
   }
@@ -223,22 +234,6 @@ class _DLState extends State<DL> {
         listener: (context, state) {
           if (state is QuestionFailure) {
             showSnackBar(context, state.error);
-          } else if (state is QuestionDisplaySuccess) {
-            final questions = state.questions;
-            double userAccuracy = correctAnswersCount /
-                (totalQuestions == 0 ? 1 : totalQuestions) *
-                100;
-
-            // Set selected questions based on difficulty and accuracy
-            selectedQuestions = selectQuestionsByDifficulty(
-                questions, desiredQuestions, userAccuracy);
-
-            // Initialize user answers and correct answers lists based on selected questions
-            userAnswers = List<String?>.filled(selectedQuestions.length, null);
-            correctAnswers = selectedQuestions.map((q) => q.answer).toList();
-
-            // Start the timer only after questions are selected
-            _startTimer(selectedQuestions.length);
           }
         },
         builder: (context, state) {
@@ -248,6 +243,7 @@ class _DLState extends State<DL> {
             if (selectedQuestions.isEmpty) {
               return const Center(child: Text("No questions available."));
             }
+
             return ListView.builder(
               itemCount: selectedQuestions.length,
               itemBuilder: (context, index) {
@@ -300,23 +296,41 @@ class _DLState extends State<DL> {
                       onPressed: () =>
                           _handleOptionSelection(index, question.option4),
                     ),
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 20),
                   ],
                 );
               },
             );
           } else {
-            return const Center(child: Text("Failed to load questions."));
+            return const Center(
+                child: Text("An error occurred. Please try again."));
           }
         },
       ),
-      floatingActionButton: Container(
-        child: FloatingBtn(
-          icon: Icons.done,
-          onPressed: _submitResults,
-          buttonText: 'Submit',
-        ),
+      floatingActionButton: FloatingBtn(
+        onPressed: () {
+          // _submitResults();
+        },
+        icon: Icons.check,
+        buttonText: '"Done',
       ),
     );
+  }
+
+  Future<void> appendResultsToStatisticsFile(
+      int totalQuestions, int totalCorrectAnswers) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final appUserState = context.read<AppUserCubit>().state;
+    if (appUserState is AppUserLoggedIn) {
+      final userId = appUserState.user.id;
+      final statsFile = File('${directory.path}/statistics_$userId.txt');
+
+      double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
+      await statsFile.writeAsString(
+        'Total Questions: $totalQuestions\nTotal Correct Answers: $totalCorrectAnswers\nPercentage Correct: ${percentageCorrect.toStringAsFixed(2)}%\n---\n',
+        mode: FileMode.append,
+      );
+      showSnackBar(context, "Results saved to statistics file.");
+    }
   }
 }
