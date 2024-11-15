@@ -5,7 +5,7 @@ class FloatingBtn extends StatelessWidget {
   final String buttonText;
   final VoidCallback onPressed;
   const FloatingBtn(
-      {super.key, required this.buttonText, required this.onPressed});
+      {super.key, required this.buttonText, required this.onPressed, required IconData icon});
 
   @override
   Widget build(BuildContext context) {

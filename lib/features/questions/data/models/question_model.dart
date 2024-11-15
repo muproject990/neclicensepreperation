@@ -12,8 +12,10 @@ class QuestionModel extends Question {
     required super.answer,
     required super.topics,
     required super.updatedAt,
+    required super.difficulty, // New difficulty field
   });
 
+  // Convert the QuestionModel instance to JSON format
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': id,
@@ -26,25 +28,29 @@ class QuestionModel extends Question {
       'answer': answer,
       'topics': topics,
       'updated_at': updatedAt.toIso8601String(),
+      'difficulty': difficulty, // Include difficulty in JSON
     };
   }
 
+  // Create a QuestionModel instance from JSON data
   factory QuestionModel.fromJson(Map<String, dynamic> map) {
     return QuestionModel(
-        id: map['id'] as String,
-        userId: map['user_id'] as String,
-        question: map['question'] as String,
-        option1: map['option1'] as String,
-        option2: map['option2'] as String,
-        option3: map['option3'] as String,
-        option4: map['option4'] as String,
-        answer: map['answer'] as String,
-        topics: map['topics'] == null
-            ? []
-            : List<String>.from(
-                (map['topics'] as List<dynamic>).map((e) => e.toString())),
-        updatedAt: map['updated_at'] == null
-            ? DateTime.now()
-            : DateTime.parse(map['updated_at']));
+      id: map['id'] as String,
+      userId: map['user_id'] as String,
+      question: map['question'] as String,
+      option1: map['option1'] as String,
+      option2: map['option2'] as String,
+      option3: map['option3'] as String,
+      option4: map['option4'] as String,
+      answer: map['answer'] as String,
+      topics: map['topics'] == null
+          ? []
+          : List<String>.from(
+              (map['topics'] as List<dynamic>).map((e) => e.toString())),
+      updatedAt: map['updated_at'] == null
+          ? DateTime.now()
+          : DateTime.parse(map['updated_at']),
+      difficulty: map['difficulty'] as String, // Parse difficulty from JSON
+    );
   }
 }

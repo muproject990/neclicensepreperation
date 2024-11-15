@@ -76,60 +76,62 @@ class _StatisticsChartState extends State<StatisticsChart> {
         padding: const EdgeInsets.all(16.0),
         child: totalQuestionsList.isEmpty
             ? Center(child: Text("No data available"))
-            : BarChart(
-                BarChartData(
-                  barGroups: _createBarGroups(),
-                  titlesData: FlTitlesData(
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (index, _) =>
-                            Text('Quiz ${index.toInt() + 1}'),
+            : ListView.builder(
+                itemCount: totalQuestionsList.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      Text(
+                        'Quiz ${index + 1}',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 40,
+                      SizedBox(
+                        height: 200,
+                        child: PieChart(
+                          PieChartData(
+                            sections: _generatePieSections(index),
+                            sectionsSpace: 2,
+                            centerSpaceRadius: 40,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
+                      Divider(),
+                    ],
+                  );
+                },
               ),
       ),
     );
   }
 
-  List<BarChartGroupData> _createBarGroups() {
-    return List.generate(totalQuestionsList.length, (index) {
-      // Calculate the correct and incorrect percentages
-      final correctPercentage = percentageCorrectList[index];
-      final incorrectPercentage = 100 - correctPercentage;
+  List<PieChartSectionData> _generatePieSections(int index) {
+    final correctPercentage = percentageCorrectList[index];
+    final incorrectPercentage = 100 - correctPercentage;
 
-      return BarChartGroupData(
-        x: index,
-        barRods: [
-          BarChartRodData(
-            toY: 100, // Stack up to 100% for each quiz
-            rodStackItems: [
-              // Correct answers segment
-              BarChartRodStackItem(
-                0, // Starting point of the correct segment
-                correctPercentage, // End of the correct segment
-                Colors.green, // Color for correct answers
-              ),
-              // Incorrect answers segment
-              BarChartRodStackItem(
-                correctPercentage, // Start of the incorrect segment
-                100, // End up to 100% for incorrect answers
-                Colors.red, // Color for incorrect answers
-              ),
-            ],
-            width: 15,
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ],
-      );
-    });
+    return [
+      PieChartSectionData(
+        value: correctPercentage,
+        color: Colors.green,
+        title: '${correctPercentage.toStringAsFixed(1)}%',
+        radius: 50,
+        titleStyle: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      PieChartSectionData(
+        value: incorrectPercentage,
+        color: Colors.red,
+        title: '${incorrectPercentage.toStringAsFixed(1)}%',
+        radius: 50,
+        titleStyle: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+    ];
   }
 }

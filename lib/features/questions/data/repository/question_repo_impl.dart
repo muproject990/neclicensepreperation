@@ -21,6 +21,7 @@ class QuestionRepositoryImpl implements QuestionRepository {
     required String option4,
     required String answer,
     required List<String> topics,
+    required String difficulty, // New parameter
   }) async {
     try {
       QuestionModel questionModel = QuestionModel(
@@ -34,15 +35,14 @@ class QuestionRepositoryImpl implements QuestionRepository {
         answer: answer,
         topics: topics,
         updatedAt: DateTime.now(),
+        difficulty: difficulty, // Set the difficulty level
       );
 
       final uploadedQuestion =
           await questionRemoteDataSource.uploadQuestion(questionModel);
       return right(uploadedQuestion);
     } on ServerException catch (e) {
-      return left(
-        Failure(e.message),
-      );
+      return left(Failure(e.message));
     }
   }
 

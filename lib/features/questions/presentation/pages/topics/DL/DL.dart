@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neclicensepreperation/core/common/cubits/app_user/app_user_cubit.dart';
-import 'package:neclicensepreperation/core/common/cubits/main_mcq/correctAns_cubit.dart';
 import 'package:neclicensepreperation/core/common/widgets/loader.dart';
 import 'package:neclicensepreperation/core/utils/show_snackbar.dart';
 import 'package:neclicensepreperation/features/questions/domain/entities/question.dart';
@@ -33,41 +32,36 @@ class _DLState extends State<DL> {
   int _remainingTime = 0;
   ValueNotifier<String> _timerDisplay = ValueNotifier<String>("");
 
+  // Performance Tracking
+  int totalQuestions = 0;
+  int correctAnswersCount = 0;
+  List<int> responseTimes = [];
+  DateTime? questionStartTime;
+
   @override
   void initState() {
     super.initState();
     context.read<QuestionBloc>().add(QuestionFetchAllQuestions());
   }
 
-  List<Question> selectRandomQuestions(
-      List<Question> allQuestions, int numberOfQuestions) {
-    if (allQuestions.length <= numberOfQuestions) {
-      return List<Question>.from(allQuestions);
+  List<Question> selectQuestionsByDifficulty(
+      List<Question> allQuestions, int numberOfQuestions, double userAccuracy) {
+    double easyThreshold = 70.0;
+    double hardThreshold = 90.0;
+
+    List<Question> selectedQuestions;
+    if (userAccuracy < easyThreshold) {
+      selectedQuestions =
+          allQuestions.where((q) => q.difficulty == 'easy').toList();
+    } else if (userAccuracy < hardThreshold) {
+      selectedQuestions =
+          allQuestions.where((q) => q.difficulty != 'hard').toList();
+    } else {
+      selectedQuestions =
+          allQuestions.where((q) => q.difficulty == 'hard').toList();
     }
 
-    int numberOfParts = 5;
-    int partSize = (allQuestions.length / numberOfParts).ceil();
-
-    List<Question> questionsCopy = List<Question>.from(allQuestions);
-
-    List<Question> selectedQuestions = [];
-
-    for (int i = 0; i < numberOfParts; i++) {
-      int start = i * partSize;
-      int end = start + partSize > questionsCopy.length
-          ? questionsCopy.length
-          : start + partSize;
-
-      List<Question> part = questionsCopy.sublist(start, end);
-      part.shuffle(Random());
-
-      int questionsPerPart = (numberOfQuestions / numberOfParts).ceil();
-
-      selectedQuestions.addAll(part.take(questionsPerPart));
-
-      if (selectedQuestions.length >= numberOfQuestions) break;
-    }
-
+    selectedQuestions.shuffle(Random());
     return selectedQuestions.take(numberOfQuestions).toList();
   }
 
@@ -75,34 +69,33 @@ class _DLState extends State<DL> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Assuming BlocConsumer builds the widget after questions are loaded
     if (context.read<QuestionBloc>().state is QuestionDisplaySuccess) {
       final questions =
           (context.read<QuestionBloc>().state as QuestionDisplaySuccess)
               .questions;
 
-      //! Shuffle and select only 50 questions
-      selectedQuestions = selectRandomQuestions(questions, desiredQuestions);
+      double userAccuracy = correctAnswersCount /
+          (totalQuestions == 0 ? 1 : totalQuestions) *
+          100;
+      selectedQuestions = selectQuestionsByDifficulty(
+          questions, desiredQuestions, userAccuracy);
 
       userAnswers = List<String?>.filled(selectedQuestions.length, null);
       correctAnswers = selectedQuestions.map((q) => q.answer).toList();
-
       _startTimer(selectedQuestions.length);
     }
   }
 
   void _startTimer(int totalQuestions) {
-    _remainingTime =
-        totalQuestions * 2; // Set duration based on total questions
+    _remainingTime = totalQuestions * 20;
     _updateTimerDisplay();
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingTime <= 0) {
         timer.cancel();
-        if (userAnswers.isNotEmpty) {
+        if (userAnswers.isNotEmpty && mounted) {
           showSnackBar(
               context, "Time is up! Your answers have not been submitted.");
-          // userAnswers.clear();
           Navigator.push(context, MCQMainPage.route());
         }
       } else {
@@ -127,45 +120,34 @@ class _DLState extends State<DL> {
 
   Future<void> showStatistics() async {
     final directory = await getApplicationDocumentsDirectory();
-
-    // Access user information from AppUserCubit
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
       final userId = appUserState.user.id;
-
-      // Use the user ID to dynamically find the file
       final statsFile = File('${directory.path}/statistics_$userId.txt');
 
-      try {
-        if (await statsFile.exists()) {
-          String fileContent = await statsFile.readAsString();
-
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text("Statistics"),
-                content: SingleChildScrollView(
-                  child: Text(fileContent.isNotEmpty
-                      ? fileContent
-                      : "No statistics found."),
+      if (await statsFile.exists()) {
+        String fileContent = await statsFile.readAsString();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Statistics"),
+              content: SingleChildScrollView(
+                child: Text(fileContent.isNotEmpty
+                    ? fileContent
+                    : "No statistics found."),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text("OK"),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text("OK"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        } else {
-          showSnackBar(context, "No statistics file found for this user.");
-        }
-      } catch (e) {
-        showSnackBar(context, "Error reading statistics: ${e.toString()}");
+              ],
+            );
+          },
+        );
+      } else {
+        showSnackBar(context, "No statistics file found for this user.");
       }
     } else {
       showSnackBar(context, "Error: User not authenticated.");
@@ -175,66 +157,25 @@ class _DLState extends State<DL> {
   Future<void> appendResultsToStatisticsFile(
       int totalQuestions, int totalCorrectAnswers) async {
     final directory = await getApplicationDocumentsDirectory();
-
-    // Access user information from AppUserCubit
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
-      final userId = appUserState.user.id; // assuming `user.id` exists
-
-      // Use the user ID to dynamically name the file
+      final userId = appUserState.user.id;
       final statsFile = File('${directory.path}/statistics_$userId.txt');
 
-      StringBuffer content = StringBuffer();
       double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
-
-      content.writeln('Total Questions: $totalQuestions');
-      content.writeln('Total Correct Answers: $totalCorrectAnswers');
-      content.writeln(
-          'Percentage Correct: ${percentageCorrect.toStringAsFixed(2)}%');
-      content.writeln('---');
-
-      await statsFile.writeAsString(content.toString(), mode: FileMode.append);
+      await statsFile.writeAsString(
+        'Total Questions: $totalQuestions\nTotal Correct Answers: $totalCorrectAnswers\nPercentage Correct: ${percentageCorrect.toStringAsFixed(2)}%\n---\n',
+        mode: FileMode.append,
+      );
       showSnackBar(context, "Statistics updated successfully!");
     } else {
       showSnackBar(context, "Error: User not authenticated.");
     }
   }
 
-  Future<void> showResults() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/results.txt');
-
-    if (await file.exists()) {
-      String fileContent = await file.readAsString();
-
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Results"),
-            content: SingleChildScrollView(
-              child: Text(fileContent),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text("OK"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      showSnackBar(context, "No results found.");
-    }
-  }
-
   void _submitResults() {
     _timer?.cancel();
 
-    // Ensure the lengths match before proceeding
     if (userAnswers.length == correctAnswers.length) {
       int totalCorrectAnswers = userAnswers.asMap().entries.where((entry) {
         int index = entry.key;
@@ -243,38 +184,38 @@ class _DLState extends State<DL> {
       }).length;
 
       appendResultsToStatisticsFile(userAnswers.length, totalCorrectAnswers);
+      showStatistics();
     } else {
       showSnackBar(
           context, "Error: Answers and correct answers length mismatch.");
     }
   }
 
+  void _handleOptionSelection(int index, String selectedOption) {
+    setState(() {
+      if (userAnswers[index] != null) return;
+      userAnswers[index] = selectedOption;
+
+      if (selectedOption == correctAnswers[index]) {
+        correctAnswersCount++;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: BlocBuilder<CorrectAnsCubit, Map<String, int>>(
-          builder: (context, state) {
-            return const Expanded(
-              child: Text(
-                ' Choose correct Ans..',
-              ),
-            );
-          },
-        ),
+        title: const Text('Choose correct Ans..'),
         actions: [
           ValueListenableBuilder<String>(
             valueListenable: _timerDisplay,
-            builder: (context, value, child) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  value,
+            builder: (context, value, child) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(value,
                   style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              );
-            },
+                      fontSize: 20, fontWeight: FontWeight.bold)),
+            ),
           ),
         ],
       ),
@@ -283,21 +224,28 @@ class _DLState extends State<DL> {
           if (state is QuestionFailure) {
             showSnackBar(context, state.error);
           } else if (state is QuestionDisplaySuccess) {
-            // Only initialize answers if questions are loaded
-            if (userAnswers.isEmpty) {
-              userAnswers = List<String?>.filled(state.questions.length, null);
-              correctAnswers = state.questions.map((q) => q.answer).toList();
-              _startTimer(state.questions.length);
-            }
+            final questions = state.questions;
+            double userAccuracy = correctAnswersCount /
+                (totalQuestions == 0 ? 1 : totalQuestions) *
+                100;
+
+            // Set selected questions based on difficulty and accuracy
+            selectedQuestions = selectQuestionsByDifficulty(
+                questions, desiredQuestions, userAccuracy);
+
+            // Initialize user answers and correct answers lists based on selected questions
+            userAnswers = List<String?>.filled(selectedQuestions.length, null);
+            correctAnswers = selectedQuestions.map((q) => q.answer).toList();
+
+            // Start the timer only after questions are selected
+            _startTimer(selectedQuestions.length);
           }
         },
         builder: (context, state) {
           if (state is QuestionLoading) {
             return const Loader();
-          }
-
-          if (state is QuestionDisplaySuccess) {
-            if (state.questions.isEmpty) {
+          } else if (state is QuestionDisplaySuccess) {
+            if (selectedQuestions.isEmpty) {
               return const Center(child: Text("No questions available."));
             }
             return ListView.builder(
@@ -352,66 +300,23 @@ class _DLState extends State<DL> {
                       onPressed: () =>
                           _handleOptionSelection(index, question.option4),
                     ),
-                    const SizedBox(height: 10),
-                    if (userAnswers[index] != null)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          'Correct Answer: ${correctAnswers[index].toUpperCase()}',
-                          style: TextStyle(
-                            color: userAnswers[index] == correctAnswers[index]
-                                ? Colors.green
-                                : Colors.red,
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 50),
                   ],
                 );
               },
             );
+          } else {
+            return const Center(child: Text("Failed to load questions."));
           }
-          return const SizedBox();
         },
       ),
       floatingActionButton: Container(
-        margin: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.blueAccent,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
         child: FloatingBtn(
-          buttonText: 'Done',
-          onPressed: () {
-            if (userAnswers.any((answer) => answer == null)) {
-              showSnackBar(
-                  context, "Please answer all questions before submitting.");
-            } else {
-              _submitResults();
-            }
-          },
+          icon: Icons.done,
+          onPressed: _submitResults,
+          buttonText: 'Submit',
         ),
       ),
     );
-  }
-
-  void _handleOptionSelection(int index, String selectedOption) {
-    setState(() {
-      if (userAnswers[index] != null) return; // Prevent re-selection
-      userAnswers[index] = selectedOption;
-
-      context.read<CorrectAnsCubit>().incrementAnswered();
-
-      if (selectedOption == correctAnswers[index]) {
-        context.read<CorrectAnsCubit>().incrementCorrect();
-      }
-    });
   }
 }

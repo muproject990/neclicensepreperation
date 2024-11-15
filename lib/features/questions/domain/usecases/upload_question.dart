@@ -11,14 +11,16 @@ class UploadQuestion implements UseCase<Question, UploadQuestionParams> {
   @override
   Future<Either<Failure, Question>> call(UploadQuestionParams params) async {
     return await questionRepository.uploadQuestion(
-        question: params.question,
-        option1: params.option1,
-        option2: params.option2,
-        option3: params.option3,
-        userId: params.userId,
-        option4: params.option4,
-        answer: params.answer,
-        topics: params.topics);
+      question: params.question,
+      option1: params.option1,
+      option2: params.option2,
+      option3: params.option3,
+      userId: params.userId,
+      option4: params.option4,
+      answer: params.answer,
+      topics: params.topics,
+      difficulty: params.difficulty,
+    );
   }
 }
 
@@ -31,14 +33,17 @@ class UploadQuestionParams {
   final String option4;
   final String answer;
   final List<String> topics;
+  final String difficulty;
 
-  UploadQuestionParams(
-      {required this.question,
-      required this.option1,
-      required this.option2,
-      required this.option3,
-      required this.userId,
-      required this.option4,
-      required this.answer,
-      required this.topics});
+  UploadQuestionParams({
+    required this.question,
+    required this.option1,
+    required this.option2,
+    required this.option3,
+    required this.userId,
+    required this.option4,
+    required this.answer,
+    required this.topics,
+    required this.difficulty,
+  });
 }

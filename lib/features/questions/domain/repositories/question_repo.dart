@@ -12,6 +12,8 @@ abstract interface class QuestionRepository {
     required String option4,
     required String answer,
     required List<String> topics,
+    required String difficulty, 
+
   });
 
   Future<Either<Failure, List<Question>>> getAllQuestion();

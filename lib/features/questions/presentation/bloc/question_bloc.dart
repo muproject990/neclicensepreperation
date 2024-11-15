@@ -14,7 +14,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   final UploadQuestion _uploadQuestion;
   final GetAllQuestions _getAllQuestions;
   final GetTocQuestions _getTocQuestions;
-  final GetDsaQuestions _getDsaQuestions;
+final GetDsaQuestions _getDsaQuestions;
   QuestionBloc({
     required UploadQuestion uploadQuestion,
     required GetAllQuestions getAllQuestion,
@@ -43,7 +43,9 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
           userId: event.userId,
           option4: event.option4,
           answer: event.answer,
-          topics: event.topics),
+          topics: event.topics,
+          difficulty: ''),
+      // Todo modification needed here
     );
 
     res.fold(
