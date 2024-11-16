@@ -47,6 +47,7 @@ dependencies:
   http: ^1.2.1
   syncfusion_flutter_pdfviewer: ^26.1.35
   fl_chart: ^0.69.0
+  shared_preferences: ^2.3.3
 
 
 flutter_icons:

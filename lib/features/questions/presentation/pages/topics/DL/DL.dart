@@ -13,6 +13,7 @@ import 'package:neclicensepreperation/features/questions/presentation/pages/home
 import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
 import 'package:neclicensepreperation/features/questions/widgets/optionbutton.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DL extends StatefulWidget {
   static route() => MaterialPageRoute(builder: (context) => const DL());
@@ -53,7 +54,22 @@ class _DLState extends State<DL> {
   void initState() {
     super.initState();
     // _loadUserStatistics();
+    loadUserAccuracy();
     context.read<QuestionBloc>().add(QuestionFetchAllQuestions());
+  }
+
+  Future<void> saveUserAccuracy(double accuracy) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('user_accuracy', accuracy);
+    print("User accuracy saved successfully: $accuracy%");
+  }
+
+  Future<void> loadUserAccuracy() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userAccuracy = prefs.getDouble('user_accuracy') ??
+          0.0; // Default to 0.0 if not found
+    });
   }
 
   // Load user's statistics and analyze recent performance
@@ -435,6 +451,7 @@ class _DLState extends State<DL> {
       // Append results to the statistics file
       await appendResultsToStatisticsFile(
           selectedQuestions.length, correctAnswersCount, userAccuracy);
+      saveUserAccuracy(userAccuracy);
 
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => StatisticsChart()));
@@ -464,36 +481,3 @@ class _DLState extends State<DL> {
     }
   }
 }
-
-
-
-
-     // bottomNavigationBar: Row(
-      //   mainAxisAlignment: MainAxisAlignment.center,
-      //   children: [
-      //     IconButton(
-      //       icon: Icon(Icons.arrow_back),
-      //       onPressed: currentPage > 0
-      //           ? () {
-      //               setState(() {
-      //                 currentPage--;
-      //               });
-      //             }
-      //           : null,
-      //     ),
-      //     Text(
-      //         'Page ${currentPage + 1} of ${(selectedQuestions.length / questionsPerPage).ceil()}'),
-      //     IconButton(
-      //       icon: Icon(Icons.arrow_forward),
-      //       onPressed:
-      //           (currentPage + 1) * questionsPerPage < selectedQuestions.length
-      //               ? () {
-      //                   setState(() {
-      //                     currentPage++;
-      //                   });
-      //                 }
-      //               : null,
-      //     ),
-      //   ],
-      // ),
-    
