@@ -14,6 +14,7 @@ class _StatisticsChartState extends State<StatisticsChart> {
   List<int> totalQuestionsList = [];
   List<int> totalCorrectAnswersList = [];
   List<double> percentageCorrectList = [];
+  double averageAccuracy = 0.0; // New variable for storing average accuracy
 
   @override
   void initState() {
@@ -64,7 +65,11 @@ class _StatisticsChartState extends State<StatisticsChart> {
         percentageCorrectList.add(double.parse(percentageMatch.group(1)!));
       }
     }
-
+    // Calculate the average accuracy after parsing all statistics
+    if (percentageCorrectList.isNotEmpty) {
+      averageAccuracy = percentageCorrectList.reduce((a, b) => a + b) /
+          percentageCorrectList.length;
+    }
     setState(() {}); // Update the UI after parsing
   }
 
@@ -72,7 +77,7 @@ class _StatisticsChartState extends State<StatisticsChart> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Quiz Performance Statistics"),
+        title: Text("Success Rate: ${averageAccuracy.toStringAsFixed(1)}%"),
         backgroundColor: Colors.blueGrey[800],
       ),
       body: ListView.builder(

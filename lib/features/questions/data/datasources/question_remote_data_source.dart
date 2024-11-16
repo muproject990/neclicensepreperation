@@ -34,7 +34,7 @@ class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
   Future<List<QuestionModel>> getAllQuestion() async {
     try {
       final questions = await supabaseClient
-          .from('addquestions')
+          .from('microprocessorandDL')
           .select("*")
           .contains('topics', ['Microprocessor']);
 
@@ -44,18 +44,18 @@ class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
     }
   }
 
-  Future<List<QuestionModel>> getAllMicro() async {
-    try {
-      final questions = await supabaseClient
-          .from('addquestions')
-          .select("*")
-          .contains('topics', ['Microprocessor']);
+  // Future<List<QuestionModel>> getAllMicro() async {
+  //   try {
+  //     final questions = await supabaseClient
+  //         .from('addquestions')
+  //         .select("*")
+  //         .contains('topics', ['Microprocessor']);
 
-      return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
-    }
-  }
+  //     return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
+  //   } catch (e) {
+  //     throw ServerException(message: e.toString());
+  //   }
+  // }
 
   @override
   Future<List<QuestionModel>> getTocQuestion() async {
