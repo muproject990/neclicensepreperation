@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neclicensepreperation/features/auth/presentation/signup_page.dart';
-import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/biochart.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/stats.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/profile.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/home_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

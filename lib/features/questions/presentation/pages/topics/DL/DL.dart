@@ -8,6 +8,7 @@ import 'package:neclicensepreperation/core/common/widgets/loader.dart';
 import 'package:neclicensepreperation/core/utils/show_snackbar.dart';
 import 'package:neclicensepreperation/features/questions/domain/entities/question.dart';
 import 'package:neclicensepreperation/features/questions/presentation/bloc/question_bloc.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/stats.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/home_page.dart';
 import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
 import 'package:neclicensepreperation/features/questions/widgets/optionbutton.dart';
@@ -22,7 +23,7 @@ class DL extends StatefulWidget {
 }
 
 class _DLState extends State<DL> {
-  int desiredQuestions = 50;
+  int desiredQuestions = 100;
   List<String?> userAnswers = [];
   List<String> correctAnswers = [];
   List<Question> selectedQuestions = [];
@@ -41,9 +42,12 @@ class _DLState extends State<DL> {
 
   int consecutiveCorrectAnswers = 0;
   int consecutiveIncorrectAnswers = 0;
-  int difficultyThreshold = 4; // Increase difficulty after 4 correct answers
+  int difficultyThreshold = 5; // Increase difficulty after 2 correct answers
   int decreaseDifficultyThreshold =
-      39; // Decrease difficulty after 3 incorrect answers
+      3; // Decrease difficulty after 3 incorrect answers
+  int currentPage = 0; // Current page index
+  final int questionsPerPage = 10;
+  late int counter = 0;
 
   @override
   void initState() {
@@ -191,23 +195,32 @@ class _DLState extends State<DL> {
     setState(() {
       userAnswers[index] = selectedOption;
 
-      if (selectedOption == correctAnswers[index]) {
-        consecutiveCorrectAnswers++;
-        consecutiveIncorrectAnswers = 0; // Reset incorrect counter
-        // Increase difficulty if threshold reached
-        if (consecutiveCorrectAnswers >= difficultyThreshold) {
-          consecutiveCorrectAnswers = 0;
-          userAccuracy += 5; // Increase accuracy to select harder questions
-          _loadNewQuestions();
-        }
+      // Check if all questions have been answered
+      if (!userAnswers.contains(null)) {
+        // All questions answered, submit results
+        _submitResults();
       } else {
-        consecutiveIncorrectAnswers++;
-        consecutiveCorrectAnswers = 0; // Reset correct counter
-        // Decrease difficulty if threshold reached
-        if (consecutiveIncorrectAnswers >= decreaseDifficultyThreshold) {
+        counter++;
+
+        if (selectedOption == correctAnswers[index]) {
+          correctAnswersCount++;
+          consecutiveCorrectAnswers++;
           consecutiveIncorrectAnswers = 0;
-          userAccuracy -= 5; // Decrease accuracy to select easier questions
-          _loadNewQuestions();
+          // Increase difficulty if threshold reached
+          if (consecutiveCorrectAnswers >= difficultyThreshold) {
+            consecutiveCorrectAnswers = 0;
+            userAccuracy += 5; // Increase accuracy to select harder questions
+            _loadNewQuestions();
+          }
+        } else {
+          consecutiveIncorrectAnswers++;
+          consecutiveCorrectAnswers = 0; // Reset correct counter
+          // Decrease difficulty if threshold reached
+          if (consecutiveIncorrectAnswers >= decreaseDifficultyThreshold) {
+            consecutiveIncorrectAnswers = 0;
+            userAccuracy -= 5; // Decrease accuracy to select easier questions
+            _loadNewQuestions();
+          }
         }
       }
     });
@@ -217,18 +230,95 @@ class _DLState extends State<DL> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Choose correct Ans..'),
-        actions: [
-          ValueListenableBuilder<String>(
-            valueListenable: _timerDisplay,
-            builder: (context, value, child) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(value,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Column(
+                      children: [
+                        // Accuracy Indicator
+                        Row(
+                          children: [
+                            Icon(Icons.speed, size: 16, color: Colors.white70),
+                            SizedBox(width: 5),
+                            Text(
+                              'Accuracy: ${userAccuracy.toStringAsFixed(1)}%',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: userAccuracy < 50
+                                      ? Colors.red
+                                      : userAccuracy < 70
+                                          ? Colors.orange
+                                          : Colors.green,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 15),
+
+                        // Questions Answered Indicator
+                        Row(
+                          children: [
+                            const Icon(Icons.check_circle_outline,
+                                size: 16, color: Colors.white70),
+                            const SizedBox(width: 5),
+                            Text(
+                              'Answered: $counter/${selectedQuestions.length}',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: totalQuestions <
+                                          selectedQuestions.length / 2
+                                      ? Colors.red
+                                      : totalQuestions <
+                                              selectedQuestions.length * 0.8
+                                          ? Colors.orange
+                                          : Colors.green,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ),
-        ],
+
+            // Timer Display
+            ValueListenableBuilder<String>(
+              valueListenable: _timerDisplay,
+              builder: (context, value, child) => Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.timer_outlined,
+                        color: _remainingTime < 60 ? Colors.red : Colors.white,
+                        size: 20),
+                    SizedBox(width: 5),
+                    Text(
+                      value,
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color:
+                              _remainingTime < 60 ? Colors.red : Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.blueGrey[800],
+        elevation: 0,
       ),
       body: BlocConsumer<QuestionBloc, QuestionState>(
         listener: (context, state) {
@@ -244,63 +334,85 @@ class _DLState extends State<DL> {
               return const Center(child: Text("No questions available."));
             }
 
-            return ListView.builder(
-              itemCount: selectedQuestions.length,
-              itemBuilder: (context, index) {
-                final question = selectedQuestions[index];
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 50, left: 10),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.blueGrey[600],
-                          borderRadius: BorderRadius.circular(8),
+            // Calculate the range of questions to display
+            int startIndex = currentPage * questionsPerPage;
+            int endIndex = startIndex + questionsPerPage;
+            List<Question> questionsToDisplay = selectedQuestions.sublist(
+                startIndex,
+                endIndex > selectedQuestions.length
+                    ? selectedQuestions.length
+                    : endIndex);
+
+            return Column(children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: questionsToDisplay.length,
+                  itemBuilder: (context, index) {
+                    final question = questionsToDisplay[index];
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50, left: 10),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            decoration: BoxDecoration(
+                              color: Colors.blueGrey[600],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '${startIndex + index + 1}  ${question.question.toUpperCase()}',
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ),
                         ),
-                        child: Text(
-                          '${index + 1}  ${question.question.toUpperCase()}',
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                        const SizedBox(height: 20),
+                        OptionButton(
+                          text: question.option1,
+                          isSelected: userAnswers[index] == question.option1,
+                          onPressed: () =>
+                              _handleOptionSelection(index, question.option1),
+                          isCorrect: userAnswers[index] == question.answer,
+                          isDisabled: userAnswers[index] != null,
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    OptionButton(
-                      text: question.option1,
-                      isSelected: userAnswers[index] == question.option1,
-                      onPressed: () =>
-                          _handleOptionSelection(index, question.option1),
-                    ),
-                    const SizedBox(height: 10),
-                    OptionButton(
-                      text: question.option2,
-                      isSelected: userAnswers[index] == question.option2,
-                      onPressed: () =>
-                          _handleOptionSelection(index, question.option2),
-                    ),
-                    const SizedBox(height: 10),
-                    OptionButton(
-                      text: question.option3,
-                      isSelected: userAnswers[index] == question.option3,
-                      onPressed: () =>
-                          _handleOptionSelection(index, question.option3),
-                    ),
-                    const SizedBox(height: 10),
-                    OptionButton(
-                      text: question.option4,
-                      isSelected: userAnswers[index] == question.option4,
-                      onPressed: () =>
-                          _handleOptionSelection(index, question.option4),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                );
-              },
-            );
+                        const SizedBox(height: 10),
+                        OptionButton(
+                          text: question.option2,
+                          isSelected: userAnswers[index] == question.option2,
+                          onPressed: () =>
+                              _handleOptionSelection(index, question.option2),
+                          isCorrect: userAnswers[index] == question.answer,
+                          isDisabled: userAnswers[index] != null,
+                        ),
+                        const SizedBox(height: 10),
+                        OptionButton(
+                          text: question.option3,
+                          isSelected: userAnswers[index] == question.option3,
+                          onPressed: () =>
+                              _handleOptionSelection(index, question.option3),
+                          isCorrect: userAnswers[index] == question.answer,
+                          isDisabled: userAnswers[index] != null,
+                        ),
+                        const SizedBox(height: 10),
+                        OptionButton(
+                          text: question.option4,
+                          isSelected: userAnswers[index] == question.option4,
+                          onPressed: () =>
+                              _handleOptionSelection(index, question.option4),
+                          isCorrect: userAnswers[index] == question.answer,
+                          isDisabled: userAnswers[index] != null,
+                        ),
+                        const SizedBox(height: 20),
+                        const SizedBox(height: 20),
+                      ],
+                    );
+                  },
+                ),
+              )
+            ]);
           } else {
             return const Center(
                 child: Text("An error occurred. Please try again."));
@@ -308,17 +420,31 @@ class _DLState extends State<DL> {
         },
       ),
       floatingActionButton: FloatingBtn(
-        onPressed: () {
-          // _submitResults();
-        },
+        onPressed: _submitResults,
         icon: Icons.check,
-        buttonText: '"Done',
+        buttonText: 'Done',
       ),
     );
   }
 
+  Future<void> _submitResults() async {
+    try {
+      // Stop the timer
+      _timer?.cancel();
+
+      // Append results to the statistics file
+      await appendResultsToStatisticsFile(
+          selectedQuestions.length, correctAnswersCount, userAccuracy);
+
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => StatisticsChart()));
+    } catch (e) {
+      showSnackBar(context, "Error submitting results: ${e.toString()}");
+    }
+  }
+
   Future<void> appendResultsToStatisticsFile(
-      int totalQuestions, int totalCorrectAnswers) async {
+      int totalQuestions, int totalCorrectAnswers, accuracy) async {
     final directory = await getApplicationDocumentsDirectory();
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
@@ -327,10 +453,47 @@ class _DLState extends State<DL> {
 
       double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
       await statsFile.writeAsString(
-        'Total Questions: $totalQuestions\nTotal Correct Answers: $totalCorrectAnswers\nPercentage Correct: ${percentageCorrect.toStringAsFixed(2)}%\n---\n',
+        'Total Questions: $totalQuestions\n'
+        'Total Correct Answers: $totalCorrectAnswers\n'
+        'Accuracy: $userAccuracy\n'
+        'Correct: ${percentageCorrect.toStringAsFixed(2)}%\n'
+        '---\n',
         mode: FileMode.append,
       );
       showSnackBar(context, "Results saved to statistics file.");
     }
   }
 }
+
+
+
+
+     // bottomNavigationBar: Row(
+      //   mainAxisAlignment: MainAxisAlignment.center,
+      //   children: [
+      //     IconButton(
+      //       icon: Icon(Icons.arrow_back),
+      //       onPressed: currentPage > 0
+      //           ? () {
+      //               setState(() {
+      //                 currentPage--;
+      //               });
+      //             }
+      //           : null,
+      //     ),
+      //     Text(
+      //         'Page ${currentPage + 1} of ${(selectedQuestions.length / questionsPerPage).ceil()}'),
+      //     IconButton(
+      //       icon: Icon(Icons.arrow_forward),
+      //       onPressed:
+      //           (currentPage + 1) * questionsPerPage < selectedQuestions.length
+      //               ? () {
+      //                   setState(() {
+      //                     currentPage++;
+      //                   });
+      //                 }
+      //               : null,
+      //     ),
+      //   ],
+      // ),
+    
