@@ -15,16 +15,15 @@ import 'package:neclicensepreperation/features/questions/widgets/optionbutton.da
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Programming extends StatefulWidget {
-  static route() =>
-      MaterialPageRoute(builder: (context) => const Programming());
-  const Programming({super.key});
+class Dsa extends StatefulWidget {
+  static route() => MaterialPageRoute(builder: (context) => const Dsa());
+  const Dsa({super.key});
 
   @override
-  State<Programming> createState() => _ProgrammingState();
+  State<Dsa> createState() => _DsaState();
 }
 
-class _ProgrammingState extends State<Programming> {
+class _DsaState extends State<Dsa> {
   final String data = "TOC";
   int desiredQuestions = 100;
   List<String?> userAnswers = [];

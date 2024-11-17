@@ -9,7 +9,7 @@ import 'package:neclicensepreperation/core/utils/show_snackbar.dart';
 import 'package:neclicensepreperation/features/questions/domain/entities/question.dart';
 import 'package:neclicensepreperation/features/questions/presentation/bloc/question_bloc.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/stats.dart';
-import 'package:neclicensepreperation/features/questions/presentation/pages/home_page.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/main_page_mcq.dart';
 import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
 import 'package:neclicensepreperation/features/questions/widgets/optionbutton.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,6 +24,7 @@ class DL extends StatefulWidget {
 }
 
 class _DLState extends State<DL> {
+  final String data = "DL";
   int desiredQuestions = 100;
   List<String?> userAnswers = [];
   List<String> correctAnswers = [];
@@ -34,26 +35,24 @@ class _DLState extends State<DL> {
   int _remainingTime = 0;
   ValueNotifier<String> _timerDisplay = ValueNotifier<String>("");
 
-  // Performance Tracking
   int totalQuestions = 0;
   int correctAnswersCount = 0;
-  double userAccuracy = 0.0; // Dynamic user accuracy
+  double userAccuracy = 0.0;
   List<int> responseTimes = [];
   DateTime? questionStartTime;
 
   int consecutiveCorrectAnswers = 0;
   int consecutiveIncorrectAnswers = 0;
-  int difficultyThreshold = 5; // Increase difficulty after 2 correct answers
-  int decreaseDifficultyThreshold =
-      3; // Decrease difficulty after 3 incorrect answers
-  int currentPage = 0; // Current page index
+  int difficultyThreshold = 2;
+  int decreaseDifficultyThreshold = 3;
+  int currentPage = 0;
   final int questionsPerPage = 10;
   late int counter = 0;
 
   @override
   void initState() {
     super.initState();
-    // _loadUserStatistics();
+
     loadUserAccuracy();
     context.read<QuestionBloc>().add(QuestionFetchAllQuestions());
   }
@@ -67,22 +66,20 @@ class _DLState extends State<DL> {
   Future<void> loadUserAccuracy() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userAccuracy = prefs.getDouble('user_accuracy') ??
-          0.0; // Default to 0.0 if not found
+      userAccuracy = prefs.getDouble('user_accuracy') ?? 0.0;
     });
   }
 
-  // Load user's statistics and analyze recent performance
   Future<void> _loadUserStatistics() async {
     final directory = await getApplicationDocumentsDirectory();
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
       final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/statistics_$userId.txt');
+      final statsFile = File('${directory.path}/$data$userId.txt');
 
       if (await statsFile.exists()) {
         final stats = await statsFile.readAsString();
-        // Extract previous stats; this is just a sample way to calculate.
+
         final totalCorrect =
             RegExp(r'Total Correct Answers: (\d+)').firstMatch(stats)?.group(1);
         final totalQuestions =
@@ -102,8 +99,8 @@ class _DLState extends State<DL> {
   void _updateDifficultyBasedOnPerformance() {
     if (consecutiveCorrectAnswers >= difficultyThreshold) {
       setState(() {
-        consecutiveCorrectAnswers = 0; // Reset after reaching threshold
-        userAccuracy = 90.0; // Adjust this based on real user performance
+        consecutiveCorrectAnswers = 0;
+        userAccuracy = 90.0;
       });
       _loadNewQuestions();
     }
@@ -118,7 +115,7 @@ class _DLState extends State<DL> {
           selectQuestionsByDifficulty(questions, desiredQuestions);
       userAnswers = List<String?>.filled(selectedQuestions.length, null);
       correctAnswers = selectedQuestions.map((q) => q.answer).toList();
-      _startTimer(selectedQuestions.length); // Restart timer for new questions
+      _startTimer(selectedQuestions.length);
     });
   }
 
@@ -130,29 +127,23 @@ class _DLState extends State<DL> {
 
     List<Question> filteredQuestions;
 
-    // Adjust questions based on user accuracy
     if (userAccuracy < easyThreshold) {
-      // For lower accuracy, select mostly easy questions
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'easy').toList();
       print("Selected Easy Questions - User Accuracy: $userAccuracy");
     } else if (userAccuracy < mediumThreshold) {
-      // For mid-range accuracy, select medium questions
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'medium').toList();
       print("Selected Medium Questions - User Accuracy: $userAccuracy");
     } else if (userAccuracy < hardThreshold) {
-      // For high accuracy but below the hardest level, include hard questions
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'hard').toList();
       print("Selected Hard Questions - User Accuracy: $userAccuracy");
     } else {
-      // Highest accuracy users get very hard questions
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'very_hard').toList();
     }
 
-    // Shuffle and take only the desired number of questions
     filteredQuestions.shuffle(Random());
     return filteredQuestions.take(numberOfQuestions).toList();
   }
@@ -206,14 +197,11 @@ class _DLState extends State<DL> {
     super.dispose();
   }
 
-  // Handle option selection, updating userAnswers list
   void _handleOptionSelection(int index, String selectedOption) {
     setState(() {
       userAnswers[index] = selectedOption;
 
-      // Check if all questions have been answered
       if (!userAnswers.contains(null)) {
-        // All questions answered, submit results
         _submitResults();
       } else {
         counter++;
@@ -222,19 +210,19 @@ class _DLState extends State<DL> {
           correctAnswersCount++;
           consecutiveCorrectAnswers++;
           consecutiveIncorrectAnswers = 0;
-          // Increase difficulty if threshold reached
+
           if (consecutiveCorrectAnswers >= difficultyThreshold) {
             consecutiveCorrectAnswers = 0;
-            userAccuracy += 5; // Increase accuracy to select harder questions
+            userAccuracy += 5;
             _loadNewQuestions();
           }
         } else {
           consecutiveIncorrectAnswers++;
-          consecutiveCorrectAnswers = 0; // Reset correct counter
-          // Decrease difficulty if threshold reached
+          consecutiveCorrectAnswers = 0;
+
           if (consecutiveIncorrectAnswers >= decreaseDifficultyThreshold) {
             consecutiveIncorrectAnswers = 0;
-            userAccuracy -= 5; // Decrease accuracy to select easier questions
+            userAccuracy -= 5;
             _loadNewQuestions();
           }
         }
@@ -256,7 +244,6 @@ class _DLState extends State<DL> {
                   children: [
                     Column(
                       children: [
-                        // Accuracy Indicator
                         Row(
                           children: [
                             Icon(Icons.speed, size: 16, color: Colors.white70),
@@ -275,8 +262,6 @@ class _DLState extends State<DL> {
                           ],
                         ),
                         const SizedBox(width: 15),
-
-                        // Questions Answered Indicator
                         Row(
                           children: [
                             const Icon(Icons.check_circle_outline,
@@ -303,8 +288,6 @@ class _DLState extends State<DL> {
                 ),
               ],
             ),
-
-            // Timer Display
             ValueListenableBuilder<String>(
               valueListenable: _timerDisplay,
               builder: (context, value, child) => Container(
@@ -350,7 +333,6 @@ class _DLState extends State<DL> {
               return const Center(child: Text("No questions available."));
             }
 
-            // Calculate the range of questions to display
             int startIndex = currentPage * questionsPerPage;
             int endIndex = startIndex + questionsPerPage;
             List<Question> questionsToDisplay = selectedQuestions.sublist(
@@ -369,7 +351,7 @@ class _DLState extends State<DL> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 50, left: 10),
+                          padding: const EdgeInsets.only(top: 20, left: 10),
                           child: Container(
                             width: MediaQuery.of(context).size.width,
                             padding: const EdgeInsets.symmetric(
@@ -445,16 +427,18 @@ class _DLState extends State<DL> {
 
   Future<void> _submitResults() async {
     try {
-      // Stop the timer
       _timer?.cancel();
 
-      // Append results to the statistics file
       await appendResultsToStatisticsFile(
           selectedQuestions.length, correctAnswersCount, userAccuracy);
       saveUserAccuracy(userAccuracy);
 
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => StatisticsChart()));
+          context,
+          MaterialPageRoute(
+              builder: (context) => StatisticsChart(
+                    data: data,
+                  )));
     } catch (e) {
       showSnackBar(context, "Error submitting results: ${e.toString()}");
     }
@@ -466,7 +450,7 @@ class _DLState extends State<DL> {
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
       final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/statistics_$userId.txt');
+      final statsFile = File('${directory.path}/${data}$userId.txt');
 
       double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
       await statsFile.writeAsString(

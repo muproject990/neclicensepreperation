@@ -9,7 +9,7 @@ import 'package:neclicensepreperation/core/utils/show_snackbar.dart';
 import 'package:neclicensepreperation/features/questions/domain/entities/question.dart';
 import 'package:neclicensepreperation/features/questions/presentation/bloc/question_bloc.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/stats.dart';
-import 'package:neclicensepreperation/features/questions/presentation/pages/home_page.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/main_page_mcq.dart';
 import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
 import 'package:neclicensepreperation/features/questions/widgets/optionbutton.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,6 +24,7 @@ class TOC extends StatefulWidget {
 }
 
 class _TOCState extends State<TOC> {
+  final String data = "TOC";
   int desiredQuestions = 100;
   List<String?> userAnswers = [];
   List<String> correctAnswers = [];
@@ -43,7 +44,7 @@ class _TOCState extends State<TOC> {
 
   int consecutiveCorrectAnswers = 0;
   int consecutiveIncorrectAnswers = 0;
-  int difficultyThreshold = 5; // Increase difficulty after 2 correct answers
+  int difficultyThreshold = 2; // Increase difficulty after 2 correct answers
   int decreaseDifficultyThreshold =
       3; // Decrease difficulty after 3 incorrect answers
   int currentPage = 0; // Current page index
@@ -55,7 +56,7 @@ class _TOCState extends State<TOC> {
     super.initState();
     // _loadUserStatistics();
     loadUserAccuracy();
-    context.read<QuestionBloc>().add(QuestionFetchTocQuestions());
+    context.read<QuestionBloc>().add(QuestionFetchAllQuestions());
   }
 
   Future<void> saveUserAccuracy(double accuracy) async {
@@ -78,7 +79,7 @@ class _TOCState extends State<TOC> {
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
       final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/statistics_$userId.txt');
+      final statsFile = File('${directory.path}/$data$userId.txt');
 
       if (await statsFile.exists()) {
         final stats = await statsFile.readAsString();
@@ -454,7 +455,11 @@ class _TOCState extends State<TOC> {
       saveUserAccuracy(userAccuracy);
 
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => StatisticsChart()));
+          context,
+          MaterialPageRoute(
+              builder: (context) => StatisticsChart(
+                    data: data,
+                  )));
     } catch (e) {
       showSnackBar(context, "Error submitting results: ${e.toString()}");
     }
@@ -466,7 +471,7 @@ class _TOCState extends State<TOC> {
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
       final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/statistics_$userId.txt');
+      final statsFile = File('${directory.path}/${data}$userId.txt');
 
       double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
       await statsFile.writeAsString(

@@ -6,6 +6,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 
 class StatisticsChart extends StatefulWidget {
+  final String data;
+
+  const StatisticsChart({super.key, required this.data});
   @override
   _StatisticsChartState createState() => _StatisticsChartState();
 }
@@ -27,7 +30,7 @@ class _StatisticsChartState extends State<StatisticsChart> {
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
       final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/statistics_$userId.txt');
+      final statsFile = File('${directory.path}/${widget.data}$userId.txt');
       print(statsFile.toString());
 
       try {

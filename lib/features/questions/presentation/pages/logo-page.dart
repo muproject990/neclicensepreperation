@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:neclicensepreperation/features/auth/presentation/signup_page.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/stats.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/profile.dart';
-import 'package:neclicensepreperation/features/questions/presentation/pages/home_page.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/main_page_mcq.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/AI_Chatbot/AIBOT.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class IntroPage extends StatefulWidget {
@@ -17,8 +18,8 @@ class _IntroPageState extends State<IntroPage> {
 
   final List<Widget> _pages = [
     const MCQMainPage(), // Assuming HomePage is your existing home page
-    StatisticsChart(),
-    ProfilePage(),
+    const StatisticsChart(data: 'DL'),
+    AIBOT(),
   ];
 
   void _onItemTapped(int index) {
@@ -52,41 +53,36 @@ class _IntroPageState extends State<IntroPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_currentIndex], // Display the selected page here
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: Colors.white,
+        body: _pages[_currentIndex], // Display the selected page here
+        bottomNavigationBar: BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
             ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.pie_chart,
-              color: Colors.white,
+            BottomNavigationBarItem(
+              icon: Icon(Icons.pie_chart),
+              label: 'Chart',
             ),
-            label: 'Chart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-              color: Colors.white,
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat_bubble_outline),
+              label: 'AI BOT',
             ),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.logout,
-              color: Colors.white,
+            BottomNavigationBarItem(
+              icon: Icon(Icons.logout),
+              label: 'Logout',
             ),
-            label: 'Logout',
-          ),
-        ],
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
-      ),
-    );
+          ],
+          currentIndex: _currentIndex,
+          selectedItemColor: Colors.blueAccent, // Color for the selected item
+          unselectedItemColor: Colors.white, // Color for unselected items
+          backgroundColor: Colors.blueGrey[800], // Background color
+          type:
+              BottomNavigationBarType.fixed, // Fixed type for a consistent look
+          onTap: _onItemTapped,
+          elevation: 8, // Shadow effect
+          selectedFontSize: 14, // Font size for selected item
+          unselectedFontSize: 12, // Font size for unselected items
+        ));
   }
 }

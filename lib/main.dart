@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:neclicensepreperation/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:neclicensepreperation/core/common/cubits/main_mcq/correctAns_cubit.dart';
 import 'package:neclicensepreperation/core/theme.dart';
@@ -11,6 +12,8 @@ import 'package:neclicensepreperation/init_dependencies.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Gemini.init(apiKey: 'AIzaSyBMeRZYOZcYWN3nbLJXsbR_XFTxhdfIpjQ');
+
   await initDependencies();
 
   runApp(MultiBlocProvider(
@@ -18,7 +21,6 @@ void main() async {
       BlocProvider(
         create: (_) => serviceLocator<AppUserCubit>(),
       ),
-      
       BlocProvider(
         create: (_) => serviceLocator<AuthBloc>(),
       ),
