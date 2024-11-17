@@ -410,14 +410,38 @@ class _DLState extends State<DL> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => AIBOT(
-                                        question: question.question,
+                                        question.question,
                                       )),
                             );
                           },
                           child: Container(
-                            child: Text(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12.0,
+                                horizontal:
+                                    16.0), // Add padding for better spacing
+                            margin: const EdgeInsets.all(
+                                8.0), // Add margin around the container
+                            decoration: BoxDecoration(
+                              color: Colors.blueAccent, // Background color
+                              borderRadius: BorderRadius.circular(
+                                  12.0), // Rounded corners
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black26, // Shadow color
+                                  blurRadius: 4.0, // Blur radius
+                                  offset: Offset(2.0, 2.0), // Shadow offset
+                                ),
+                              ],
+                            ),
+                            child: const Text(
                               "Have Doubts",
-                              style: TextStyle(color: Colors.amber),
+                              style: TextStyle(
+                                color: Colors.amber, // Text color
+                                fontSize:
+                                    18.0, // Increased font size for better visibility
+                                fontWeight:
+                                    FontWeight.bold, // Bold text for emphasis
+                              ),
                             ),
                           ),
                         ),

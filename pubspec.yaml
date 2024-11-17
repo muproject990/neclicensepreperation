@@ -49,6 +49,7 @@ dependencies:
   fl_chart: ^0.69.0
   shared_preferences: ^2.3.3
   flutter_gemini: ^2.0.5
+  speech_to_text: ^7.0.0
 
 
 flutter_icons:
