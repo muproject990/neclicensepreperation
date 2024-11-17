@@ -19,7 +19,9 @@ class _IntroPageState extends State<IntroPage> {
   final List<Widget> _pages = [
     const MCQMainPage(), // Assuming HomePage is your existing home page
     const StatisticsChart(data: 'DL'),
-    AIBOT(),
+    const AIBOT(
+      question: 'HI there ',
+    ),
   ];
 
   void _onItemTapped(int index) {

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 
 class AIBOT extends StatefulWidget {
+  final String question;
+
+  const AIBOT({super.key, required this.question});
+
   @override
   _AIBOTState createState() => _AIBOTState();
 }
@@ -9,13 +13,39 @@ class AIBOT extends StatefulWidget {
 class _AIBOTState extends State<AIBOT> {
   final List<String> messages = [];
   final TextEditingController _controller = TextEditingController();
-
   final gemini = Gemini.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _sendInitialMessage(); // Send the question when the widget is initialized
+  }
+
+  void _sendInitialMessage() {
+    // Automatically send the question passed to the AIBOT widget
+    final initialMessage = widget.question;
+    setState(() {
+      messages.add(":User  $initialMessage"); // Show user message
+    });
+
+    // Stream Gemini's response and update UI as each part arrives
+    gemini.streamGenerateContent(initialMessage).listen((value) {
+      setState(() {
+        // Append AI response as it streams in
+        messages.add("AI: ${value.output}");
+      });
+    }).onError((e) {
+      // Display error if streaming fails
+      setState(() {
+        messages.add("Error: ${e.toString()}");
+      });
+    });
+  }
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
       setState(() {
-        messages.add("User: ${_controller.text}"); // Show user message
+        messages.add(":User  ${_controller.text}"); // Show user message
       });
 
       final userMessage = _controller.text;

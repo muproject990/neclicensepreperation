@@ -8,6 +8,7 @@ import 'package:neclicensepreperation/core/common/widgets/loader.dart';
 import 'package:neclicensepreperation/core/utils/show_snackbar.dart';
 import 'package:neclicensepreperation/features/questions/domain/entities/question.dart';
 import 'package:neclicensepreperation/features/questions/presentation/bloc/question_bloc.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/AI_Chatbot/AIBOT.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/stats.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/main_page_mcq.dart';
 import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
@@ -403,7 +404,23 @@ class _DLState extends State<DL> {
                           isCorrect: userAnswers[index] == question.answer,
                           isDisabled: userAnswers[index] != null,
                         ),
-                        const SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AIBOT(
+                                        question: question.question,
+                                      )),
+                            );
+                          },
+                          child: Container(
+                            child: Text(
+                              "Have Doubts",
+                              style: TextStyle(color: Colors.amber),
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 20),
                       ],
                     );
