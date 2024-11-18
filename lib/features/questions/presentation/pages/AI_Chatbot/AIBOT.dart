@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class AIBOT extends StatefulWidget {
   final String question;
@@ -29,7 +28,7 @@ class _AIBOTState extends State<AIBOT> {
 
   void _sendInitialMessage() {
     final initialMessage =
-        " ${widget.question} \n${widget.op1} \n${widget.op2} \n${widget.op3} \n${widget.op4}  \nExplain the reason ";
+        " ${widget.question} \n${widget.op1} \n${widget.op2} \n${widget.op3} \n${widget.op4 + "\nExplain the reason"}  \n ";
 
     _addMessage("User: $initialMessage"); // Show user message
 

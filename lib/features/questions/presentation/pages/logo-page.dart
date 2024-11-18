@@ -20,10 +20,11 @@ class _IntroPageState extends State<IntroPage> {
     const MCQMainPage(), // Assuming HomePage is your existing home page
     const StatisticsChart(data: 'DL'),
     const AIBOT("Hi", "", "", "", ""),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {
-    if (index == 3) {
+    if (index == 4) {
       // Index for Logout
       _logout();
     } else {
