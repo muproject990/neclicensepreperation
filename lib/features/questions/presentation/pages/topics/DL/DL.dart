@@ -374,8 +374,11 @@ class _DLState extends State<DL> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => AIBOT(
-                                        question.question,
-                                      )),
+                                      question.question,
+                                      question.option1,
+                                      question.option2,
+                                      question.option3,
+                                      question.option4)),
                             );
                           },
                           child: Container(

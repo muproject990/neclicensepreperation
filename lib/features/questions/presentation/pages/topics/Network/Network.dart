@@ -379,14 +379,18 @@ class _NETWORKANDSECURITYState extends State<NETWORKANDSECURITY> {
                           isCorrect: userAnswers[index] == question.answer,
                           isDisabled: userAnswers[index] != null,
                         ),
+                        const SizedBox(height: 20),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => AIBOT(
-                                        question.question,
-                                      )),
+                                      question.question,
+                                      question.option1,
+                                      question.option2,
+                                      question.option3,
+                                      question.option4)),
                             );
                           },
                           child: Container(

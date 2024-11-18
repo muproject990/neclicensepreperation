@@ -4,8 +4,13 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class AIBOT extends StatefulWidget {
   final String question;
+  final String op1;
+  final String op2;
+  final String op3;
+  final String op4;
 
-  const AIBOT(this.question, {super.key});
+  const AIBOT(this.question, this.op1, this.op2, this.op3, this.op4,
+      {super.key});
 
   @override
   _AIBOTState createState() => _AIBOTState();
@@ -15,19 +20,17 @@ class _AIBOTState extends State<AIBOT> {
   final List<String> messages = [];
   final TextEditingController _controller = TextEditingController();
   final gemini = Gemini.instance;
-  late stt.SpeechToText _speech;
-  bool _isListening = false;
-  String _speechText = "";
 
   @override
   void initState() {
     super.initState();
-    _speech = stt.SpeechToText();
     _sendInitialMessage(); // Automatically send the initial question
   }
 
   void _sendInitialMessage() {
-    final initialMessage = widget.question;
+    final initialMessage =
+        " ${widget.question} \n${widget.op1} \n${widget.op2} \n${widget.op3} \n${widget.op4}  \nExplain the reason ";
+
     _addMessage("User: $initialMessage"); // Show user message
 
     // Stream Gemini's response and update UI as each part arrives

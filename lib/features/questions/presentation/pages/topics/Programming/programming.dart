@@ -8,6 +8,7 @@ import 'package:neclicensepreperation/core/common/widgets/loader.dart';
 import 'package:neclicensepreperation/core/utils/show_snackbar.dart';
 import 'package:neclicensepreperation/features/questions/domain/entities/question.dart';
 import 'package:neclicensepreperation/features/questions/presentation/bloc/question_bloc.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/AI_Chatbot/AIBOT.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/stats.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/main_page_mcq.dart';
 import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
@@ -373,6 +374,47 @@ class _ProgrammingState extends State<Programming> {
                           isDisabled: userAnswers[index] != null,
                         ),
                         const SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AIBOT(
+                                        question.question,question.option1,question.option2,question.option3,question.option4
+                                      )),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12.0,
+                                horizontal:
+                                    16.0), // Add padding for better spacing
+                            margin: const EdgeInsets.all(
+                                8.0), // Add margin around the container
+                            decoration: BoxDecoration(
+                              color: Colors.blueAccent, // Background color
+                              borderRadius: BorderRadius.circular(
+                                  12.0), // Rounded corners
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black26, // Shadow color
+                                  blurRadius: 4.0, // Blur radius
+                                  offset: Offset(2.0, 2.0), // Shadow offset
+                                ),
+                              ],
+                            ),
+                            child: const Text(
+                              "Have Doubts",
+                              style: TextStyle(
+                                color: Colors.amber, // Text color
+                                fontSize:
+                                    18.0, // Increased font size for better visibility
+                                fontWeight:
+                                    FontWeight.bold, // Bold text for emphasis
+                              ),
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 20),
                       ],
                     );
