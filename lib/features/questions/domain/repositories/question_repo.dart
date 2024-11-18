@@ -12,12 +12,12 @@ abstract interface class QuestionRepository {
     required String option4,
     required String answer,
     required List<String> topics,
-    required String difficulty, 
-
+    required String difficulty,
   });
 
   Future<Either<Failure, List<Question>>> getAllQuestion();
+  Future<Either<Failure, List<Question>>> getProgrammingQuestions();
+  Future<Either<Failure, List<Question>>> getNetworkQuestions();
   Future<Either<Failure, List<Question>>> getTocQuestions();
   Future<Either<Failure, List<Question>>> getDsaQuestions();
-  Future<Either<Failure, List<Question>>> getProgrammingQuestions();
 }

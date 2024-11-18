@@ -4,6 +4,8 @@ import 'package:neclicensepreperation/core/usecase/usercase.dart';
 import 'package:neclicensepreperation/features/questions/domain/entities/question.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/get_all_questio.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/get_dsa_questios.dart';
+import 'package:neclicensepreperation/features/questions/domain/usecases/get_network_questios.dart';
+import 'package:neclicensepreperation/features/questions/domain/usecases/get_programming_questios.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/get_toc_question.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/upload_question.dart';
 
@@ -13,23 +15,24 @@ part 'question_state.dart';
 class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   final UploadQuestion _uploadQuestion;
   final GetAllQuestions _getAllQuestions;
-  final GetTocQuestions _getTocQuestions;
-final GetDsaQuestions _getDsaQuestions;
-  QuestionBloc({
-    required UploadQuestion uploadQuestion,
-    required GetAllQuestions getAllQuestion,
-    required GetTocQuestions get_toc_question,
-    required GetDsaQuestions get_dsa_questions,
-  })  : _uploadQuestion = uploadQuestion,
+  final GetProgrammingQuestions _getProgrammingQuestions;
+  final GetNetworkQuestios _getNetworkQuestios;
+
+  QuestionBloc(
+      {required UploadQuestion uploadQuestion,
+      required GetAllQuestions getAllQuestion,
+      required GetProgrammingQuestions getProgrammingQuestions,
+      required GetNetworkQuestios getNetworkQuestions})
+      : _uploadQuestion = uploadQuestion,
         _getAllQuestions = getAllQuestion,
-        _getTocQuestions = get_toc_question,
-        _getDsaQuestions = get_dsa_questions,
+        _getProgrammingQuestions = getProgrammingQuestions,
+        _getNetworkQuestios = getNetworkQuestions,
         super(QuestionInitial()) {
     on<QuestionEvent>((event, emit) => emit(QuestionLoading()));
     on<QuestionUpload>(_onQuestionUpload);
     on<QuestionFetchAllQuestions>(_onFetchAllQuestions);
-    on<QuestionFetchTocQuestions>(_onFetchTocQuestions);
-    on<QuestionFetchDsaQuestions>(_onFetchDsaQuestions);
+    on<QuestionFetchProgrammingQuestions>(_onFetchProgrammingQuestions);
+    on<QuestionFetchNetworkQuestions>(_onFetchNetworkQuestions);
   }
 
   void _onQuestionUpload(
@@ -65,22 +68,22 @@ final GetDsaQuestions _getDsaQuestions;
     );
   }
 
-  void _onFetchTocQuestions(
-    QuestionFetchTocQuestions event,
+  void _onFetchProgrammingQuestions(
+    QuestionFetchProgrammingQuestions event,
     Emitter<QuestionState> emit,
   ) async {
-    final res = await _getTocQuestions(NoParams());
+    final res = await _getProgrammingQuestions(NoParams());
     res.fold(
       (l) => emit(QuestionFailure(l.message)),
       (r) => emit(QuestionDisplaySuccess(r)),
     );
   }
 
-  void _onFetchDsaQuestions(
-    QuestionFetchDsaQuestions event,
+  void _onFetchNetworkQuestions(
+    QuestionFetchNetworkQuestions event,
     Emitter<QuestionState> emit,
   ) async {
-    final res = await _getDsaQuestions(NoParams());
+    final res = await _getNetworkQuestios(NoParams());
     res.fold(
       (l) => emit(QuestionFailure(l.message)),
       (r) => emit(QuestionDisplaySuccess(r)),

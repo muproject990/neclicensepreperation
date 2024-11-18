@@ -16,16 +16,17 @@ import 'package:neclicensepreperation/features/questions/widgets/optionbutton.da
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class DL extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context) => const DL());
-  const DL({super.key});
+class NETWORKANDSECURITY extends StatefulWidget {
+  static route() =>
+      MaterialPageRoute(builder: (context) => const NETWORKANDSECURITY());
+  const NETWORKANDSECURITY({super.key});
 
   @override
-  State<DL> createState() => _DLState();
+  State<NETWORKANDSECURITY> createState() => _NETWORKANDSECURITYState();
 }
 
-class _DLState extends State<DL> {
-  final String data = "DL";
+class _NETWORKANDSECURITYState extends State<NETWORKANDSECURITY> {
+  final String data = "NETWORKANDSECURITY";
   int desiredQuestions = 100;
   List<String?> userAnswers = [];
   List<String> correctAnswers = [];
@@ -44,7 +45,7 @@ class _DLState extends State<DL> {
 
   int consecutiveCorrectAnswers = 0;
   int consecutiveIncorrectAnswers = 0;
-  int difficultyThreshold = 5;
+  int difficultyThreshold = 2;
   int decreaseDifficultyThreshold = 3;
   int currentPage = 0;
   final int questionsPerPage = 10;
@@ -55,20 +56,30 @@ class _DLState extends State<DL> {
     super.initState();
 
     loadUserAccuracy();
-    context.read<QuestionBloc>().add(QuestionFetchAllQuestions());
+    context.read<QuestionBloc>().add(QuestionFetchNetworkQuestions());
   }
 
   Future<void> saveUserAccuracy(double accuracy) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('user_accuracy', accuracy);
+    await prefs.setDouble('network_accuracy', accuracy);
     print("User accuracy saved successfully: $accuracy%");
   }
 
   Future<void> loadUserAccuracy() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userAccuracy = prefs.getDouble('user_accuracy') ?? 0.0;
+      userAccuracy = prefs.getDouble('network_accuracy') ?? 0.0;
     });
+  }
+
+  void _updateDifficultyBasedOnPerformance() {
+    if (consecutiveCorrectAnswers >= difficultyThreshold) {
+      setState(() {
+        consecutiveCorrectAnswers = 0;
+        userAccuracy = 90.0;
+      });
+      _loadNewQuestions();
+    }
   }
 
   void _loadNewQuestions() {

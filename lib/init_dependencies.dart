@@ -10,6 +10,8 @@ import 'package:neclicensepreperation/features/questions/data/datasources/questi
 import 'package:neclicensepreperation/features/questions/data/repository/question_repo_impl.dart';
 import 'package:neclicensepreperation/features/questions/domain/repositories/question_repo.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/get_dsa_questios.dart';
+import 'package:neclicensepreperation/features/questions/domain/usecases/get_network_questios.dart';
+import 'package:neclicensepreperation/features/questions/domain/usecases/get_programming_questios.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/upload_question.dart';
 import 'package:neclicensepreperation/features/questions/presentation/bloc/question_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -108,6 +110,16 @@ void _initQuestion() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => GetProgrammingQuestions(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => GetNetworkQuestios(
+        serviceLocator(),
+      ),
+    )
 
     // get all Toc Questions
     ..registerFactory(
@@ -121,14 +133,12 @@ void _initQuestion() {
         serviceLocator(),
       ),
     )
-
     ..registerLazySingleton(
       () => QuestionBloc(
         uploadQuestion: serviceLocator(),
         getAllQuestion: serviceLocator(),
-        get_toc_question: serviceLocator(),
-        get_dsa_questions: serviceLocator(),
-        // getdsa: serviceLocator(),
+        getProgrammingQuestions: serviceLocator(),
+        getNetworkQuestions: serviceLocator(),
       ),
     );
   ;

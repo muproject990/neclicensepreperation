@@ -5,6 +5,7 @@ import 'package:neclicensepreperation/core/common/cubits/app_user/app_user_cubit
 import 'package:neclicensepreperation/features/questions/presentation/pages/add_new_question.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/DL.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DSA/DSA.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/topics/Network/Network.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/topics/Programming/programming.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/topics/TOC/toc.dart';
 import 'package:neclicensepreperation/features/questions/widgets/gradient_button.dart';
@@ -60,6 +61,26 @@ class _MCQMainPageState extends State<MCQMainPage> {
                   ),
                   const SizedBox(height: 20),
                   GradientBtn(
+                    buttonText: "Programming and its applications",
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        Programming.route(),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  GradientBtn(
+                    buttonText: "Computer Network and its security",
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        NETWORKANDSECURITY.route(),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  GradientBtn(
                     buttonText: "Theory Of Computation and Computer graphics",
                     onPressed: () {
                       Navigator.push(context, TOC.route());
@@ -77,16 +98,6 @@ class _MCQMainPageState extends State<MCQMainPage> {
                   ),
                   const SizedBox(height: 20),
                   GradientBtn(
-                    buttonText: "Programming and its applications",
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        Programming.route(),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  GradientBtn(
                     buttonText: "Computer organization and embedded systems",
                     onPressed: () {
                       Navigator.push(
@@ -98,16 +109,6 @@ class _MCQMainPageState extends State<MCQMainPage> {
                   const SizedBox(height: 20),
                   GradientBtn(
                     buttonText: "AI and Neural Network",
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        Programming.route(),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  GradientBtn(
-                    buttonText: "Computer Network and its security",
                     onPressed: () {
                       Navigator.push(
                         context,

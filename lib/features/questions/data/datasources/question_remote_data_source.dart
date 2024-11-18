@@ -1,5 +1,7 @@
 import 'package:neclicensepreperation/core/error/exception.dart';
 import 'package:neclicensepreperation/features/questions/data/models/question_model.dart';
+import 'package:neclicensepreperation/features/questions/domain/usecases/get_micro_question.dart';
+import 'package:neclicensepreperation/features/questions/domain/usecases/get_network_questios.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class QuestionRemoteDataSource {
@@ -8,6 +10,7 @@ abstract interface class QuestionRemoteDataSource {
   Future<List<QuestionModel>> getTocQuestion();
   Future<List<QuestionModel>> getDsaQuestion();
   Future<List<QuestionModel>> getProgrammingQuestions();
+  Future<List<QuestionModel>> getNetworkQuestions();
 }
 
 class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
@@ -44,18 +47,67 @@ class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
     }
   }
 
-  // Future<List<QuestionModel>> getAllMicro() async {
-  //   try {
-  //     final questions = await supabaseClient
-  //         .from('addquestions')
-  //         .select("*")
-  //         .contains('topics', ['Microprocessor']);
 
-  //     return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
-  //   } catch (e) {
-  //     throw ServerException(message: e.toString());
-  //   }
-  // }
+
+  @override
+  Future<List<QuestionModel>> getProgrammingQuestions() async {
+    try {
+      final questions = await supabaseClient.from('programming').select("*");
+
+      return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+
+
+
+
+  
+
+  @override
+  Future<List<QuestionModel>> getNetworkQuestions() async {
+    try {
+      final questions = await supabaseClient.from('network').select("*");
+
+      return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   @override
   Future<List<QuestionModel>> getTocQuestion() async {
@@ -78,20 +130,6 @@ class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
           .from('addquestions')
           .select("*")
           .contains('topics', ['DSA']);
-
-      return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
-    } catch (e) {
-      throw ServerException(message: e.toString());
-    }
-  }
-
-  @override
-  Future<List<QuestionModel>> getProgrammingQuestions() async {
-    try {
-      final questions = await supabaseClient
-          .from('addquestions')
-          .select("*")
-          .contains('topics', ['Programming']);
 
       return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
     } catch (e) {

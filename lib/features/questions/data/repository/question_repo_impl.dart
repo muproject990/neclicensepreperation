@@ -67,6 +67,16 @@ class QuestionRepositoryImpl implements QuestionRepository {
   }
 
   @override
+  Future<Either<Failure, List<Question>>> getNetworkQuestions() async {
+    try {
+      final question = await questionRemoteDataSource.getNetworkQuestions();
+      return right(question);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, List<Question>>> getTocQuestions() async {
     try {
       final question = await questionRemoteDataSource.getTocQuestion();

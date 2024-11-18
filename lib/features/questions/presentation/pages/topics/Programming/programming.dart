@@ -25,7 +25,7 @@ class Programming extends StatefulWidget {
 }
 
 class _ProgrammingState extends State<Programming> {
-  final String data = "TOC";
+  final String data = "Programming";
   int desiredQuestions = 100;
   List<String?> userAnswers = [];
   List<String> correctAnswers = [];
@@ -45,7 +45,7 @@ class _ProgrammingState extends State<Programming> {
 
   int consecutiveCorrectAnswers = 0;
   int consecutiveIncorrectAnswers = 0;
-  int difficultyThreshold = 2; // Increase difficulty after 2 correct answers
+  int difficultyThreshold = 5; // Increase difficulty after 2 correct answers
   int decreaseDifficultyThreshold =
       3; // Decrease difficulty after 3 incorrect answers
   int currentPage = 0; // Current page index
@@ -55,60 +55,12 @@ class _ProgrammingState extends State<Programming> {
   @override
   void initState() {
     super.initState();
-    // _loadUserStatistics();
-    loadUserAccuracy();
-    context.read<QuestionBloc>().add(QuestionFetchAllQuestions());
+    context.read<QuestionBloc>().add(QuestionFetchProgrammingQuestions());
   }
 
   Future<void> saveUserAccuracy(double accuracy) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('user_accuracy', accuracy);
-    print("User accuracy saved successfully: $accuracy%");
-  }
-
-  Future<void> loadUserAccuracy() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userAccuracy = prefs.getDouble('user_accuracy') ??
-          0.0; // Default to 0.0 if not found
-    });
-  }
-
-  // Load user's statistics and analyze recent performance
-  Future<void> _loadUserStatistics() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final appUserState = context.read<AppUserCubit>().state;
-    if (appUserState is AppUserLoggedIn) {
-      final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/$data$userId.txt');
-
-      if (await statsFile.exists()) {
-        final stats = await statsFile.readAsString();
-        // Extract previous stats; this is just a sample way to calculate.
-        final totalCorrect =
-            RegExp(r'Total Correct Answers: (\d+)').firstMatch(stats)?.group(1);
-        final totalQuestions =
-            RegExp(r'Total Questions: (\d+)').firstMatch(stats)?.group(1);
-
-        if (totalCorrect != null && totalQuestions != null) {
-          final accuracy =
-              int.parse(totalCorrect) / int.parse(totalQuestions) * 100;
-          setState(() {
-            userAccuracy = accuracy;
-          });
-        }
-      }
-    }
-  }
-
-  void _updateDifficultyBasedOnPerformance() {
-    if (consecutiveCorrectAnswers >= difficultyThreshold) {
-      setState(() {
-        consecutiveCorrectAnswers = 0; // Reset after reaching threshold
-        userAccuracy = 90.0; // Adjust this based on real user performance
-      });
-      _loadNewQuestions();
-    }
+    await prefs.setDouble('programming_accuracy', accuracy);
   }
 
   void _loadNewQuestions() {
@@ -208,14 +160,11 @@ class _ProgrammingState extends State<Programming> {
     super.dispose();
   }
 
-  // Handle option selection, updating userAnswers list
   void _handleOptionSelection(int index, String selectedOption) {
     setState(() {
       userAnswers[index] = selectedOption;
 
-      // Check if all questions have been answered
       if (!userAnswers.contains(null)) {
-        // All questions answered, submit results
         _submitResults();
       } else {
         counter++;
@@ -224,19 +173,17 @@ class _ProgrammingState extends State<Programming> {
           correctAnswersCount++;
           consecutiveCorrectAnswers++;
           consecutiveIncorrectAnswers = 0;
-          // Increase difficulty if threshold reached
           if (consecutiveCorrectAnswers >= difficultyThreshold) {
             consecutiveCorrectAnswers = 0;
-            userAccuracy += 5; // Increase accuracy to select harder questions
+            userAccuracy += 5;
             _loadNewQuestions();
           }
         } else {
           consecutiveIncorrectAnswers++;
-          consecutiveCorrectAnswers = 0; // Reset correct counter
-          // Decrease difficulty if threshold reached
+          consecutiveCorrectAnswers = 0;
           if (consecutiveIncorrectAnswers >= decreaseDifficultyThreshold) {
             consecutiveIncorrectAnswers = 0;
-            userAccuracy -= 5; // Decrease accuracy to select easier questions
+            userAccuracy -= 5;
             _loadNewQuestions();
           }
         }
@@ -261,8 +208,9 @@ class _ProgrammingState extends State<Programming> {
                         // Accuracy Indicator
                         Row(
                           children: [
-                            Icon(Icons.speed, size: 16, color: Colors.white70),
-                            SizedBox(width: 5),
+                            const Icon(Icons.speed,
+                                size: 16, color: Colors.white70),
+                            const SizedBox(width: 5),
                             Text(
                               'Accuracy: ${userAccuracy.toStringAsFixed(1)}%',
                               style: TextStyle(
@@ -310,7 +258,8 @@ class _ProgrammingState extends State<Programming> {
             ValueListenableBuilder<String>(
               valueListenable: _timerDisplay,
               builder: (context, value, child) => Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(20),
