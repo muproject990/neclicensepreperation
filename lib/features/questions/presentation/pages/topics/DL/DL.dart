@@ -11,6 +11,10 @@ import 'package:neclicensepreperation/features/questions/presentation/bloc/quest
 import 'package:neclicensepreperation/features/questions/presentation/pages/AI_Chatbot/AIBOT.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/stats.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/main_page_mcq.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/widgetHelper/AccuracyHelper.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/widgetHelper/TimerDisplay.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/widgetHelper/floating.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/widgetHelper/questionCard.dart';
 import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
 import 'package:neclicensepreperation/features/questions/widgets/optionbutton.dart';
 import 'package:path_provider/path_provider.dart';
@@ -225,82 +229,14 @@ class _DLState extends State<DL> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Column(
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.speed, size: 16, color: Colors.white70),
-                            SizedBox(width: 5),
-                            Text(
-                              'Accuracy: ${userAccuracy.toStringAsFixed(1)}%',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: userAccuracy < 50
-                                      ? Colors.red
-                                      : userAccuracy < 70
-                                          ? Colors.orange
-                                          : Colors.green,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 15),
-                        Row(
-                          children: [
-                            const Icon(Icons.check_circle_outline,
-                                size: 16, color: Colors.white70),
-                            const SizedBox(width: 5),
-                            Text(
-                              'Answered: $counter/${selectedQuestions.length}',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: totalQuestions <
-                                          selectedQuestions.length / 2
-                                      ? Colors.red
-                                      : totalQuestions <
-                                              selectedQuestions.length * 0.8
-                                          ? Colors.orange
-                                          : Colors.green,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+            ProgressDisplay(
+              userAccuracy: userAccuracy,
+              answeredCount: counter,
+              totalQuestions: selectedQuestions.length,
             ),
-            ValueListenableBuilder<String>(
-              valueListenable: _timerDisplay,
-              builder: (context, value, child) => Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.timer_outlined,
-                        color: _remainingTime < 60 ? Colors.red : Colors.white,
-                        size: 20),
-                    SizedBox(width: 5),
-                    Text(
-                      value,
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color:
-                              _remainingTime < 60 ? Colors.red : Colors.white),
-                    ),
-                  ],
-                ),
-              ),
+            TimerDisplay(
+              timerDisplay: _timerDisplay,
+              remainingTime: _remainingTime,
             ),
           ],
         ),
@@ -321,134 +257,27 @@ class _DLState extends State<DL> {
               return const Center(child: Text("No questions available."));
             }
 
-            int startIndex = currentPage * questionsPerPage;
-            int endIndex = startIndex + questionsPerPage;
-            List<Question> questionsToDisplay = selectedQuestions.sublist(
-                startIndex,
-                endIndex > selectedQuestions.length
-                    ? selectedQuestions.length
-                    : endIndex);
-
-            return Column(children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: questionsToDisplay.length,
-                  itemBuilder: (context, index) {
-                    final question = questionsToDisplay[index];
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 10),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.blueGrey[600],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              '${startIndex + index + 1}  ${question.question.toUpperCase()}',
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        OptionButton(
-                          text: question.option1,
-                          isSelected: userAnswers[index] == question.option1,
-                          onPressed: () =>
-                              _handleOptionSelection(index, question.option1),
-                          isCorrect: userAnswers[index] == question.answer,
-                          isDisabled: userAnswers[index] != null,
-                        ),
-                        const SizedBox(height: 10),
-                        OptionButton(
-                          text: question.option2,
-                          isSelected: userAnswers[index] == question.option2,
-                          onPressed: () =>
-                              _handleOptionSelection(index, question.option2),
-                          isCorrect: userAnswers[index] == question.answer,
-                          isDisabled: userAnswers[index] != null,
-                        ),
-                        const SizedBox(height: 10),
-                        OptionButton(
-                          text: question.option3,
-                          isSelected: userAnswers[index] == question.option3,
-                          onPressed: () =>
-                              _handleOptionSelection(index, question.option3),
-                          isCorrect: userAnswers[index] == question.answer,
-                          isDisabled: userAnswers[index] != null,
-                        ),
-                        const SizedBox(height: 10),
-                        OptionButton(
-                          text: question.option4,
-                          isSelected: userAnswers[index] == question.option4,
-                          onPressed: () =>
-                              _handleOptionSelection(index, question.option4),
-                          isCorrect: userAnswers[index] == question.answer,
-                          isDisabled: userAnswers[index] != null,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AIBOT(
-                                        question.question,
-                                      )),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 12.0,
-                                horizontal:
-                                    16.0), // Add padding for better spacing
-                            margin: const EdgeInsets.all(
-                                8.0), // Add margin around the container
-                            decoration: BoxDecoration(
-                              color: Colors.blueAccent, // Background color
-                              borderRadius: BorderRadius.circular(
-                                  12.0), // Rounded corners
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black26, // Shadow color
-                                  blurRadius: 4.0, // Blur radius
-                                  offset: Offset(2.0, 2.0), // Shadow offset
-                                ),
-                              ],
-                            ),
-                            child: const Text(
-                              "Have Doubts",
-                              style: TextStyle(
-                                color: Colors.amber, // Text color
-                                fontSize:
-                                    18.0, // Increased font size for better visibility
-                                fontWeight:
-                                    FontWeight.bold, // Bold text for emphasis
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    );
-                  },
-                ),
-              )
-            ]);
+            return ListView.builder(
+              itemCount: selectedQuestions.length,
+              itemBuilder: (context, index) {
+                final question = selectedQuestions[index];
+                return QuestionCard(
+                  question: question,
+                  userAnswer: userAnswers[index],
+                  onOptionSelected: (selectedOption) =>
+                      _handleOptionSelection(index, selectedOption),
+                  questionIndex: index,
+                );
+              },
+            );
           } else {
             return const Center(
                 child: Text("An error occurred. Please try again."));
           }
         },
       ),
-      floatingActionButton: FloatingBtn(
-        onPressed: _submitResults,
-        icon: Icons.check,
-        buttonText: 'Done',
+      floatingActionButton: FloatingSubmitButton(
+        onSubmit: _submitResults,
       ),
     );
   }
