@@ -44,7 +44,7 @@ class _DLState extends State<DL> {
 
   int consecutiveCorrectAnswers = 0;
   int consecutiveIncorrectAnswers = 0;
-  int difficultyThreshold = 2;
+  int difficultyThreshold = 5;
   int decreaseDifficultyThreshold = 3;
   int currentPage = 0;
   final int questionsPerPage = 10;
@@ -60,41 +60,24 @@ class _DLState extends State<DL> {
 
   Future<void> saveUserAccuracy(double accuracy) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('user_accuracy', accuracy);
+
+    final appUserState = context.read<AppUserCubit>().state;
+    if (appUserState is AppUserLoggedIn) {
+      final userId = appUserState.user.id;
+      await prefs.setDouble('$data$userId', accuracy);
+    }
     print("User accuracy saved successfully: $accuracy%");
   }
 
   Future<void> loadUserAccuracy() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userAccuracy = prefs.getDouble('user_accuracy') ?? 0.0;
-    });
-  }
-
-  Future<void> _loadUserStatistics() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final appUserState = context.read<AppUserCubit>().state;
-    if (appUserState is AppUserLoggedIn) {
-      final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/$data$userId.txt');
-
-      if (await statsFile.exists()) {
-        final stats = await statsFile.readAsString();
-
-        final totalCorrect =
-            RegExp(r'Total Correct Answers: (\d+)').firstMatch(stats)?.group(1);
-        final totalQuestions =
-            RegExp(r'Total Questions: (\d+)').firstMatch(stats)?.group(1);
-
-        if (totalCorrect != null && totalQuestions != null) {
-          final accuracy =
-              int.parse(totalCorrect) / int.parse(totalQuestions) * 100;
-          setState(() {
-            userAccuracy = accuracy;
-          });
-        }
+      final appUserState = context.read<AppUserCubit>().state;
+      if (appUserState is AppUserLoggedIn) {
+        final userId = appUserState.user.id;
+        userAccuracy = prefs.getDouble('$data$userId') ?? 0.0;
       }
-    }
+    });
   }
 
   void _updateDifficultyBasedOnPerformance() {
@@ -210,6 +193,7 @@ class _DLState extends State<DL> {
         if (selectedOption == correctAnswers[index]) {
           correctAnswersCount++;
           consecutiveCorrectAnswers++;
+          print(consecutiveCorrectAnswers);
           consecutiveIncorrectAnswers = 0;
 
           if (consecutiveCorrectAnswers >= difficultyThreshold) {
@@ -219,6 +203,7 @@ class _DLState extends State<DL> {
           }
         } else {
           consecutiveIncorrectAnswers++;
+          print(consecutiveIncorrectAnswers);
           consecutiveCorrectAnswers = 0;
 
           if (consecutiveIncorrectAnswers >= decreaseDifficultyThreshold) {
