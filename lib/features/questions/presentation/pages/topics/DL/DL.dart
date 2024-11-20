@@ -26,7 +26,7 @@ class DL extends StatefulWidget {
 
 class _DLState extends State<DL> {
   final String data = "DL";
-  int desiredQuestions = 100;
+  int desiredQuestions = 1;
   List<String?> userAnswers = [];
   List<String> correctAnswers = [];
   List<Question> selectedQuestions = [];
@@ -44,7 +44,7 @@ class _DLState extends State<DL> {
 
   int consecutiveCorrectAnswers = 0;
   int consecutiveIncorrectAnswers = 0;
-  int difficultyThreshold = 5;
+  int difficultyThreshold = 1;
   int decreaseDifficultyThreshold = 3;
   int currentPage = 0;
   final int questionsPerPage = 10;
@@ -178,6 +178,8 @@ class _DLState extends State<DL> {
   @override
   void dispose() {
     _timer?.cancel();
+    _timer = null; // Set to null to avoid dangling references
+    _timerDisplay.dispose(); // Dispose of the ValueNotifier
     super.dispose();
   }
 

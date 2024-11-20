@@ -177,7 +177,7 @@ class _StatisticsChartState extends State<StatisticsChart> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Accuracy',
                         style: TextStyle(
                           fontSize: 16,
