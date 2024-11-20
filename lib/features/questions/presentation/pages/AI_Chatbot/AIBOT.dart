@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 
 class AIBOT extends StatefulWidget {
-  final String question;
-  final String op1;
-  final String op2;
-  final String op3;
-  final String op4;
+  final String? question;
+  final String? op1;
+  final String? op2;
+  final String? op3;
+  final String? op4;
 
-  const AIBOT(this.question, this.op1, this.op2, this.op3, this.op4,
-      {super.key});
+  const AIBOT({
+    this.question,
+    this.op1,
+    this.op2,
+    this.op3,
+    this.op4,
+    super.key,
+  });
 
   @override
   _AIBOTState createState() => _AIBOTState();
@@ -23,30 +29,35 @@ class _AIBOTState extends State<AIBOT> {
   @override
   void initState() {
     super.initState();
-    _sendInitialMessage(); // Automatically send the initial question
+    _sendInitialMessage();
   }
 
   void _sendInitialMessage() {
-    final initialMessage =
-        " ${widget.question} \n${widget.op1} \n${widget.op2} \n${widget.op3} \n${widget.op4 + "\nExplain the reason"}  \n ";
+    final initialMessage = [
+      widget.question ?? "No question provided.",
+      widget.op1 ?? "Option 1: N/A",
+      widget.op2 ?? "Option 2: N/A",
+      widget.op3 ?? "Option 3: N/A",
+      widget.op4 ?? "Option 4: N/A",
+      "Explain"
+    ].join("\n");
 
-    _addMessage("User: $initialMessage"); // Show user message
+    // Display the initial message as a user message
+    _addMessage("User: $initialMessage");
 
-    // Stream Gemini's response and update UI as each part arrives
     gemini.streamGenerateContent(initialMessage).listen((value) {
-      _addMessage("AI: ${value.output}"); // Append AI response
+      _addMessage("AI: ${value.output}");
     }).onError((e) {
-      _addMessage("Error: ${e.toString()}"); // Handle errors
+      _addMessage("Error: ${e.toString()}");
     });
   }
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
       final userMessage = _controller.text;
-      _addMessage("User: $userMessage"); // Show user message
-      _controller.clear(); // Clear the text field
+      _addMessage("User: $userMessage");
+      _controller.clear();
 
-      // Stream Gemini's response and update UI as each part arrives
       gemini.streamGenerateContent(userMessage).listen((value) {
         _addMessage("AI: ${value.output}"); // Append AI response
       }).onError((e) {
@@ -107,9 +118,9 @@ class _AIBOTState extends State<AIBOT> {
                         messages[index]
                             .substring(messages[index].indexOf(":") + 1)
                             .trim(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16.0,
-                          color: Colors.black,
+                          color: Color.fromARGB(255, 0, 0, 0),
                         ),
                       ),
                     ),
@@ -129,10 +140,10 @@ class _AIBOTState extends State<AIBOT> {
                       hintText: 'Type a message...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
-                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderSide: const BorderSide(color: Colors.blueAccent),
                       ),
                       filled: true,
-                      fillColor: const Color.fromARGB(255, 35, 1, 1),
+                      fillColor: const Color.fromARGB(255, 67, 53, 53),
                     ),
                   ),
                 ),

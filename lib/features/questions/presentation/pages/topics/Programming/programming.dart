@@ -283,6 +283,8 @@ class _ProgrammingState extends State<Programming> {
                 ),
               ),
             ),
+         
+         
           ],
         ),
         backgroundColor: Colors.blueGrey[800],
@@ -379,9 +381,13 @@ class _ProgrammingState extends State<Programming> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AIBOT(
-                                        question.question,question.option1,question.option2,question.option3,question.option4
-                                      )),
+                                builder: (context) => AIBOT(
+                                    question: question.question,
+                                    op1: question.option1,
+                                    op2: question.option2,
+                                    op3: question.option3,
+                                    op4: question.option4),
+                              ),
                             );
                           },
                           child: Container(

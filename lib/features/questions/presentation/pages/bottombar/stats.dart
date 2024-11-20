@@ -1,15 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neclicensepreperation/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:provider/provider.dart';
 
 class StatisticsChart extends StatefulWidget {
   final String data;
 
   const StatisticsChart({super.key, required this.data});
   @override
+  // ignore: library_private_types_in_public_api
   _StatisticsChartState createState() => _StatisticsChartState();
 }
 
@@ -73,6 +74,7 @@ class _StatisticsChartState extends State<StatisticsChart> {
       averageAccuracy = percentageCorrectList.reduce((a, b) => a + b) /
           percentageCorrectList.length;
     }
+
     setState(() {}); // Update the UI after parsing
   }
 
@@ -99,7 +101,7 @@ class _StatisticsChartState extends State<StatisticsChart> {
     final incorrectAnswers = totalQuestions - correctAnswers;
 
     return Card(
-      margin: EdgeInsets.all(16),
+      margin: const EdgeInsets.all(16),
       elevation: 6,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),

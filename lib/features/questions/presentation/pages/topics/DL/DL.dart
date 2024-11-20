@@ -13,6 +13,8 @@ import 'package:neclicensepreperation/features/questions/presentation/pages/bott
 import 'package:neclicensepreperation/features/questions/presentation/pages/main_page_mcq.dart';
 import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
 import 'package:neclicensepreperation/features/questions/widgets/optionbutton.dart';
+import 'package:neclicensepreperation/features/questions/widgets/question_list.dart';
+import 'package:neclicensepreperation/features/questions/widgets/questionitems.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -60,14 +62,22 @@ class _DLState extends State<DL> {
 
   Future<void> saveUserAccuracy(double accuracy) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('user_accuracy', accuracy);
+    final appUserState = context.read<AppUserCubit>().state;
+    if (appUserState is AppUserLoggedIn) {
+      final userId = appUserState.user.id;
+      await prefs.setDouble('$userId$data', accuracy);
+    }
     print("User accuracy saved successfully: $accuracy%");
   }
 
   Future<void> loadUserAccuracy() async {
+    final appUserState = context.read<AppUserCubit>().state;
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userAccuracy = prefs.getDouble('user_accuracy') ?? 0.0;
+      if (appUserState is AppUserLoggedIn) {
+        final userId = appUserState.user.id;
+        userAccuracy = prefs.getDouble('$userId$data') ?? 0.0;
+      }
     });
   }
 
@@ -164,32 +174,43 @@ class _DLState extends State<DL> {
 
   void _handleOptionSelection(int index, String selectedOption) {
     setState(() {
+      // Update the user's answer for the current question
       userAnswers[index] = selectedOption;
 
+      // Check if all answers are filled
       if (!userAnswers.contains(null)) {
         _submitResults();
+        return;
+      }
+
+      // Increment the question counter
+      counter++;
+
+      // Check if the selected option matches the correct answer
+      if (selectedOption == correctAnswers[index]) {
+        correctAnswersCount++;
+        consecutiveCorrectAnswers++;
+        consecutiveIncorrectAnswers = 0; // Reset incorrect streak
+        print("Correct Streak: $consecutiveCorrectAnswers");
+
+        // Check if difficulty threshold is reached
+        if (consecutiveCorrectAnswers >= difficultyThreshold) {
+          consecutiveCorrectAnswers = 0; // Reset correct streak
+          userAccuracy = (userAccuracy + 5)
+              .clamp(0, 100); // Ensure accuracy stays within 0-100
+          _loadNewQuestions(); // Load new questions
+        }
       } else {
-        counter++;
+        consecutiveIncorrectAnswers++;
+        consecutiveCorrectAnswers = 0; // Reset correct streak
+        print("Incorrect Streak: $consecutiveIncorrectAnswers");
 
-        if (selectedOption == correctAnswers[index]) {
-          correctAnswersCount++;
-          consecutiveCorrectAnswers++;
-          consecutiveIncorrectAnswers = 0;
-
-          if (consecutiveCorrectAnswers >= difficultyThreshold) {
-            consecutiveCorrectAnswers = 0;
-            userAccuracy += 5;
-            _loadNewQuestions();
-          }
-        } else {
-          consecutiveIncorrectAnswers++;
-          consecutiveCorrectAnswers = 0;
-
-          if (consecutiveIncorrectAnswers >= decreaseDifficultyThreshold) {
-            consecutiveIncorrectAnswers = 0;
-            userAccuracy -= 5;
-            _loadNewQuestions();
-          }
+        // Check if difficulty needs to be reduced
+        if (consecutiveIncorrectAnswers >= decreaseDifficultyThreshold) {
+          consecutiveIncorrectAnswers = 0; // Reset incorrect streak
+          userAccuracy = (userAccuracy - 5)
+              .clamp(0, 100); // Ensure accuracy stays within 0-100
+          _loadNewQuestions(); // Load new questions
         }
       }
     });
@@ -306,119 +327,13 @@ class _DLState extends State<DL> {
                     ? selectedQuestions.length
                     : endIndex);
 
-            return Column(children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: questionsToDisplay.length,
-                  itemBuilder: (context, index) {
-                    final question = questionsToDisplay[index];
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 10),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.blueGrey[600],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              '${startIndex + index + 1}  ${question.question.toUpperCase()}',
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        OptionButton(
-                          text: question.option1,
-                          isSelected: userAnswers[index] == question.option1,
-                          onPressed: () =>
-                              _handleOptionSelection(index, question.option1),
-                          isCorrect: userAnswers[index] == question.answer,
-                          isDisabled: userAnswers[index] != null,
-                        ),
-                        const SizedBox(height: 10),
-                        OptionButton(
-                          text: question.option2,
-                          isSelected: userAnswers[index] == question.option2,
-                          onPressed: () =>
-                              _handleOptionSelection(index, question.option2),
-                          isCorrect: userAnswers[index] == question.answer,
-                          isDisabled: userAnswers[index] != null,
-                        ),
-                        const SizedBox(height: 10),
-                        OptionButton(
-                          text: question.option3,
-                          isSelected: userAnswers[index] == question.option3,
-                          onPressed: () =>
-                              _handleOptionSelection(index, question.option3),
-                          isCorrect: userAnswers[index] == question.answer,
-                          isDisabled: userAnswers[index] != null,
-                        ),
-                        const SizedBox(height: 10),
-                        OptionButton(
-                          text: question.option4,
-                          isSelected: userAnswers[index] == question.option4,
-                          onPressed: () =>
-                              _handleOptionSelection(index, question.option4),
-                          isCorrect: userAnswers[index] == question.answer,
-                          isDisabled: userAnswers[index] != null,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AIBOT(
-                                      question.question,
-                                      question.option1,
-                                      question.option2,
-                                      question.option3,
-                                      question.option4)),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 12.0,
-                                horizontal:
-                                    16.0), // Add padding for better spacing
-                            margin: const EdgeInsets.all(
-                                8.0), // Add margin around the container
-                            decoration: BoxDecoration(
-                              color: Colors.blueAccent, // Background color
-                              borderRadius: BorderRadius.circular(
-                                  12.0), // Rounded corners
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black26, // Shadow color
-                                  blurRadius: 4.0, // Blur radius
-                                  offset: Offset(2.0, 2.0), // Shadow offset
-                                ),
-                              ],
-                            ),
-                            child: const Text(
-                              "Have Doubts",
-                              style: TextStyle(
-                                color: Colors.amber, // Text color
-                                fontSize:
-                                    18.0, // Increased font size for better visibility
-                                fontWeight:
-                                    FontWeight.bold, // Bold text for emphasis
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    );
-                  },
-                ),
-              )
-            ]);
+            return QuestionList(
+              userAnswers: userAnswers,
+              questions: state.questions,
+              onOptionSelected: (index, selectedOption) {
+                _handleOptionSelection(index, selectedOption);
+              },
+            );
           } else {
             return const Center(
                 child: Text("An error occurred. Please try again."));

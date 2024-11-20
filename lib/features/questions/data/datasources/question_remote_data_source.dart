@@ -1,7 +1,5 @@
 import 'package:neclicensepreperation/core/error/exception.dart';
 import 'package:neclicensepreperation/features/questions/data/models/question_model.dart';
-import 'package:neclicensepreperation/features/questions/domain/usecases/get_micro_question.dart';
-import 'package:neclicensepreperation/features/questions/domain/usecases/get_network_questios.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class QuestionRemoteDataSource {
