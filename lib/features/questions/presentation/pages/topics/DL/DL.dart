@@ -13,6 +13,7 @@ import 'package:neclicensepreperation/features/questions/presentation/pages/bott
 import 'package:neclicensepreperation/features/questions/presentation/pages/main_page_mcq.dart';
 import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
 import 'package:neclicensepreperation/features/questions/widgets/optionbutton.dart';
+import 'package:neclicensepreperation/features/questions/widgets/videoplayer.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -394,44 +395,76 @@ class _DLState extends State<DL> {
                           isCorrect: userAnswers[index] == question.answer,
                           isDisabled: userAnswers[index] != null,
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AIBOT(
-                                        question.question,
-                                      )),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 12.0,
-                                horizontal:
-                                    16.0), // Add padding for better spacing
-                            margin: const EdgeInsets.all(
-                                8.0), // Add margin around the container
-                            decoration: BoxDecoration(
-                              color: Colors.blueAccent, // Background color
-                              borderRadius: BorderRadius.circular(
-                                  12.0), // Rounded corners
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black26, // Shadow color
-                                  blurRadius: 4.0, // Blur radius
-                                  offset: Offset(2.0, 2.0), // Shadow offset
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AIBOT(
+                                      question.question,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12.0, horizontal: 16.0),
+                                margin: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(255, 33, 65, 120),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4.0,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            child: const Text(
-                              "Have Doubts",
-                              style: TextStyle(
-                                color: Colors.black, // Text color
-                                fontSize:
-                                    18.0, // Increased font size for better visibility
+                                child: const Text(
+                                  "Have Doubts",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18.0),
+                                ),
                               ),
                             ),
-                          ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => VideoGuidePage(
+                                        query: question.question),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12.0, horizontal: 16.0),
+                                margin: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(255, 246, 0, 74),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4.0,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                child: const Text(
+                                  "Video Guide",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18.0),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 20),
                       ],
