@@ -20,7 +20,7 @@ class _IntroPageState extends State<IntroPage> {
   // List of dropdown options for statistics
   final List<String> _dataOptions = [
     'DL',
-    'Option 2',
+    'Programming',
     'Option 3',
     'Option 4',
     'Option 5',

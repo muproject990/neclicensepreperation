@@ -44,7 +44,7 @@ class _DLState extends State<DL> {
 
   int consecutiveCorrectAnswers = 0;
   int consecutiveIncorrectAnswers = 0;
-  int difficultyThreshold = 1;
+  int difficultyThreshold = 5;
   int decreaseDifficultyThreshold = 2;
   int currentPage = 0;
   final int questionsPerPage = 5;
@@ -57,7 +57,9 @@ class _DLState extends State<DL> {
     loadUserAccuracy();
     context.read<QuestionBloc>().add(QuestionFetchAllQuestions());
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      showQuestionCountDialog();
+      if (mounted) {
+        showQuestionCountDialog();
+      }
     });
   }
 
@@ -80,32 +82,6 @@ class _DLState extends State<DL> {
         userAccuracy = prefs.getDouble('$data$userId') ?? 0.0;
       }
     });
-  }
-
-  Future<void> _loadUserStatistics() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final appUserState = context.read<AppUserCubit>().state;
-    if (appUserState is AppUserLoggedIn) {
-      final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/$data$userId.txt');
-
-      if (await statsFile.exists()) {
-        final stats = await statsFile.readAsString();
-
-        final totalCorrect =
-            RegExp(r'Total Correct Answers: (\d+)').firstMatch(stats)?.group(1);
-        final totalQuestions =
-            RegExp(r'Total Questions: (\d+)').firstMatch(stats)?.group(1);
-
-        if (totalCorrect != null && totalQuestions != null) {
-          final accuracy =
-              int.parse(totalCorrect) / int.parse(totalQuestions) * 100;
-          setState(() {
-            userAccuracy = accuracy;
-          });
-        }
-      }
-    }
   }
 
   void _loadNewQuestions() {
@@ -171,13 +147,26 @@ class _DLState extends State<DL> {
     _remainingTime = totalQuestions * 20;
     _updateTimerDisplay();
 
+    // Cancel any existing timer before starting a new one
+    _timer?.cancel();
+
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        // If the widget is unmounted, cancel the timer and return early
+        timer.cancel();
+        return;
+      }
+
       if (_remainingTime <= 0) {
         timer.cancel();
         if (userAnswers.isNotEmpty) {
           showSnackBar(
               context, "Time is up! Your answers have not been submitted.");
-          Navigator.push(context, MCQMainPage.route());
+
+          // Check if the widget is still mounted before navigating
+          if (mounted) {
+            Navigator.push(context, MCQMainPage.route());
+          }
         }
       } else {
         _remainingTime--;
@@ -186,17 +175,17 @@ class _DLState extends State<DL> {
     });
   }
 
+  @override
+  void dispose() {
+    _timer?.cancel(); // Cancel the timer when the widget is disposed
+    super.dispose();
+  }
+
   void _updateTimerDisplay() {
     int minutes = _remainingTime ~/ 60;
     int seconds = _remainingTime % 60;
     _timerDisplay.value =
         "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
   }
 
   void _handleOptionSelection(int index, String selectedOption) {
@@ -437,11 +426,9 @@ class _DLState extends State<DL> {
                             child: const Text(
                               "Have Doubts",
                               style: TextStyle(
-                                color: Colors.amber, // Text color
+                                color: Colors.black, // Text color
                                 fontSize:
                                     18.0, // Increased font size for better visibility
-                                fontWeight:
-                                    FontWeight.bold, // Bold text for emphasis
                               ),
                             ),
                           ),
@@ -462,7 +449,7 @@ class _DLState extends State<DL> {
       floatingActionButton: FloatingBtn(
         onPressed: _submitResults,
         icon: Icons.check,
-        buttonText: 'Done',
+        buttonText: 'Submit',
       ),
     );
   }
@@ -517,9 +504,6 @@ class _DLState extends State<DL> {
           title: Text("Enter Desired Number of Questions"),
           content: TextField(
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              hintText: "e.g., 10, 20, 50",
-            ),
             onChanged: (value) {
               tempCount = int.tryParse(value);
             },

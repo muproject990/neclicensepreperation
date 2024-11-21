@@ -4,8 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neclicensepreperation/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/add_new_question.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/DL.dart';
-import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DSA/DSA.dart';
-import 'package:neclicensepreperation/features/questions/presentation/pages/topics/Programming/programming.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/Programming.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/topics/TOC/toc.dart';
 import 'package:neclicensepreperation/features/questions/widgets/gradient_button.dart';
 
@@ -60,6 +59,16 @@ class _MCQMainPageState extends State<MCQMainPage> {
                   ),
                   const SizedBox(height: 20),
                   GradientBtn(
+                    buttonText: "Programming and its applications",
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        Programming.route(),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  GradientBtn(
                     buttonText: "Theory Of Computation and Computer graphics",
                     onPressed: () {
                       Navigator.push(context, TOC.route());
@@ -69,20 +78,10 @@ class _MCQMainPageState extends State<MCQMainPage> {
                   GradientBtn(
                     buttonText: "DSA,Database System and operating system",
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        Dsa.route(),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  GradientBtn(
-                    buttonText: "Programming and its applications",
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        Programming.route(),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   Programming.route(),
+                      // );
                     },
                   ),
                   const SizedBox(height: 20),

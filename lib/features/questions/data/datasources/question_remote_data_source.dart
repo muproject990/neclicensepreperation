@@ -88,10 +88,7 @@ class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
   @override
   Future<List<QuestionModel>> getProgrammingQuestions() async {
     try {
-      final questions = await supabaseClient
-          .from('addquestions')
-          .select("*")
-          .contains('topics', ['Programming']);
+      final questions = await supabaseClient.from('programming').select("*");
 
       return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
     } catch (e) {

@@ -9,6 +9,7 @@ import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.
 import 'package:neclicensepreperation/features/questions/data/datasources/question_remote_data_source.dart';
 import 'package:neclicensepreperation/features/questions/data/repository/question_repo_impl.dart';
 import 'package:neclicensepreperation/features/questions/domain/repositories/question_repo.dart';
+import 'package:neclicensepreperation/features/questions/domain/usecases/get_all_programming_question.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/get_dsa_questios.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/upload_question.dart';
 import 'package:neclicensepreperation/features/questions/presentation/bloc/question_bloc.dart';
@@ -115,19 +116,24 @@ void _initQuestion() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => GetAllProgrammingQuestions(
+        serviceLocator(),
+      ),
+    )
     // get all DSA Questions
     ..registerFactory(
       () => GetDsaQuestions(
         serviceLocator(),
       ),
     )
-
     ..registerLazySingleton(
       () => QuestionBloc(
         uploadQuestion: serviceLocator(),
         getAllQuestion: serviceLocator(),
         get_toc_question: serviceLocator(),
         get_dsa_questions: serviceLocator(),
+        get_programming_questions: serviceLocator(),
         // getdsa: serviceLocator(),
       ),
     );
