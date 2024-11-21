@@ -56,6 +56,9 @@ class _DLState extends State<DL> {
 
     loadUserAccuracy();
     context.read<QuestionBloc>().add(QuestionFetchAllQuestions());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showQuestionCountDialog();
+    });
   }
 
   Future<void> saveUserAccuracy(double accuracy) async {
@@ -502,5 +505,47 @@ class _DLState extends State<DL> {
       );
       showSnackBar(context, "Results saved to statistics file.");
     }
+  }
+
+  Future<void> showQuestionCountDialog() async {
+    int? tempCount; // Temporarily hold user input
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Enter Desired Number of Questions"),
+          content: TextField(
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              hintText: "e.g., 10, 20, 50",
+            ),
+            onChanged: (value) {
+              tempCount = int.tryParse(value);
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog without saving
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                if (tempCount != null && tempCount! > 0) {
+                  setState(() {
+                    desiredQuestions = tempCount!;
+                  });
+                  _loadNewQuestions(); // Load questions based on new count
+                }
+                Navigator.of(context).pop(); // Close dialog and save
+              },
+              child: Text("Start Quiz"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
