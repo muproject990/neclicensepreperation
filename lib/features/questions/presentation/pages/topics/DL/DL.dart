@@ -198,18 +198,13 @@ class _DLState extends State<DL> {
 
   void _handleOptionSelection(int index, String selectedOption) {
     setState(() {
-      // Update the selected option
       userAnswers[index] = selectedOption;
 
-      // Check if all answers have been selected
       if (!userAnswers.contains(null)) {
-        // Submit the results only when all answers are provided
-        _submitResults();
+        _submitResults(); // This will trigger result submission only when all answers are selected.
       } else {
-        // Update counters and accuracy based on the selected option
         counter++;
 
-        // Check if the answer is correct
         if (selectedOption == correctAnswers[index]) {
           correctAnswersCount++;
           consecutiveCorrectAnswers++;
@@ -217,7 +212,8 @@ class _DLState extends State<DL> {
 
           if (consecutiveCorrectAnswers >= difficultyThreshold) {
             consecutiveCorrectAnswers = 0;
-            userAccuracy += 5;
+            // Increase accuracy but ensure it doesn't exceed 100
+            userAccuracy = min(userAccuracy + 5, 100.0); // Cap at 100
             _loadNewQuestions();
           }
         } else {
@@ -226,7 +222,8 @@ class _DLState extends State<DL> {
 
           if (consecutiveIncorrectAnswers >= decreaseDifficultyThreshold) {
             consecutiveIncorrectAnswers = 0;
-            userAccuracy -= 5;
+            // Decrease accuracy but ensure it doesn't go below 0
+            userAccuracy = max(userAccuracy - 5, 0.0); // Cap at 0
             _loadNewQuestions();
           }
         }
