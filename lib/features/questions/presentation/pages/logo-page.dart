@@ -15,16 +15,24 @@ class IntroPage extends StatefulWidget {
 
 class _IntroPageState extends State<IntroPage> {
   int _currentIndex = 0;
+  String? _selectedData; // Variable to hold the selected data for the chart
 
-  final List<Widget> _pages = [
-    const MCQMainPage(), // Assuming HomePage is your existing home page
-    const StatisticsChart(data: 'DL'),
-    const AIBOT("Hi "),
+  // List of dropdown options for statistics
+  final List<String> _dataOptions = [
+    'DL',
+    'Option 2',
+    'Option 3',
+    'Option 4',
+    'Option 5',
+    'Option 6',
+    'Option 7',
+    'Option 8',
+    'Option 9',
+    'Option 10',
   ];
 
   void _onItemTapped(int index) {
     if (index == 3) {
-      // Index for Logout
       _logout();
     } else {
       setState(() {
@@ -33,15 +41,21 @@ class _IntroPageState extends State<IntroPage> {
     }
   }
 
+  List<Widget> get _pages {
+    return [
+      const MCQMainPage(), // Home Page
+      StatisticsChart(data: _selectedData ?? 'DL'), // Statistics Page
+      ProfilePage(), // Profile Page
+    ];
+  }
+
   Future<void> _logout() async {
     try {
       await Supabase.instance.client.auth.signOut();
-      // Successfully logged out
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const SignUpPage()),
       );
     } catch (error) {
-      // Handle the error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Logout failed: $error'),
@@ -50,39 +64,71 @@ class _IntroPageState extends State<IntroPage> {
     }
   }
 
+  void _onDataSelected(String? newValue) {
+    setState(() {
+      _selectedData = newValue; // Update the selected data
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Update the StatisticsChart with the selected data
+    final statisticsChart = StatisticsChart(data: _selectedData ?? 'DL');
+
     return Scaffold(
-        body: _pages[_currentIndex], // Display the selected page here
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
+      body: Column(
+        children: [
+          Expanded(
+            child: _currentIndex == 1 ? statisticsChart : _pages[_currentIndex],
+          ),
+          // Dropdown moved to the bottom, just above the BottomNavigationBar
+          if (_currentIndex == 1)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: DropdownButton<String>(
+                value: _selectedData,
+                hint: const Text('Select data for statistics'),
+                borderRadius: BorderRadius.circular(15),
+                items: _dataOptions.map((String option) {
+                  return DropdownMenuItem<String>(
+                    value: option,
+                    child: Text(option),
+                  );
+                }).toList(),
+                onChanged: _onDataSelected,
+              ),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.pie_chart),
-              label: 'Chart',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble_outline),
-              label: 'AI BOT',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.logout),
-              label: 'Logout',
-            ),
-          ],
-          currentIndex: _currentIndex,
-          selectedItemColor: Colors.blueAccent, // Color for the selected item
-          unselectedItemColor: Colors.white, // Color for unselected items
-          backgroundColor: Colors.blueGrey[800], // Background color
-          type:
-              BottomNavigationBarType.fixed, // Fixed type for a consistent look
-          onTap: _onItemTapped,
-          elevation: 8, // Shadow effect
-          selectedFontSize: 14, // Font size for selected item
-          unselectedFontSize: 12, // Font size for unselected items
-        ));
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.pie_chart),
+            label: 'Chart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_pin),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.logout),
+            label: 'Logout',
+          ),
+        ],
+        currentIndex: _currentIndex,
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.white,
+        backgroundColor: Colors.blueGrey[800],
+        type: BottomNavigationBarType.fixed,
+        onTap: _onItemTapped,
+        elevation: 8,
+        selectedFontSize: 14,
+        unselectedFontSize: 12,
+      ),
+    );
   }
 }

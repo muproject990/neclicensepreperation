@@ -26,7 +26,7 @@ class DL extends StatefulWidget {
 
 class _DLState extends State<DL> {
   final String data = "DL";
-  int desiredQuestions = 100;
+  int desiredQuestions = 20;
   List<String?> userAnswers = [];
   List<String> correctAnswers = [];
   List<Question> selectedQuestions = [];
@@ -44,7 +44,7 @@ class _DLState extends State<DL> {
 
   int consecutiveCorrectAnswers = 0;
   int consecutiveIncorrectAnswers = 0;
-  int difficultyThreshold = 5;
+  int difficultyThreshold = 1;
   int decreaseDifficultyThreshold = 2;
   int currentPage = 0;
   final int questionsPerPage = 5;
@@ -199,33 +199,31 @@ class _DLState extends State<DL> {
   void _handleOptionSelection(int index, String selectedOption) {
     setState(() {
       userAnswers[index] = selectedOption;
+      counter++; // Increase counter for every answered question
 
-      if (!userAnswers.contains(null)) {
-        _submitResults(); // This will trigger result submission only when all answers are selected.
-      } else {
-        counter++;
+      if (counter == desiredQuestions) {
+        _submitResults(); // Submit when 20 questions are answered
+        return;
+      }
 
-        if (selectedOption == correctAnswers[index]) {
-          correctAnswersCount++;
-          consecutiveCorrectAnswers++;
-          consecutiveIncorrectAnswers = 0;
+      if (selectedOption == correctAnswers[index]) {
+        correctAnswersCount++;
+        consecutiveCorrectAnswers++;
+        consecutiveIncorrectAnswers = 0;
 
-          if (consecutiveCorrectAnswers >= difficultyThreshold) {
-            consecutiveCorrectAnswers = 0;
-            // Increase accuracy but ensure it doesn't exceed 100
-            userAccuracy = min(userAccuracy + 5, 100.0); // Cap at 100
-            _loadNewQuestions();
-          }
-        } else {
-          consecutiveIncorrectAnswers++;
+        if (consecutiveCorrectAnswers >= difficultyThreshold) {
           consecutiveCorrectAnswers = 0;
+          userAccuracy = min(userAccuracy + 5, 100.0); // Cap at 100
+          _loadNewQuestions();
+        }
+      } else {
+        consecutiveIncorrectAnswers++;
+        consecutiveCorrectAnswers = 0;
 
-          if (consecutiveIncorrectAnswers >= decreaseDifficultyThreshold) {
-            consecutiveIncorrectAnswers = 0;
-            // Decrease accuracy but ensure it doesn't go below 0
-            userAccuracy = max(userAccuracy - 5, 0.0); // Cap at 0
-            _loadNewQuestions();
-          }
+        if (consecutiveIncorrectAnswers >= decreaseDifficultyThreshold) {
+          consecutiveIncorrectAnswers = 0;
+          userAccuracy = max(userAccuracy - 5, 0.0); // Cap at 0
+          _loadNewQuestions();
         }
       }
     });

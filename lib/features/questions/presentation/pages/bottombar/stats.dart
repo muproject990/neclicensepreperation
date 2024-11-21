@@ -68,11 +68,12 @@ class _StatisticsChartState extends State<StatisticsChart> {
         percentageCorrectList.add(double.parse(percentageMatch.group(1)!));
       }
     }
-    // Calculate the average accuracy after parsing all statistics
+
     if (percentageCorrectList.isNotEmpty) {
       averageAccuracy = percentageCorrectList.reduce((a, b) => a + b) /
           percentageCorrectList.length;
     }
+
     setState(() {}); // Update the UI after parsing
   }
 
