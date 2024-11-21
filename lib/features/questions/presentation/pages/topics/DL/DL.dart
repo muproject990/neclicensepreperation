@@ -44,10 +44,10 @@ class _DLState extends State<DL> {
 
   int consecutiveCorrectAnswers = 0;
   int consecutiveIncorrectAnswers = 0;
-  int difficultyThreshold = 2;
-  int decreaseDifficultyThreshold = 3;
+  int difficultyThreshold = 5;
+  int decreaseDifficultyThreshold = 2;
   int currentPage = 0;
-  final int questionsPerPage = 10;
+  final int questionsPerPage = 5;
   late int counter = 0;
 
   @override
@@ -59,15 +59,23 @@ class _DLState extends State<DL> {
   }
 
   Future<void> saveUserAccuracy(double accuracy) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('user_accuracy', accuracy);
+    final appUserState = context.read<AppUserCubit>().state;
+    if (appUserState is AppUserLoggedIn) {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = appUserState.user.id;
+      await prefs.setDouble('$data$userId', accuracy);
+    }
     print("User accuracy saved successfully: $accuracy%");
   }
 
   Future<void> loadUserAccuracy() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userAccuracy = prefs.getDouble('user_accuracy') ?? 0.0;
+      final appUserState = context.read<AppUserCubit>().state;
+      if (appUserState is AppUserLoggedIn) {
+        final userId = appUserState.user.id;
+        userAccuracy = prefs.getDouble('$data$userId') ?? 0.0;
+      }
     });
   }
 
@@ -94,16 +102,6 @@ class _DLState extends State<DL> {
           });
         }
       }
-    }
-  }
-
-  void _updateDifficultyBasedOnPerformance() {
-    if (consecutiveCorrectAnswers >= difficultyThreshold) {
-      setState(() {
-        consecutiveCorrectAnswers = 0;
-        userAccuracy = 90.0;
-      });
-      _loadNewQuestions();
     }
   }
 
@@ -200,13 +198,18 @@ class _DLState extends State<DL> {
 
   void _handleOptionSelection(int index, String selectedOption) {
     setState(() {
+      // Update the selected option
       userAnswers[index] = selectedOption;
 
+      // Check if all answers have been selected
       if (!userAnswers.contains(null)) {
+        // Submit the results only when all answers are provided
         _submitResults();
       } else {
+        // Update counters and accuracy based on the selected option
         counter++;
 
+        // Check if the answer is correct
         if (selectedOption == correctAnswers[index]) {
           correctAnswersCount++;
           consecutiveCorrectAnswers++;
