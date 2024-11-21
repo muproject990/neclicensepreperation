@@ -67,9 +67,9 @@ class QuestionRepositoryImpl implements QuestionRepository {
   }
 
   @override
-  Future<Either<Failure, List<Question>>> getTocQuestions() async {
+  Future<Either<Failure, List<Question>>> getAllAIQuestion() async {
     try {
-      final question = await questionRemoteDataSource.getTocQuestion();
+      final question = await questionRemoteDataSource.getAiQuestion();
       return right(question);
     } on ServerException catch (e) {
       return left(Failure(e.message));
@@ -77,9 +77,9 @@ class QuestionRepositoryImpl implements QuestionRepository {
   }
 
   @override
-  Future<Either<Failure, List<Question>>> getDsaQuestions() async {
+  Future<Either<Failure, List<Question>>> getTocQuestions() async {
     try {
-      final question = await questionRemoteDataSource.getDsaQuestion();
+      final question = await questionRemoteDataSource.getTocQuestion();
       return right(question);
     } on ServerException catch (e) {
       return left(Failure(e.message));

@@ -5,9 +5,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 abstract interface class QuestionRemoteDataSource {
   Future<QuestionModel> uploadQuestion(QuestionModel question);
   Future<List<QuestionModel>> getAllQuestion();
+  Future<List<QuestionModel>> getProgrammingQuestions();
+  Future<List<QuestionModel>> getAiQuestion();
   Future<List<QuestionModel>> getTocQuestion();
   Future<List<QuestionModel>> getDsaQuestion();
-  Future<List<QuestionModel>> getProgrammingQuestions();
 }
 
 class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
@@ -44,27 +45,10 @@ class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
     }
   }
 
-  // Future<List<QuestionModel>> getAllMicro() async {
-  //   try {
-  //     final questions = await supabaseClient
-  //         .from('addquestions')
-  //         .select("*")
-  //         .contains('topics', ['Microprocessor']);
-
-  //     return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
-  //   } catch (e) {
-  //     throw ServerException(message: e.toString());
-  //   }
-  // }
-
   @override
   Future<List<QuestionModel>> getTocQuestion() async {
     try {
-      final questions = await supabaseClient
-          .from('addquestions')
-          .select("*")
-          .contains('topics', ['TOC']);
-
+      final questions = await supabaseClient.from('toc').select("*");
       return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -89,6 +73,17 @@ class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
   Future<List<QuestionModel>> getProgrammingQuestions() async {
     try {
       final questions = await supabaseClient.from('programming').select("*");
+
+      return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<QuestionModel>> getAiQuestion() async {
+    try {
+      final questions = await supabaseClient.from('neural').select("*");
 
       return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
     } catch (e) {

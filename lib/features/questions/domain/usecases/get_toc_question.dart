@@ -4,9 +4,9 @@ import 'package:neclicensepreperation/core/usecase/usercase.dart';
 import 'package:neclicensepreperation/features/questions/domain/entities/question.dart';
 import 'package:neclicensepreperation/features/questions/domain/repositories/question_repo.dart';
 
-class GetTocQuestions implements UseCase<List<Question>, NoParams> {
+class GetAllTocQuestion implements UseCase<List<Question>, NoParams> {
   final QuestionRepository questionRepository;
-  GetTocQuestions(this.questionRepository);
+  GetAllTocQuestion(this.questionRepository);
 
   @override
   Future<Either<Failure, List<Question>>> call(NoParams params) async {

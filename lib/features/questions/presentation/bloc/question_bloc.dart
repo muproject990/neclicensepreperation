@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neclicensepreperation/core/usecase/usercase.dart';
 import 'package:neclicensepreperation/features/questions/domain/entities/question.dart';
+import 'package:neclicensepreperation/features/questions/domain/usecases/get_all_ai_question.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/get_all_programming_question.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/get_all_questio.dart';
-import 'package:neclicensepreperation/features/questions/domain/usecases/get_dsa_questios.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/get_toc_question.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/upload_question.dart';
 
@@ -14,27 +14,29 @@ part 'question_state.dart';
 class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   final UploadQuestion _uploadQuestion;
   final GetAllQuestions _getAllQuestions;
-  final GetTocQuestions _getTocQuestions;
   final GetAllProgrammingQuestions _getProgrammingQuestions;
-  final GetDsaQuestions _getDsaQuestions;
+  final GetAllTocQuestion _getAllTocQuestion;
+  final GetAllAiQuestion _getAllAiQuestion;
+
   QuestionBloc({
     required UploadQuestion uploadQuestion,
     required GetAllQuestions getAllQuestion,
-    required GetTocQuestions get_toc_question,
-    required GetDsaQuestions get_dsa_questions,
     required GetAllProgrammingQuestions get_programming_questions,
+    required GetAllAiQuestion getAllAiQuestion,
+    required GetAllTocQuestion getAllTocQuestion,
   })  : _uploadQuestion = uploadQuestion,
         _getAllQuestions = getAllQuestion,
-        _getTocQuestions = get_toc_question,
-        _getDsaQuestions = get_dsa_questions,
         _getProgrammingQuestions = get_programming_questions,
+        _getAllAiQuestion = getAllAiQuestion,
+        _getAllTocQuestion = getAllTocQuestion,
         super(QuestionInitial()) {
     on<QuestionEvent>((event, emit) => emit(QuestionLoading()));
     on<QuestionUpload>(_onQuestionUpload);
     on<QuestionFetchAllQuestions>(_onFetchAllQuestions);
     on<QuestionFetchProgrammingQuestions>(_onFetchProgrammingQuestions);
+    on<QuestionFetchAIQuestions>(_onFetchAIQuestions);
+
     on<QuestionFetchTocQuestions>(_onFetchTocQuestions);
-    on<QuestionFetchDsaQuestions>(_onFetchDsaQuestions);
   }
 
   void _onQuestionUpload(
@@ -81,22 +83,22 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     );
   }
 
-  void _onFetchTocQuestions(
-    QuestionFetchTocQuestions event,
+  void _onFetchAIQuestions(
+    QuestionFetchAIQuestions event,
     Emitter<QuestionState> emit,
   ) async {
-    final res = await _getTocQuestions(NoParams());
+    final res = await _getAllAiQuestion(NoParams());
     res.fold(
       (l) => emit(QuestionFailure(l.message)),
       (r) => emit(QuestionDisplaySuccess(r)),
     );
   }
 
-  void _onFetchDsaQuestions(
-    QuestionFetchDsaQuestions event,
+  void _onFetchTocQuestions(
+    QuestionFetchTocQuestions event,
     Emitter<QuestionState> emit,
   ) async {
-    final res = await _getDsaQuestions(NoParams());
+    final res = await _getAllTocQuestion(NoParams());
     res.fold(
       (l) => emit(QuestionFailure(l.message)),
       (r) => emit(QuestionDisplaySuccess(r)),
