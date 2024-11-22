@@ -12,7 +12,6 @@ class AllVaraibles {
 
   int totalQuestions = 0;
   int correctAnswersCount = 0;
-  double userAccuracy = 0.0;
   List<int> responseTimes = [];
   DateTime? questionStartTime;
 
@@ -21,13 +20,10 @@ class AllVaraibles {
   int difficultyThreshold = 5;
   int decreaseDifficultyThreshold = 2;
   int currentPage = 0;
-  final int questionsPerPage = 5;
+  final int questionsPerPage = 10;
   late int counter = 0;
   Timer? timer;
   int remainingTime = 0;
+
   ValueNotifier<String> timerDisplay = ValueNotifier<String>("");
-
-
-
-  
 }

@@ -28,6 +28,8 @@ class DL extends StatefulWidget {
 
 class _DLState extends State<DL> {
   final String data = "DL";
+  double userAccuracy = 0.0;
+
   AllVaraibles varaibles = AllVaraibles();
 
   @override
@@ -59,7 +61,7 @@ class _DLState extends State<DL> {
       final appUserState = context.read<AppUserCubit>().state;
       if (appUserState is AppUserLoggedIn) {
         final userId = appUserState.user.id;
-        varaibles.userAccuracy = prefs.getDouble('$data$userId') ?? 0.0;
+        userAccuracy = prefs.getDouble('$data$userId') ?? 0.0;
       }
     });
   }
@@ -85,19 +87,19 @@ class _DLState extends State<DL> {
 
     List<Question> filteredQuestions;
 
-    if (varaibles.userAccuracy < easyThreshold) {
+    if (userAccuracy < easyThreshold) {
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'easy').toList();
-      print("Selected Easy Questions - User Accuracy: $varaibles.userAccuracy");
-    } else if (varaibles.userAccuracy < mediumThreshold) {
+      print("Selected Easy Questions - User Accuracy: $userAccuracy");
+    } else if (userAccuracy < mediumThreshold) {
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'medium').toList();
       print(
-          "Selected Medium Questions - User Accuracy: $varaibles.userAccuracy");
-    } else if (varaibles.userAccuracy < hardThreshold) {
+          "Selected Medium Questions - User Accuracy: $userAccuracy");
+    } else if (userAccuracy < hardThreshold) {
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'hard').toList();
-      print("Selected Hard Questions - User Accuracy: $varaibles.userAccuracy");
+      print("Selected Hard Questions - User Accuracy: $userAccuracy");
     } else {
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'very_hard').toList();
@@ -189,8 +191,8 @@ class _DLState extends State<DL> {
         if (varaibles.consecutiveCorrectAnswers >=
             varaibles.difficultyThreshold) {
           varaibles.consecutiveCorrectAnswers = 0;
-          varaibles.userAccuracy =
-              min(varaibles.userAccuracy + 5, 100.0); // Cap at 100
+          userAccuracy =
+              min(userAccuracy + 5, 100.0); // Cap at 100
           _loadNewQuestions();
         }
       } else {
@@ -200,8 +202,8 @@ class _DLState extends State<DL> {
         if (varaibles.consecutiveIncorrectAnswers >=
             varaibles.decreaseDifficultyThreshold) {
           varaibles.consecutiveIncorrectAnswers = 0;
-          varaibles.userAccuracy =
-              max(varaibles.userAccuracy - 5, 0.0); // Cap at 0
+          userAccuracy =
+              max(userAccuracy - 5, 0.0); // Cap at 0
           _loadNewQuestions();
         }
       }
@@ -227,12 +229,12 @@ class _DLState extends State<DL> {
                             Icon(Icons.speed, size: 16, color: Colors.white70),
                             SizedBox(width: 5),
                             Text(
-                              'Accuracy: ${varaibles.userAccuracy.toStringAsFixed(1)}%',
+                              'Accuracy: ${userAccuracy.toStringAsFixed(1)}%',
                               style: TextStyle(
                                   fontSize: 14,
-                                  color: varaibles.userAccuracy < 50
+                                  color: userAccuracy < 50
                                       ? Colors.red
-                                      : varaibles.userAccuracy < 70
+                                      : userAccuracy < 70
                                           ? Colors.orange
                                           : Colors.green,
                                   fontWeight: FontWeight.w500),
@@ -492,8 +494,8 @@ class _DLState extends State<DL> {
       varaibles.timer?.cancel();
 
       await appendResultsToStatisticsFile(varaibles.selectedQuestions.length,
-          varaibles.correctAnswersCount, varaibles.userAccuracy);
-      saveUserAccuracy(varaibles.userAccuracy);
+          varaibles.correctAnswersCount, userAccuracy);
+      saveUserAccuracy(userAccuracy);
 
       Navigator.pushReplacement(
           context,
@@ -518,7 +520,7 @@ class _DLState extends State<DL> {
       await statsFile.writeAsString(
         'Total Questions: $totalQuestions\n'
         'Total Correct Answers: $totalCorrectAnswers\n'
-        'Accuracy: $varaibles.userAccuracy\n'
+        'Accuracy: $userAccuracy\n'
         'Correct: ${percentageCorrect.toStringAsFixed(2)}%\n'
         '---\n',
         mode: FileMode.append,

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:neclicensepreperation/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/varaibles.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,7 @@ class StatisticsChart extends StatefulWidget {
 }
 
 class _StatisticsChartState extends State<StatisticsChart> {
+  AllVaraibles varaibles = AllVaraibles();
   List<int> totalQuestionsList = [];
   List<int> totalCorrectAnswersList = [];
   List<double> percentageCorrectList = [];
