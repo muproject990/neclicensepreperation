@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neclicensepreperation/core/common/cubits/app_user/app_user_cubit.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
   @override
   Widget build(BuildContext context) {
     final appUserState = context.watch<AppUserCubit>().state;
@@ -16,7 +14,7 @@ class ProfilePage extends StatelessWidget {
       return Expanded(
         child: Scaffold(
           appBar: AppBar(
-            title: const Text("Profile"),
+            title: Text("Profile"),
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -26,12 +24,12 @@ class ProfilePage extends StatelessWidget {
                 // Welcome Greeting
                 Text(
                   "Welcome, ${user.name}!",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
 
                 // Profile Information
                 Card(
@@ -66,7 +64,7 @@ class ProfilePage extends StatelessWidget {
         ),
       );
     } else {
-      return const Scaffold(
+      return Scaffold(
         body: Center(
           child: Text("Please log in to view your profile."),
         ),
@@ -80,7 +78,7 @@ class ProfileInfoRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const ProfileInfoRow({super.key, required this.label, required this.value});
+  const ProfileInfoRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +89,7 @@ class ProfileInfoRow extends StatelessWidget {
         children: [
           Text(
             "$label:",
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),

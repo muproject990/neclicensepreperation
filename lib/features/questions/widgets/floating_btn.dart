@@ -6,11 +6,11 @@ class FloatingBtn extends StatefulWidget {
   final String buttonText;
 
   const FloatingBtn({
-    super.key,
+    Key? key,
     required this.onPressed,
     required this.icon,
     required this.buttonText,
-  });
+  }) : super(key: key);
 
   @override
   _FloatingBtnState createState() => _FloatingBtnState();

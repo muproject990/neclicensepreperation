@@ -35,7 +35,7 @@ class _ProjectState extends State<Project> {
 
   Timer? _timer;
   int _remainingTime = 0;
-  final ValueNotifier<String> _timerDisplay = ValueNotifier<String>("");
+  ValueNotifier<String> _timerDisplay = ValueNotifier<String>("");
 
   int totalQuestions = 0;
   int correctAnswersCount = 0;
@@ -243,8 +243,8 @@ class _ProjectState extends State<Project> {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.speed, size: 16, color: Colors.white70),
-                            const SizedBox(width: 5),
+                            Icon(Icons.speed, size: 16, color: Colors.white70),
+                            SizedBox(width: 5),
                             Text(
                               'Accuracy: ${userAccuracy.toStringAsFixed(1)}%',
                               style: TextStyle(
@@ -288,7 +288,7 @@ class _ProjectState extends State<Project> {
             ValueListenableBuilder<String>(
               valueListenable: _timerDisplay,
               builder: (context, value, child) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(20),
@@ -298,7 +298,7 @@ class _ProjectState extends State<Project> {
                     Icon(Icons.timer_outlined,
                         color: _remainingTime < 60 ? Colors.red : Colors.white,
                         size: 20),
-                    const SizedBox(width: 5),
+                    SizedBox(width: 5),
                     Text(
                       value,
                       style: TextStyle(
@@ -517,7 +517,7 @@ class _ProjectState extends State<Project> {
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
       final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/$data$userId.txt');
+      final statsFile = File('${directory.path}/${data}$userId.txt');
 
       double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
       await statsFile.writeAsString(
@@ -539,7 +539,7 @@ class _ProjectState extends State<Project> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Enter Desired Number of Questions"),
+          title: Text("Enter Desired Number of Questions"),
           content: TextField(
             keyboardType: TextInputType.number,
             onChanged: (value) {
@@ -551,7 +551,7 @@ class _ProjectState extends State<Project> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close dialog without saving
               },
-              child: const Text("Cancel"),
+              child: Text("Cancel"),
             ),
             TextButton(
               onPressed: () {
@@ -563,7 +563,7 @@ class _ProjectState extends State<Project> {
                 }
                 Navigator.of(context).pop(); // Close dialog and save
               },
-              child: const Text("Start Quiz"),
+              child: Text("Start Quiz"),
             ),
           ],
         );

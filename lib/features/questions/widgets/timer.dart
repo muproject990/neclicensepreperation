@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class QuizTimer extends StatefulWidget {
   final int duration; // in seconds
 
-  const QuizTimer({super.key, required this.duration});
+  const QuizTimer({Key? key, required this.duration}) : super(key: key);
 
   @override
   _QuizTimerState createState() => _QuizTimerState();
@@ -24,7 +24,7 @@ class _QuizTimerState extends State<QuizTimer> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_remainingTime > 0) {
         setState(() {
           _remainingTime--;
@@ -35,12 +35,12 @@ class _QuizTimerState extends State<QuizTimer> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Time is up!'),
-            content: const Text('You have reached the time limit.'),
+            title: Text('Time is up!'),
+            content: Text('You have reached the time limit.'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
+                child: Text('OK'),
               ),
             ],
           ),

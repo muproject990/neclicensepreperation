@@ -39,7 +39,7 @@ class _StatisticsChartState extends State<StatisticsChart> {
           _parseStatistics(fileContent);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("No statistics file found for this user.")),
+            SnackBar(content: Text("No statistics file found for this user.")),
           );
         }
       } catch (e) {
@@ -100,7 +100,7 @@ class _StatisticsChartState extends State<StatisticsChart> {
     final incorrectAnswers = totalQuestions - correctAnswers;
 
     return Card(
-      margin: const EdgeInsets.all(16),
+      margin: EdgeInsets.all(16),
       elevation: 6,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -124,13 +124,13 @@ class _StatisticsChartState extends State<StatisticsChart> {
                 ),
                 Text(
                   DateTime.now().toString().split(' ')[0],
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.grey,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // Statistics Row
             Row(
@@ -156,7 +156,7 @@ class _StatisticsChartState extends State<StatisticsChart> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // Percentage and Pie Chart
             Row(
@@ -178,7 +178,7 @@ class _StatisticsChartState extends State<StatisticsChart> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Accuracy',
                         style: TextStyle(
                           fontSize: 16,
@@ -213,10 +213,10 @@ class _StatisticsChartState extends State<StatisticsChart> {
     return Column(
       children: [
         Icon(icon, color: color, size: 30),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             color: Colors.grey,
           ),
@@ -251,7 +251,7 @@ class _StatisticsChartState extends State<StatisticsChart> {
         color: Colors.green,
         title: '${correctPercentage.toStringAsFixed(1)}%',
         radius: 50,
-        titleStyle: const TextStyle(
+        titleStyle: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
           color: Colors.white,
@@ -262,7 +262,7 @@ class _StatisticsChartState extends State<StatisticsChart> {
         color: Colors.red,
         title: '${incorrectPercentage.toStringAsFixed(1)}%',
         radius: 50,
-        titleStyle: const TextStyle(
+        titleStyle: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
           color: Colors.white,

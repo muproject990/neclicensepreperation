@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class VideoGuidePage extends StatefulWidget {
   final String query;
 
-  const VideoGuidePage({super.key, required this.query});
+  const VideoGuidePage({Key? key, required this.query}) : super(key: key);
 
   @override
   _VideoGuidePageState createState() => _VideoGuidePageState();
