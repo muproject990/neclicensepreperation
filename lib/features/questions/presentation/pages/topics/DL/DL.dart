@@ -11,6 +11,7 @@ import 'package:neclicensepreperation/features/questions/presentation/bloc/quest
 import 'package:neclicensepreperation/features/questions/presentation/pages/AI_Chatbot/AIBOT.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/stats.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/main_page_mcq.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/varaibles.dart';
 import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
 import 'package:neclicensepreperation/features/questions/widgets/optionbutton.dart';
 import 'package:neclicensepreperation/features/questions/widgets/videoplayer.dart';
@@ -27,29 +28,7 @@ class DL extends StatefulWidget {
 
 class _DLState extends State<DL> {
   final String data = "DL";
-
-  Timer? _timer;
-  int _remainingTime = 0;
-  ValueNotifier<String> _timerDisplay = ValueNotifier<String>("");
-  int desiredQuestions = 20;
-  List<String?> userAnswers = [];
-  List<String> correctAnswers = [];
-  List<Question> selectedQuestions = [];
-  late String user;
-
-  int totalQuestions = 0;
-  int correctAnswersCount = 0;
-  double userAccuracy = 0.0;
-  List<int> responseTimes = [];
-  DateTime? questionStartTime;
-
-  int consecutiveCorrectAnswers = 0;
-  int consecutiveIncorrectAnswers = 0;
-  int difficultyThreshold = 5;
-  int decreaseDifficultyThreshold = 2;
-  int currentPage = 0;
-  final int questionsPerPage = 5;
-  late int counter = 0;
+  AllVaraibles varaibles = AllVaraibles();
 
   @override
   void initState() {
@@ -80,21 +59,21 @@ class _DLState extends State<DL> {
       final appUserState = context.read<AppUserCubit>().state;
       if (appUserState is AppUserLoggedIn) {
         final userId = appUserState.user.id;
-        userAccuracy = prefs.getDouble('$data$userId') ?? 0.0;
+        varaibles.userAccuracy = prefs.getDouble('$data$userId') ?? 0.0;
       }
     });
   }
 
   void _loadNewQuestions() {
-    final questions =
-        (context.read<QuestionBloc>().state as QuestionDisplaySuccess)
-            .questions;
+    final questions = (context.read<QuestionBloc>().state).questions;
     setState(() {
-      selectedQuestions =
-          selectQuestionsByDifficulty(questions, desiredQuestions);
-      userAnswers = List<String?>.filled(selectedQuestions.length, null);
-      correctAnswers = selectedQuestions.map((q) => q.answer).toList();
-      _startTimer(selectedQuestions.length);
+      varaibles.selectedQuestions =
+          selectQuestionsByDifficulty(questions, varaibles.desiredQuestions);
+      varaibles.userAnswers =
+          List<String?>.filled(varaibles.selectedQuestions.length, null);
+      varaibles.correctAnswers =
+          varaibles.selectedQuestions.map((q) => q.answer).toList();
+      _startTimer(varaibles.selectedQuestions.length);
     });
   }
 
@@ -106,18 +85,19 @@ class _DLState extends State<DL> {
 
     List<Question> filteredQuestions;
 
-    if (userAccuracy < easyThreshold) {
+    if (varaibles.userAccuracy < easyThreshold) {
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'easy').toList();
-      print("Selected Easy Questions - User Accuracy: $userAccuracy");
-    } else if (userAccuracy < mediumThreshold) {
+      print("Selected Easy Questions - User Accuracy: $varaibles.userAccuracy");
+    } else if (varaibles.userAccuracy < mediumThreshold) {
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'medium').toList();
-      print("Selected Medium Questions - User Accuracy: $userAccuracy");
-    } else if (userAccuracy < hardThreshold) {
+      print(
+          "Selected Medium Questions - User Accuracy: $varaibles.userAccuracy");
+    } else if (varaibles.userAccuracy < hardThreshold) {
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'hard').toList();
-      print("Selected Hard Questions - User Accuracy: $userAccuracy");
+      print("Selected Hard Questions - User Accuracy: $varaibles.userAccuracy");
     } else {
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'very_hard').toList();
@@ -135,32 +115,34 @@ class _DLState extends State<DL> {
       final questions =
           (context.read<QuestionBloc>().state as QuestionDisplaySuccess)
               .questions;
-      selectedQuestions =
-          selectQuestionsByDifficulty(questions, desiredQuestions);
+      varaibles.selectedQuestions =
+          selectQuestionsByDifficulty(questions, varaibles.desiredQuestions);
 
-      userAnswers = List<String?>.filled(selectedQuestions.length, null);
-      correctAnswers = selectedQuestions.map((q) => q.answer).toList();
-      _startTimer(selectedQuestions.length);
+      varaibles.userAnswers =
+          List<String?>.filled(varaibles.selectedQuestions.length, null);
+      varaibles.correctAnswers =
+          varaibles.selectedQuestions.map((q) => q.answer).toList();
+      _startTimer(varaibles.selectedQuestions.length);
     }
   }
 
   void _startTimer(int totalQuestions) {
-    _remainingTime = totalQuestions * 20;
+    varaibles.remainingTime = totalQuestions * 20;
     _updateTimerDisplay();
 
     // Cancel any existing timer before starting a new one
-    _timer?.cancel();
+    varaibles.timer?.cancel();
 
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    varaibles.timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) {
         // If the widget is unmounted, cancel the timer and return early
         timer.cancel();
         return;
       }
 
-      if (_remainingTime <= 0) {
+      if (varaibles.remainingTime <= 0) {
         timer.cancel();
-        if (userAnswers.isNotEmpty) {
+        if (varaibles.userAnswers.isNotEmpty) {
           showSnackBar(
               context, "Time is up! Your answers have not been submitted.");
 
@@ -170,7 +152,7 @@ class _DLState extends State<DL> {
           }
         }
       } else {
-        _remainingTime--;
+        varaibles.remainingTime--;
         _updateTimerDisplay();
       }
     });
@@ -178,44 +160,48 @@ class _DLState extends State<DL> {
 
   @override
   void dispose() {
-    _timer?.cancel(); // Cancel the timer when the widget is disposed
+    varaibles.timer?.cancel(); // Cancel the timer when the widget is disposed
     super.dispose();
   }
 
   void _updateTimerDisplay() {
-    int minutes = _remainingTime ~/ 60;
-    int seconds = _remainingTime % 60;
-    _timerDisplay.value =
+    int minutes = varaibles.remainingTime ~/ 60;
+    int seconds = varaibles.remainingTime % 60;
+    varaibles.timerDisplay.value =
         "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
   }
 
   void _handleOptionSelection(int index, String selectedOption) {
     setState(() {
-      userAnswers[index] = selectedOption;
-      counter++; // Increase counter for every answered question
+      varaibles.userAnswers[index] = selectedOption;
+      varaibles.counter++; // Increase counter for every answered question
 
-      if (counter == desiredQuestions) {
+      if (varaibles.counter == varaibles.desiredQuestions) {
         _submitResults(); // Submit when 20 questions are answered
         return;
       }
 
-      if (selectedOption == correctAnswers[index]) {
-        correctAnswersCount++;
-        consecutiveCorrectAnswers++;
-        consecutiveIncorrectAnswers = 0;
+      if (selectedOption == varaibles.correctAnswers[index]) {
+        varaibles.correctAnswersCount++;
+        varaibles.consecutiveCorrectAnswers++;
+        varaibles.consecutiveIncorrectAnswers = 0;
 
-        if (consecutiveCorrectAnswers >= difficultyThreshold) {
-          consecutiveCorrectAnswers = 0;
-          userAccuracy = min(userAccuracy + 5, 100.0); // Cap at 100
+        if (varaibles.consecutiveCorrectAnswers >=
+            varaibles.difficultyThreshold) {
+          varaibles.consecutiveCorrectAnswers = 0;
+          varaibles.userAccuracy =
+              min(varaibles.userAccuracy + 5, 100.0); // Cap at 100
           _loadNewQuestions();
         }
       } else {
-        consecutiveIncorrectAnswers++;
-        consecutiveCorrectAnswers = 0;
+        varaibles.consecutiveIncorrectAnswers++;
+        varaibles.consecutiveCorrectAnswers = 0;
 
-        if (consecutiveIncorrectAnswers >= decreaseDifficultyThreshold) {
-          consecutiveIncorrectAnswers = 0;
-          userAccuracy = max(userAccuracy - 5, 0.0); // Cap at 0
+        if (varaibles.consecutiveIncorrectAnswers >=
+            varaibles.decreaseDifficultyThreshold) {
+          varaibles.consecutiveIncorrectAnswers = 0;
+          varaibles.userAccuracy =
+              max(varaibles.userAccuracy - 5, 0.0); // Cap at 0
           _loadNewQuestions();
         }
       }
@@ -241,12 +227,12 @@ class _DLState extends State<DL> {
                             Icon(Icons.speed, size: 16, color: Colors.white70),
                             SizedBox(width: 5),
                             Text(
-                              'Accuracy: ${userAccuracy.toStringAsFixed(1)}%',
+                              'Accuracy: ${varaibles.userAccuracy.toStringAsFixed(1)}%',
                               style: TextStyle(
                                   fontSize: 14,
-                                  color: userAccuracy < 50
+                                  color: varaibles.userAccuracy < 50
                                       ? Colors.red
-                                      : userAccuracy < 70
+                                      : varaibles.userAccuracy < 70
                                           ? Colors.orange
                                           : Colors.green,
                                   fontWeight: FontWeight.w500),
@@ -260,14 +246,16 @@ class _DLState extends State<DL> {
                                 size: 16, color: Colors.white70),
                             const SizedBox(width: 5),
                             Text(
-                              'Answered: $counter/${selectedQuestions.length}',
+                              'Answered: ${varaibles.counter}/${varaibles.selectedQuestions.length}',
                               style: TextStyle(
                                   fontSize: 14,
-                                  color: totalQuestions <
-                                          selectedQuestions.length / 2
+                                  color: varaibles.totalQuestions <
+                                          varaibles.selectedQuestions.length / 2
                                       ? Colors.red
-                                      : totalQuestions <
-                                              selectedQuestions.length * 0.8
+                                      : varaibles.totalQuestions <
+                                              varaibles.selectedQuestions
+                                                      .length *
+                                                  0.8
                                           ? Colors.orange
                                           : Colors.green,
                                   fontWeight: FontWeight.w500),
@@ -281,7 +269,7 @@ class _DLState extends State<DL> {
               ],
             ),
             ValueListenableBuilder<String>(
-              valueListenable: _timerDisplay,
+              valueListenable: varaibles.timerDisplay,
               builder: (context, value, child) => Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
@@ -291,7 +279,9 @@ class _DLState extends State<DL> {
                 child: Row(
                   children: [
                     Icon(Icons.timer_outlined,
-                        color: _remainingTime < 60 ? Colors.red : Colors.white,
+                        color: varaibles.remainingTime < 60
+                            ? Colors.red
+                            : Colors.white,
                         size: 20),
                     SizedBox(width: 5),
                     Text(
@@ -299,8 +289,9 @@ class _DLState extends State<DL> {
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color:
-                              _remainingTime < 60 ? Colors.red : Colors.white),
+                          color: varaibles.remainingTime < 60
+                              ? Colors.red
+                              : Colors.white),
                     ),
                   ],
                 ),
@@ -321,17 +312,18 @@ class _DLState extends State<DL> {
           if (state is QuestionLoading) {
             return const Loader();
           } else if (state is QuestionDisplaySuccess) {
-            if (selectedQuestions.isEmpty) {
+            if (varaibles.selectedQuestions.isEmpty) {
               return const Center(child: Text("No questions available."));
             }
 
-            int startIndex = currentPage * questionsPerPage;
-            int endIndex = startIndex + questionsPerPage;
-            List<Question> questionsToDisplay = selectedQuestions.sublist(
-                startIndex,
-                endIndex > selectedQuestions.length
-                    ? selectedQuestions.length
-                    : endIndex);
+            int startIndex = varaibles.currentPage * varaibles.questionsPerPage;
+            int endIndex = startIndex + varaibles.questionsPerPage;
+            List<Question> questionsToDisplay = varaibles.selectedQuestions
+                .sublist(
+                    startIndex,
+                    endIndex > varaibles.selectedQuestions.length
+                        ? varaibles.selectedQuestions.length
+                        : endIndex);
 
             return Column(children: [
               Expanded(
@@ -362,38 +354,46 @@ class _DLState extends State<DL> {
                         const SizedBox(height: 20),
                         OptionButton(
                           text: question.option1,
-                          isSelected: userAnswers[index] == question.option1,
+                          isSelected:
+                              varaibles.userAnswers[index] == question.option1,
                           onPressed: () =>
                               _handleOptionSelection(index, question.option1),
-                          isCorrect: userAnswers[index] == question.answer,
-                          isDisabled: userAnswers[index] != null,
+                          isCorrect:
+                              varaibles.userAnswers[index] == question.answer,
+                          isDisabled: varaibles.userAnswers[index] != null,
                         ),
                         const SizedBox(height: 10),
                         OptionButton(
                           text: question.option2,
-                          isSelected: userAnswers[index] == question.option2,
+                          isSelected:
+                              varaibles.userAnswers[index] == question.option2,
                           onPressed: () =>
                               _handleOptionSelection(index, question.option2),
-                          isCorrect: userAnswers[index] == question.answer,
-                          isDisabled: userAnswers[index] != null,
+                          isCorrect:
+                              varaibles.userAnswers[index] == question.answer,
+                          isDisabled: varaibles.userAnswers[index] != null,
                         ),
                         const SizedBox(height: 10),
                         OptionButton(
                           text: question.option3,
-                          isSelected: userAnswers[index] == question.option3,
+                          isSelected:
+                              varaibles.userAnswers[index] == question.option3,
                           onPressed: () =>
                               _handleOptionSelection(index, question.option3),
-                          isCorrect: userAnswers[index] == question.answer,
-                          isDisabled: userAnswers[index] != null,
+                          isCorrect:
+                              varaibles.userAnswers[index] == question.answer,
+                          isDisabled: varaibles.userAnswers[index] != null,
                         ),
                         const SizedBox(height: 10),
                         OptionButton(
                           text: question.option4,
-                          isSelected: userAnswers[index] == question.option4,
+                          isSelected:
+                              varaibles.userAnswers[index] == question.option4,
                           onPressed: () =>
                               _handleOptionSelection(index, question.option4),
-                          isCorrect: userAnswers[index] == question.answer,
-                          isDisabled: userAnswers[index] != null,
+                          isCorrect:
+                              varaibles.userAnswers[index] == question.answer,
+                          isDisabled: varaibles.userAnswers[index] != null,
                         ),
                         const SizedBox(height: 20),
                         Row(
@@ -466,7 +466,7 @@ class _DLState extends State<DL> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 55),
                       ],
                     );
                   },
@@ -489,11 +489,11 @@ class _DLState extends State<DL> {
 
   Future<void> _submitResults() async {
     try {
-      _timer?.cancel();
+      varaibles.timer?.cancel();
 
-      await appendResultsToStatisticsFile(
-          selectedQuestions.length, correctAnswersCount, userAccuracy);
-      saveUserAccuracy(userAccuracy);
+      await appendResultsToStatisticsFile(varaibles.selectedQuestions.length,
+          varaibles.correctAnswersCount, varaibles.userAccuracy);
+      saveUserAccuracy(varaibles.userAccuracy);
 
       Navigator.pushReplacement(
           context,
@@ -518,7 +518,7 @@ class _DLState extends State<DL> {
       await statsFile.writeAsString(
         'Total Questions: $totalQuestions\n'
         'Total Correct Answers: $totalCorrectAnswers\n'
-        'Accuracy: $userAccuracy\n'
+        'Accuracy: $varaibles.userAccuracy\n'
         'Correct: ${percentageCorrect.toStringAsFixed(2)}%\n'
         '---\n',
         mode: FileMode.append,
@@ -552,7 +552,7 @@ class _DLState extends State<DL> {
               onPressed: () {
                 if (tempCount != null && tempCount! > 0) {
                   setState(() {
-                    desiredQuestions = tempCount!;
+                    varaibles.desiredQuestions = tempCount!;
                   });
                   _loadNewQuestions(); // Load questions based on new count
                 }
