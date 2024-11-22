@@ -6,15 +6,15 @@ class PieChartWidget extends StatelessWidget {
   final int incorrectAnswers;
 
   const PieChartWidget({
-    Key? key,
+    super.key,
     required this.correctAnswers,
     required this.incorrectAnswers,
-  }) : super(key: key);
+  });
 
 // nkbkj
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 250, // Define a height for the PieChart
       child: PieChart(
         PieChartData(

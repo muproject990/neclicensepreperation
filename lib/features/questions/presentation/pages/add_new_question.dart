@@ -129,7 +129,7 @@ class _AddNewQuestionState extends State<AddNewQuestion> {
                                   },
                                   child: Chip(
                                     color: seletedTopice.contains(e)
-                                        ? const MaterialStatePropertyAll(
+                                        ? const WidgetStatePropertyAll(
                                             AppPallete.gradient2)
                                         : null,
                                     side: seletedTopice.contains(e)

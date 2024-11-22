@@ -17,16 +17,16 @@ import 'package:neclicensepreperation/features/questions/widgets/videoplayer.dar
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AI extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context) => const AI());
-  const AI({super.key});
+class NETWORK extends StatefulWidget {
+  static route() => MaterialPageRoute(builder: (context) => const NETWORK());
+  const NETWORK({super.key});
 
   @override
-  State<AI> createState() => _AIState();
+  State<NETWORK> createState() => _NETWORKState();
 }
 
-class _AIState extends State<AI> {
-  final String data = "AI";
+class _NETWORKState extends State<NETWORK> {
+  final String data = "NETWORK";
   int desiredQuestions = 20;
   List<String?> userAnswers = [];
   List<String> correctAnswers = [];
@@ -56,7 +56,7 @@ class _AIState extends State<AI> {
     super.initState();
 
     loadUserAccuracy();
-    context.read<QuestionBloc>().add(QuestionFetchAIQuestions());
+    context.read<QuestionBloc>().add(QuestionFetchNETWORKQuestions());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         showQuestionCountDialog();

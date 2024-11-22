@@ -3,7 +3,6 @@ import 'package:neclicensepreperation/features/auth/presentation/signup_page.dar
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/stats.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/profile.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/main_page_mcq.dart';
-import 'package:neclicensepreperation/features/questions/presentation/pages/AI_Chatbot/AIBOT.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class IntroPage extends StatefulWidget {

@@ -16,8 +16,8 @@ class _AIBOTState extends State<AIBOT> {
   final TextEditingController _controller = TextEditingController();
   final gemini = Gemini.instance;
   late stt.SpeechToText _speech;
-  bool _isListening = false;
-  String _speechText = "";
+  final bool _isListening = false;
+  final String _speechText = "";
 
   @override
   void initState() {
@@ -93,19 +93,19 @@ class _AIBOTState extends State<AIBOT> {
                             ? Colors.lightBlue[100]
                             : Colors.lightGreen[100],
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(8.0),
-                          topRight: Radius.circular(8.0),
+                          topLeft: const Radius.circular(8.0),
+                          topRight: const Radius.circular(8.0),
                           bottomLeft:
-                              isUser ? Radius.zero : Radius.circular(8.0),
+                              isUser ? Radius.zero : const Radius.circular(8.0),
                           bottomRight:
-                              isUser ? Radius.circular(8.0) : Radius.zero,
+                              isUser ? const Radius.circular(8.0) : Radius.zero,
                         ),
                       ),
                       child: Text(
                         messages[index]
                             .substring(messages[index].indexOf(":") + 1)
                             .trim(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16.0,
                           color: Colors.black,
                         ),
@@ -127,7 +127,7 @@ class _AIBOTState extends State<AIBOT> {
                       hintText: 'Type a message...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
-                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderSide: const BorderSide(color: Colors.blueAccent),
                       ),
                       filled: true,
                       fillColor: const Color.fromARGB(255, 35, 1, 1),

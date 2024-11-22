@@ -30,4 +30,10 @@ final class QuestionFetchProgrammingQuestions extends QuestionEvent {}
 
 final class QuestionFetchAIQuestions extends QuestionEvent {}
 
+final class QuestionFetchCOAQuestions extends QuestionEvent {}
+
+final class QuestionFetchNETWORKQuestions extends QuestionEvent {}
+
+final class QuestionFetchProjectPlanningQuestions extends QuestionEvent {}
+
 final class QuestionFetchTocQuestions extends QuestionEvent {}

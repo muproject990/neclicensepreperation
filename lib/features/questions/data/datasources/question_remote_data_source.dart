@@ -8,6 +8,9 @@ abstract interface class QuestionRemoteDataSource {
   Future<List<QuestionModel>> getProgrammingQuestions();
   Future<List<QuestionModel>> getAiQuestion();
   Future<List<QuestionModel>> getTocQuestion();
+  Future<List<QuestionModel>> getCOAQuestion();
+  Future<List<QuestionModel>> getNetworkQuestion();
+  Future<List<QuestionModel>> getProjectPlanningQuestion();
   Future<List<QuestionModel>> getDsaQuestion();
 }
 
@@ -84,6 +87,39 @@ class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
   Future<List<QuestionModel>> getAiQuestion() async {
     try {
       final questions = await supabaseClient.from('neural').select("*");
+
+      return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<QuestionModel>> getCOAQuestion() async {
+    try {
+      final questions = await supabaseClient.from('coa').select("*");
+
+      return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<QuestionModel>> getNetworkQuestion() async {
+    try {
+      final questions = await supabaseClient.from('network').select("*");
+
+      return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<QuestionModel>> getProjectPlanningQuestion() async {
+    try {
+      final questions = await supabaseClient.from('project').select("*");
 
       return questions.map((ques) => QuestionModel.fromJson(ques)).toList();
     } catch (e) {

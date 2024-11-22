@@ -1,7 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:neclicensepreperation/core/error/failure.dart';
 import 'package:neclicensepreperation/features/questions/domain/entities/question.dart';
-import 'package:neclicensepreperation/features/questions/domain/usecases/get_all_ai_question.dart';
 
 abstract interface class QuestionRepository {
   Future<Either<Failure, Question>> uploadQuestion({
@@ -19,5 +18,8 @@ abstract interface class QuestionRepository {
   Future<Either<Failure, List<Question>>> getAllQuestion();
   Future<Either<Failure, List<Question>>> getProgrammingQuestions();
   Future<Either<Failure, List<Question>>> getAllAIQuestion();
+  Future<Either<Failure, List<Question>>> getAllCOAQuestion();
+  Future<Either<Failure, List<Question>>> getAllNetworkQuestion();
+  Future<Either<Failure, List<Question>>> getAllProjPlanningQuestion();
   Future<Either<Failure, List<Question>>> getTocQuestions();
 }

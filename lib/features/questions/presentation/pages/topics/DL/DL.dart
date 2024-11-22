@@ -35,7 +35,7 @@ class _DLState extends State<DL> {
 
   Timer? _timer;
   int _remainingTime = 0;
-  ValueNotifier<String> _timerDisplay = ValueNotifier<String>("");
+  final ValueNotifier<String> _timerDisplay = ValueNotifier<String>("");
 
   int totalQuestions = 0;
   int correctAnswersCount = 0;
@@ -238,8 +238,8 @@ class _DLState extends State<DL> {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.speed, size: 16, color: Colors.white70),
-                            SizedBox(width: 5),
+                            const Icon(Icons.speed, size: 16, color: Colors.white70),
+                            const SizedBox(width: 5),
                             Text(
                               'Accuracy: ${userAccuracy.toStringAsFixed(1)}%',
                               style: TextStyle(
@@ -283,7 +283,7 @@ class _DLState extends State<DL> {
             ValueListenableBuilder<String>(
               valueListenable: _timerDisplay,
               builder: (context, value, child) => Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(20),
@@ -293,7 +293,7 @@ class _DLState extends State<DL> {
                     Icon(Icons.timer_outlined,
                         color: _remainingTime < 60 ? Colors.red : Colors.white,
                         size: 20),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text(
                       value,
                       style: TextStyle(
@@ -512,7 +512,7 @@ class _DLState extends State<DL> {
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
       final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/${data}$userId.txt');
+      final statsFile = File('${directory.path}/$data$userId.txt');
 
       double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
       await statsFile.writeAsString(
@@ -534,7 +534,7 @@ class _DLState extends State<DL> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Enter Desired Number of Questions"),
+          title: const Text("Enter Desired Number of Questions"),
           content: TextField(
             keyboardType: TextInputType.number,
             onChanged: (value) {
@@ -546,7 +546,7 @@ class _DLState extends State<DL> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close dialog without saving
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
             TextButton(
               onPressed: () {
@@ -558,7 +558,7 @@ class _DLState extends State<DL> {
                 }
                 Navigator.of(context).pop(); // Close dialog and save
               },
-              child: Text("Start Quiz"),
+              child: const Text("Start Quiz"),
             ),
           ],
         );

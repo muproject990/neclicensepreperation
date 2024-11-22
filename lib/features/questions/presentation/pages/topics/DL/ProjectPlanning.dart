@@ -17,16 +17,16 @@ import 'package:neclicensepreperation/features/questions/widgets/videoplayer.dar
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AI extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context) => const AI());
-  const AI({super.key});
+class Project extends StatefulWidget {
+  static route() => MaterialPageRoute(builder: (context) => const Project());
+  const Project({super.key});
 
   @override
-  State<AI> createState() => _AIState();
+  State<Project> createState() => _ProjectState();
 }
 
-class _AIState extends State<AI> {
-  final String data = "AI";
+class _ProjectState extends State<Project> {
+  final String data = "Project";
   int desiredQuestions = 20;
   List<String?> userAnswers = [];
   List<String> correctAnswers = [];
@@ -48,7 +48,7 @@ class _AIState extends State<AI> {
   int difficultyThreshold = 5;
   int decreaseDifficultyThreshold = 2;
   int currentPage = 0;
-  final int questionsPerPage = 10;
+  final int questionsPerPage = 5;
   late int counter = 0;
 
   @override
@@ -56,7 +56,7 @@ class _AIState extends State<AI> {
     super.initState();
 
     loadUserAccuracy();
-    context.read<QuestionBloc>().add(QuestionFetchAIQuestions());
+    context.read<QuestionBloc>().add(QuestionFetchProjectPlanningQuestions());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         showQuestionCountDialog();
@@ -86,16 +86,20 @@ class _AIState extends State<AI> {
   }
 
   void _loadNewQuestions() {
-    final questions =
-        (context.read<QuestionBloc>().state as QuestionDisplaySuccess)
-            .questions;
-    setState(() {
-      selectedQuestions =
-          selectQuestionsByDifficulty(questions, desiredQuestions);
-      userAnswers = List<String?>.filled(selectedQuestions.length, null);
-      correctAnswers = selectedQuestions.map((q) => q.answer).toList();
-      _startTimer(selectedQuestions.length);
-    });
+    final currentState = context.read<QuestionBloc>().state;
+    if (currentState is QuestionDisplaySuccess) {
+      final questions = currentState.questions;
+      setState(() {
+        selectedQuestions =
+            selectQuestionsByDifficulty(questions, desiredQuestions);
+        userAnswers = List<String?>.filled(selectedQuestions.length, null);
+        correctAnswers = selectedQuestions.map((q) => q.answer).toList();
+        _startTimer(selectedQuestions.length);
+      });
+    } else if (currentState is QuestionFailure) {
+      showSnackBar(context,
+          currentState.error); // Show an error if state is QuestionFailure
+    }
   }
 
   List<Question> selectQuestionsByDifficulty(
@@ -131,16 +135,17 @@ class _AIState extends State<AI> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    if (context.read<QuestionBloc>().state is QuestionDisplaySuccess) {
-      final questions =
-          (context.read<QuestionBloc>().state as QuestionDisplaySuccess)
-              .questions;
+    final currentState = context.read<QuestionBloc>().state;
+    if (currentState is QuestionDisplaySuccess) {
+      final questions = currentState.questions;
       selectedQuestions =
           selectQuestionsByDifficulty(questions, desiredQuestions);
-
       userAnswers = List<String?>.filled(selectedQuestions.length, null);
       correctAnswers = selectedQuestions.map((q) => q.answer).toList();
       _startTimer(selectedQuestions.length);
+    } else if (currentState is QuestionFailure) {
+      showSnackBar(
+          context, currentState.error); // Handle the failure state here
     }
   }
 
@@ -466,7 +471,7 @@ class _AIState extends State<AI> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 55),
+                        const SizedBox(height: 20),
                       ],
                     );
                   },

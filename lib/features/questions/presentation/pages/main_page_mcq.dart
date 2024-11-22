@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neclicensepreperation/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/add_new_question.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/AI.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/COA.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/DL.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/Network.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/Programming.dart';
-import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/TOC.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/ProjectPlanning.dart';
 import 'package:neclicensepreperation/features/questions/widgets/gradient_button.dart';
 
 class MCQMainPage extends StatefulWidget {
@@ -72,17 +74,17 @@ class _MCQMainPageState extends State<MCQMainPage> {
                   GradientBtn(
                     buttonText: "Theory Of Computation",
                     onPressed: () {
-                      Navigator.push(context, TOC.route());
+                      Navigator.push(context, AI.route());
                     },
                   ),
                   const SizedBox(height: 20),
                   GradientBtn(
                     buttonText: "DSA,Database System and operating system",
                     onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   Programming.route(),
-                      // );
+                      Navigator.push(
+                        context,
+                        Programming.route(),
+                      );
                     },
                   ),
                   const SizedBox(height: 20),
@@ -91,7 +93,7 @@ class _MCQMainPageState extends State<MCQMainPage> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        Programming.route(),
+                        COA.route(),
                       );
                     },
                   ),
@@ -101,7 +103,7 @@ class _MCQMainPageState extends State<MCQMainPage> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        Neural.route(),
+                        AI.route(),
                       );
                     },
                   ),
@@ -111,7 +113,7 @@ class _MCQMainPageState extends State<MCQMainPage> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        Programming.route(),
+                        NETWORK.route(),
                       );
                     },
                   ),
@@ -121,7 +123,7 @@ class _MCQMainPageState extends State<MCQMainPage> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        Programming.route(),
+                        Project.route(),
                       );
                     },
                   ),

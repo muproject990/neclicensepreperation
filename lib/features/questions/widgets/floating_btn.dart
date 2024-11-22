@@ -6,11 +6,11 @@ class FloatingBtn extends StatefulWidget {
   final String buttonText;
 
   const FloatingBtn({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.icon,
     required this.buttonText,
-  }) : super(key: key);
+  });
 
   @override
   _FloatingBtnState createState() => _FloatingBtnState();
@@ -49,14 +49,14 @@ class _FloatingBtnState extends State<FloatingBtn>
         },
         onTapCancel: () => _controller.reverse(),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [Color(0xFF6C63FF), Color(0xFF3A3A9D)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.2),

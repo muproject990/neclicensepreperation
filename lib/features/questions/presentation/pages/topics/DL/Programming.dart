@@ -13,6 +13,7 @@ import 'package:neclicensepreperation/features/questions/presentation/pages/bott
 import 'package:neclicensepreperation/features/questions/presentation/pages/main_page_mcq.dart';
 import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
 import 'package:neclicensepreperation/features/questions/widgets/optionbutton.dart';
+import 'package:neclicensepreperation/features/questions/widgets/videoplayer.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,7 +36,7 @@ class _ProgrammingState extends State<Programming> {
 
   Timer? _timer;
   int _remainingTime = 0;
-  ValueNotifier<String> _timerDisplay = ValueNotifier<String>("");
+  final ValueNotifier<String> _timerDisplay = ValueNotifier<String>("");
 
   int totalQuestions = 0;
   int correctAnswersCount = 0;
@@ -48,7 +49,7 @@ class _ProgrammingState extends State<Programming> {
   int difficultyThreshold = 5;
   int decreaseDifficultyThreshold = 2;
   int currentPage = 0;
-  final int questionsPerPage = 5;
+  final int questionsPerPage = 10;
   late int counter = 0;
 
   @override
@@ -238,8 +239,8 @@ class _ProgrammingState extends State<Programming> {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.speed, size: 16, color: Colors.white70),
-                            SizedBox(width: 5),
+                            const Icon(Icons.speed, size: 16, color: Colors.white70),
+                            const SizedBox(width: 5),
                             Text(
                               'Accuracy: ${userAccuracy.toStringAsFixed(1)}%',
                               style: TextStyle(
@@ -283,7 +284,7 @@ class _ProgrammingState extends State<Programming> {
             ValueListenableBuilder<String>(
               valueListenable: _timerDisplay,
               builder: (context, value, child) => Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(20),
@@ -293,7 +294,7 @@ class _ProgrammingState extends State<Programming> {
                     Icon(Icons.timer_outlined,
                         color: _remainingTime < 60 ? Colors.red : Colors.white,
                         size: 20),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text(
                       value,
                       style: TextStyle(
@@ -395,48 +396,78 @@ class _ProgrammingState extends State<Programming> {
                           isCorrect: userAnswers[index] == question.answer,
                           isDisabled: userAnswers[index] != null,
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AIBOT(
-                                        question.question,
-                                      )),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 12.0,
-                                horizontal:
-                                    16.0), // Add padding for better spacing
-                            margin: const EdgeInsets.all(
-                                8.0), // Add margin around the container
-                            decoration: BoxDecoration(
-                              color: Colors.blueAccent, // Background color
-                              borderRadius: BorderRadius.circular(
-                                  12.0), // Rounded corners
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black26, // Shadow color
-                                  blurRadius: 4.0, // Blur radius
-                                  offset: Offset(2.0, 2.0), // Shadow offset
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AIBOT(
+                                      question.question,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12.0, horizontal: 16.0),
+                                margin: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(255, 33, 65, 120),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4.0,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            child: const Text(
-                              "Have Doubts",
-                              style: TextStyle(
-                                color: Colors.amber, // Text color
-                                fontSize:
-                                    18.0, // Increased font size for better visibility
-                                fontWeight:
-                                    FontWeight.bold, // Bold text for emphasis
+                                child: const Text(
+                                  "Have Doubts",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18.0),
+                                ),
                               ),
                             ),
-                          ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => VideoGuidePage(
+                                        query: question.question),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12.0, horizontal: 16.0),
+                                margin: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(255, 246, 0, 74),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4.0,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                                child: const Text(
+                                  "Video Guide",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18.0),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 55),
                       ],
                     );
                   },
@@ -452,7 +483,7 @@ class _ProgrammingState extends State<Programming> {
       floatingActionButton: FloatingBtn(
         onPressed: _submitResults,
         icon: Icons.check,
-        buttonText: 'Done',
+        buttonText: 'Submit',
       ),
     );
   }
@@ -482,7 +513,7 @@ class _ProgrammingState extends State<Programming> {
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
       final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/${data}$userId.txt');
+      final statsFile = File('${directory.path}/$data$userId.txt');
 
       double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
       await statsFile.writeAsString(
@@ -504,7 +535,7 @@ class _ProgrammingState extends State<Programming> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Enter Desired Number of Questions"),
+          title: const Text("Enter Desired Number of Questions"),
           content: TextField(
             keyboardType: TextInputType.number,
             onChanged: (value) {
@@ -516,7 +547,7 @@ class _ProgrammingState extends State<Programming> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close dialog without saving
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
             TextButton(
               onPressed: () {
@@ -528,7 +559,7 @@ class _ProgrammingState extends State<Programming> {
                 }
                 Navigator.of(context).pop(); // Close dialog and save
               },
-              child: Text("Start Quiz"),
+              child: const Text("Start Quiz"),
             ),
           ],
         );

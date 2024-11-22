@@ -85,4 +85,34 @@ class QuestionRepositoryImpl implements QuestionRepository {
       return left(Failure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, List<Question>>> getAllCOAQuestion() async {
+    try {
+      final question = await questionRemoteDataSource.getCOAQuestion();
+      return right(question);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Question>>> getAllNetworkQuestion() async {
+    try {
+      final question = await questionRemoteDataSource.getNetworkQuestion();
+      return right(question);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Question>>> getAllProjPlanningQuestion() async {
+    try {
+      final question = await questionRemoteDataSource.getProjectPlanningQuestion();
+      return right(question);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
 }

@@ -11,6 +11,8 @@ import 'package:neclicensepreperation/features/questions/data/repository/questio
 import 'package:neclicensepreperation/features/questions/domain/repositories/question_repo.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/get_all_ai_question.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/get_all_programming_question.dart';
+import 'package:neclicensepreperation/features/questions/domain/usecases/get_coa_q.dart';
+import 'package:neclicensepreperation/features/questions/domain/usecases/get_proj_planning_q.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/get_toc_question.dart';
 import 'package:neclicensepreperation/features/questions/domain/usecases/upload_question.dart';
 import 'package:neclicensepreperation/features/questions/presentation/bloc/question_bloc.dart';
@@ -124,16 +126,27 @@ void _initQuestion() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => GetAllCOAQuestion(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => GetProjPlanningQ(
+        serviceLocator(),
+      ),
+    )
     ..registerLazySingleton(
       () => QuestionBloc(
-          uploadQuestion: serviceLocator(),
-          getAllQuestion: serviceLocator(),
-          get_programming_questions: serviceLocator(),
-          getAllTocQuestion: serviceLocator(),
-          getAllAiQuestion: serviceLocator()
+        uploadQuestion: serviceLocator(),
+        getAllQuestion: serviceLocator(),
+        getprogrammingquestions: serviceLocator(),
+        getAllTocQuestion: serviceLocator(),
+        getAllAiQuestion: serviceLocator(),
+        getAllCOAQuestion: serviceLocator(),
+        getProjectPlanningQuestion: serviceLocator(),
 
-          // getdsa: serviceLocator(),
-          ),
+        // getdsa: serviceLocator(),
+      ),
     );
-  ;
 }

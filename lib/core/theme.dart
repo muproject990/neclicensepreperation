@@ -14,7 +14,7 @@ class AppTheme {
     scaffoldBackgroundColor: AppPallete.backgroundColor,
     chipTheme: const ChipThemeData(
         side: BorderSide.none,
-        color: MaterialStatePropertyAll(AppPallete.backgroundColor)),
+        color: WidgetStatePropertyAll(AppPallete.backgroundColor)),
     inputDecorationTheme: InputDecorationTheme(
       contentPadding: const EdgeInsets.all(27),
       enabledBorder: _border(),
