@@ -36,8 +36,8 @@ class _DLState extends State<DL> {
   void initState() {
     super.initState();
 
-    loadUserAccuracy();
     context.read<QuestionBloc>().add(QuestionFetchAllQuestions());
+    loadUserAccuracy();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         showQuestionCountDialog();
@@ -94,8 +94,7 @@ class _DLState extends State<DL> {
     } else if (userAccuracy < mediumThreshold) {
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'medium').toList();
-      print(
-          "Selected Medium Questions - User Accuracy: $userAccuracy");
+      print("Selected Medium Questions - User Accuracy: $userAccuracy");
     } else if (userAccuracy < hardThreshold) {
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'hard').toList();
@@ -191,8 +190,7 @@ class _DLState extends State<DL> {
         if (varaibles.consecutiveCorrectAnswers >=
             varaibles.difficultyThreshold) {
           varaibles.consecutiveCorrectAnswers = 0;
-          userAccuracy =
-              min(userAccuracy + 5, 100.0); // Cap at 100
+          userAccuracy = min(userAccuracy + 5, 100.0); // Cap at 100
           _loadNewQuestions();
         }
       } else {
@@ -202,8 +200,7 @@ class _DLState extends State<DL> {
         if (varaibles.consecutiveIncorrectAnswers >=
             varaibles.decreaseDifficultyThreshold) {
           varaibles.consecutiveIncorrectAnswers = 0;
-          userAccuracy =
-              max(userAccuracy - 5, 0.0); // Cap at 0
+          userAccuracy = max(userAccuracy - 5, 0.0); // Cap at 0
           _loadNewQuestions();
         }
       }

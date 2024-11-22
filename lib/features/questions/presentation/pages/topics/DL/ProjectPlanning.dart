@@ -35,9 +35,9 @@ class _ProjectState extends State<Project> {
   @override
   void initState() {
     super.initState();
+    context.read<QuestionBloc>().add(QuestionFetchProjectPlanningQuestions());
 
     loadUserAccuracy();
-    context.read<QuestionBloc>().add(QuestionFetchProjectPlanningQuestions());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         showQuestionCountDialog();

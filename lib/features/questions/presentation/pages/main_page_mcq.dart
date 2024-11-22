@@ -75,7 +75,7 @@ class _MCQMainPageState extends State<MCQMainPage> {
                   GradientBtn(
                     buttonText: "Theory Of Computation",
                     onPressed: () {
-                      Navigator.push(context, AI.route());
+                      Navigator.push(context, TOC.route());
                     },
                   ),
                   const SizedBox(height: 20),
