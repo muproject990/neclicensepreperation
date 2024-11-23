@@ -7,6 +7,9 @@ import 'package:neclicensepreperation/features/questions/presentation/pages/AI_C
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class IntroPage extends StatefulWidget {
+  static route() => MaterialPageRoute(
+        builder: (context) => const IntroPage(),
+      );
   const IntroPage({super.key});
 
   @override
@@ -21,14 +24,11 @@ class _IntroPageState extends State<IntroPage> {
   final List<String> _dataOptions = [
     'DL',
     'Programming',
-    'Option 3',
-    'Option 4',
-    'Option 5',
-    'Option 6',
-    'Option 7',
-    'Option 8',
-    'Option 9',
-    'Option 10',
+    'AI',
+    'COA',
+    'NETWORK',
+    'Project',
+    'TOC',
   ];
 
   void _onItemTapped(int index) {

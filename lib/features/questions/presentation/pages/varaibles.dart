@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:neclicensepreperation/features/questions/domain/entities/question.dart';
 
 class AllVaraibles {
-  int desiredQuestions = 20;
+  int desiredQuestions = 80;
   List<String?> userAnswers = [];
   List<String> correctAnswers = [];
   List<Question> selectedQuestions = [];
@@ -17,7 +17,7 @@ class AllVaraibles {
 
   int consecutiveCorrectAnswers = 0;
   int consecutiveIncorrectAnswers = 0;
-  int difficultyThreshold = 5;
+  int difficultyThreshold = 1;
   int decreaseDifficultyThreshold = 2;
   int currentPage = 0;
   final int questionsPerPage = 10;

@@ -7,6 +7,7 @@ import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.
 import 'package:neclicensepreperation/features/auth/presentation/signup_page.dart';
 import 'package:neclicensepreperation/features/auth/presentation/widgets/auth_feild.dart';
 import 'package:neclicensepreperation/features/auth/presentation/widgets/auth_gradient_button.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/logo-page.dart';
 
 class LoginPage extends StatefulWidget {
   static route() => MaterialPageRoute(
@@ -19,25 +20,20 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  //! Now using TextEditiong controller For accesing value in the text Box
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  // final nameController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
+
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
-    // nameController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // it will validate every form feild
-
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -45,6 +41,13 @@ class _LoginPageState extends State<LoginPage> {
           listener: (context, state) {
             if (state is AuthFailure) {
               showSnackBar(context, state.message);
+            } else if (state is AuthSuccess) {
+              // Navigate to IntroPage after successful authentication
+              Navigator.pushReplacement(
+                context,
+                IntroPage.route(),
+              );
+              showSnackBar(context, "Login successful! Welcome.");
             }
           },
           builder: (context, state) {
@@ -55,7 +58,6 @@ class _LoginPageState extends State<LoginPage> {
               key: formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                // crossAxisAlignment: Cr,
                 children: [
                   const Text(
                     "Sign In",
@@ -68,17 +70,13 @@ class _LoginPageState extends State<LoginPage> {
                     hintText: "Email",
                     controller: emailController,
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+                  const SizedBox(height: 15),
                   AuthField(
                     isObscureText: true,
                     hintText: "Password",
                     controller: passwordController,
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   AuthGradientBtn(
                     buttonText: 'Sign In',
                     onPressed: () {
@@ -90,22 +88,16 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             );
                       }
-                      // setState(() {});
                     },
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        SignUpPage.route(),
-                      );
+                      Navigator.push(context, SignUpPage.route());
                     },
                     child: RichText(
                       text: TextSpan(
-                        text: "Don't have an account ? ",
+                        text: "Don't have an account? ",
                         style: Theme.of(context).textTheme.titleMedium,
                         children: [
                           TextSpan(
@@ -118,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             );

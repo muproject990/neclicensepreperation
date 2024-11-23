@@ -7,6 +7,7 @@ import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.
 import 'package:neclicensepreperation/features/auth/presentation/login_page.dart';
 import 'package:neclicensepreperation/features/auth/presentation/widgets/auth_feild.dart';
 import 'package:neclicensepreperation/features/auth/presentation/widgets/auth_gradient_button.dart';
+import 'package:neclicensepreperation/features/questions/presentation/pages/logo-page.dart';
 
 class SignUpPage extends StatefulWidget {
   static route() => MaterialPageRoute(
@@ -19,12 +20,11 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  //! Now using TextEditiong controller For accesing value in the text Box
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
-
   final formKey = GlobalKey<FormState>();
+
   @override
   void dispose() {
     emailController.dispose();
@@ -35,8 +35,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    // it will validate every form feild
-
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -44,17 +42,22 @@ class _SignUpPageState extends State<SignUpPage> {
           listener: (context, state) {
             if (state is AuthFailure) {
               showSnackBar(context, state.message);
+            } else if (state is AuthSuccess) {
+              Navigator.pushReplacement(
+                context,
+                IntroPage.route(), // Navigate to IntroPage
+              );
+              showSnackBar(context, "Signup successful! Welcome.");
             }
           },
           builder: (context, state) {
             if (state is AuthLoading) {
-              const Loader();
+              return const Loader();
             }
             return Form(
               key: formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                // crossAxisAlignment: Cr,
                 children: [
                   const Text(
                     "Sign Up",
@@ -67,24 +70,18 @@ class _SignUpPageState extends State<SignUpPage> {
                     hintText: "Name",
                     controller: nameController,
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+                  const SizedBox(height: 15),
                   AuthField(
                     hintText: "Email",
                     controller: emailController,
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+                  const SizedBox(height: 15),
                   AuthField(
                     isObscureText: true,
                     hintText: "Password",
                     controller: passwordController,
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   AuthGradientBtn(
                     buttonText: 'Sign Up',
                     onPressed: () {
@@ -96,25 +93,17 @@ class _SignUpPageState extends State<SignUpPage> {
                                 name: nameController.text.trim(),
                               ),
                             );
-
-                        // print(formKey.currentContext);
                       }
-                      // setState(() {});
                     },
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        LoginPage.route(),
-                      );
+                      Navigator.push(context, LoginPage.route());
                     },
                     child: RichText(
                       text: TextSpan(
-                        text: "Already have an account ? ",
+                        text: "Already have an account? ",
                         style: Theme.of(context).textTheme.titleMedium,
                         children: [
                           TextSpan(
@@ -127,7 +116,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ],
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             );

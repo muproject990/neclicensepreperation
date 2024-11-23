@@ -402,9 +402,11 @@ class _COAState extends State<COA> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(
+                                    MaterialPageRoute(
                                     builder: (context) => AIBOT(
                                       question.question,
+                                      ' ${question.option1} ${question.option2} ${question.option3} ${question.option4}  ',
+                                      question.answer,
                                     ),
                                   ),
                                 );

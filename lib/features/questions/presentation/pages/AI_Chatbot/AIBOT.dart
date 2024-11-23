@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class AIBOT extends StatefulWidget {
   final String question;
-  
+  final String query;
+  final String answer;
 
-  const AIBOT(this.question, {super.key});
+  const AIBOT(this.question, this.answer, [this.query = '', Key? key])
+      : super(key: key);
 
   @override
   _AIBOTState createState() => _AIBOTState();
@@ -16,40 +17,37 @@ class _AIBOTState extends State<AIBOT> {
   final List<String> messages = [];
   final TextEditingController _controller = TextEditingController();
   final gemini = Gemini.instance;
-  late stt.SpeechToText _speech;
-  bool _isListening = false;
-  String _speechText = "";
 
   @override
   void initState() {
     super.initState();
-    _speech = stt.SpeechToText();
-    _sendInitialMessage(); // Automatically send the initial question
+    _sendInitialMessage();
   }
 
   void _sendInitialMessage() {
-    final initialMessage = widget.question;
-    _addMessage("User: $initialMessage"); // Show user message
+    final initialMessage = widget.query.isNotEmpty
+        ? "${widget.question}  ${widget.answer}   \n Ans: ${widget.query} Explain "
+        : widget.question;
 
-    // Stream Gemini's response and update UI as each part arrives
+    _addMessage("User: $initialMessage");
+
     gemini.streamGenerateContent(initialMessage).listen((value) {
-      _addMessage("AI: ${value.output}"); // Append AI response
+      _addMessage("AI: ${value.output}");
     }).onError((e) {
-      _addMessage("Error: ${e.toString()}"); // Handle errors
+      _addMessage("Error: ${e.toString()}");
     });
   }
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
       final userMessage = _controller.text;
-      _addMessage("User: $userMessage"); // Show user message
-      _controller.clear(); // Clear the text field
+      _addMessage("User: $userMessage");
+      _controller.clear();
 
-      // Stream Gemini's response and update UI as each part arrives
       gemini.streamGenerateContent(userMessage).listen((value) {
-        _addMessage("AI: ${value.output}"); // Append AI response
+        _addMessage("AI: ${value.output}");
       }).onError((e) {
-        _addMessage("Error: ${e.toString()}"); // Handle errors
+        _addMessage("Error: ${e.toString()}");
       });
     }
   }
@@ -57,7 +55,7 @@ class _AIBOTState extends State<AIBOT> {
   void _addMessage(String message) {
     if (mounted) {
       setState(() {
-        messages.add(message); // Add message to the list
+        messages.add(message);
       });
     }
   }
