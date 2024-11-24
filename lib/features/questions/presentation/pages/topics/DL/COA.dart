@@ -265,6 +265,24 @@ class _COAState extends State<COA> {
                     ),
                   ],
                 ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.bolt,
+                      color: varaibles.getDifficultyColor(userAccuracy),
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Difficulty: ${varaibles.getDifficultyLevel(userAccuracy)}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: varaibles.getDifficultyColor(userAccuracy),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
             ValueListenableBuilder<String>(
@@ -402,7 +420,7 @@ class _COAState extends State<COA> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                    MaterialPageRoute(
+                                  MaterialPageRoute(
                                     builder: (context) => AIBOT(
                                       question.question,
                                       ' ${question.option1} ${question.option2} ${question.option3} ${question.option4}  ',

@@ -34,7 +34,13 @@ class OptionButton extends StatelessWidget {
           ),
           onPressed:
               isDisabled ? null : onPressed, // Disable if answer is selected
-          child: Text(text),
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Color.fromARGB(255, 14, 12, 12),
+              fontSize: 16,
+            ),
+          ),
         ),
         if (isSelected) ...[
           const SizedBox(height: 5),
