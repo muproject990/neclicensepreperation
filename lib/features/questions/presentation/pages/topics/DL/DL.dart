@@ -131,12 +131,10 @@ class _DLState extends State<DL> {
     varaibles.remainingTime = totalQuestions * 20;
     _updateTimerDisplay();
 
-    // Cancel any existing timer before starting a new one
     varaibles.timer?.cancel();
 
     varaibles.timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) {
-        // If the widget is unmounted, cancel the timer and return early
         timer.cancel();
         return;
       }
@@ -147,7 +145,6 @@ class _DLState extends State<DL> {
           showSnackBar(
               context, "Time is up! Your answers have not been submitted.");
 
-          // Check if the widget is still mounted before navigating
           if (mounted) {
             Navigator.push(context, MCQMainPage.route());
           }

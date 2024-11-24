@@ -9,7 +9,7 @@ class OptionButton extends StatelessWidget {
     Key? key,
     required this.text,
     required this.isSelected,
-    required this.onPressed,
+    required this.onPressed, required bool isCorrect,
   }) : super(key: key);
 
   @override
