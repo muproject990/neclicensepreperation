@@ -266,6 +266,24 @@ class _ProgrammingState extends State<Programming> {
                     ),
                   ],
                 ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.bolt,
+                      color: varaibles.getDifficultyColor(userAccuracy),
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Difficulty: ${varaibles.getDifficultyLevel(userAccuracy)}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: varaibles.getDifficultyColor(userAccuracy),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
             ValueListenableBuilder<String>(
@@ -403,7 +421,7 @@ class _ProgrammingState extends State<Programming> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                     MaterialPageRoute(
+                                  MaterialPageRoute(
                                     builder: (context) => AIBOT(
                                       question.question,
                                       ' ${question.option1} ${question.option2} ${question.option3} ${question.option4}  ',

@@ -226,16 +226,18 @@ class _DLState extends State<DL> {
                             Icon(Icons.speed, size: 16, color: Colors.white70),
                             SizedBox(width: 5),
                             Text(
-                              'Accuracy: ${userAccuracy.toStringAsFixed(1)}%',
+                              'Accuracy: ${userAccuracy.toStringAsFixed(1)}%  ',
                               style: TextStyle(
-                                  fontSize: 14,
-                                  color: userAccuracy < 50
-                                      ? Colors.red
-                                      : userAccuracy < 70
-                                          ? Colors.orange
-                                          : Colors.green,
-                                  fontWeight: FontWeight.w500),
+                                fontSize: 14,
+                                color: userAccuracy < 50
+                                    ? Colors.red
+                                    : userAccuracy < 70
+                                        ? Colors.orange
+                                        : Colors.green,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
+                            const SizedBox(width: 10),
                           ],
                         ),
                         const SizedBox(width: 15),
@@ -258,6 +260,25 @@ class _DLState extends State<DL> {
                                           ? Colors.orange
                                           : Colors.green,
                                   fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.bolt,
+                              color: varaibles.getDifficultyColor(userAccuracy),
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Difficulty: ${varaibles.getDifficultyLevel(userAccuracy)}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color:
+                                    varaibles.getDifficultyColor(userAccuracy),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -515,7 +536,11 @@ class _DLState extends State<DL> {
       final userId = appUserState.user.id;
       final statsFile = File('${directory.path}/${data}$userId.txt');
 
+      if (totalCorrectAnswers > totalQuestions) {
+        totalCorrectAnswers = 1;
+      }
       double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
+
       await statsFile.writeAsString(
         'Total Questions: $totalQuestions\n'
         'Total Correct Answers: $totalCorrectAnswers\n'

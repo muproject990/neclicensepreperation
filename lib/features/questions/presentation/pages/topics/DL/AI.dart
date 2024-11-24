@@ -261,6 +261,25 @@ class _AIState extends State<AI> {
                             ),
                           ],
                         ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.bolt,
+                              color: varaibles.getDifficultyColor(userAccuracy),
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Difficulty: ${varaibles.getDifficultyLevel(userAccuracy)}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color:
+                                    varaibles.getDifficultyColor(userAccuracy),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ],
@@ -270,7 +289,8 @@ class _AIState extends State<AI> {
             ValueListenableBuilder<String>(
               valueListenable: varaibles.timerDisplay,
               builder: (context, value, child) => Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(20),

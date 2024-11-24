@@ -26,7 +26,7 @@ class _AIBOTState extends State<AIBOT> {
 
   void _sendInitialMessage() {
     final initialMessage = widget.query.isNotEmpty
-        ? "${widget.question}  ${widget.answer}   \n Ans: ${widget.query} Explain "
+        ? "${widget.question}  ${widget.answer}   \n Ans: ${widget.query} \n Explain "
         : widget.question;
 
     _addMessage("User: $initialMessage");

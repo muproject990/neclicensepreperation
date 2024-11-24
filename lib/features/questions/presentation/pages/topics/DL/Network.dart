@@ -94,8 +94,7 @@ class _NETWORKState extends State<NETWORK> {
     } else if (userAccuracy < mediumThreshold) {
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'medium').toList();
-      print(
-          "Selected Medium Questions - User Accuracy: $userAccuracy");
+      print("Selected Medium Questions - User Accuracy: $userAccuracy");
     } else if (userAccuracy < hardThreshold) {
       filteredQuestions =
           allQuestions.where((q) => q.difficulty == 'hard').toList();
@@ -191,8 +190,7 @@ class _NETWORKState extends State<NETWORK> {
         if (varaibles.consecutiveCorrectAnswers >=
             varaibles.difficultyThreshold) {
           varaibles.consecutiveCorrectAnswers = 0;
-          userAccuracy =
-              min(userAccuracy + 5, 100.0); // Cap at 100
+          userAccuracy = min(userAccuracy + 5, 100.0); // Cap at 100
           _loadNewQuestions();
         }
       } else {
@@ -202,8 +200,7 @@ class _NETWORKState extends State<NETWORK> {
         if (varaibles.consecutiveIncorrectAnswers >=
             varaibles.decreaseDifficultyThreshold) {
           varaibles.consecutiveIncorrectAnswers = 0;
-          userAccuracy =
-              max(userAccuracy - 5, 0.0); // Cap at 0
+          userAccuracy = max(userAccuracy - 5, 0.0); // Cap at 0
           _loadNewQuestions();
         }
       }
@@ -265,6 +262,24 @@ class _NETWORKState extends State<NETWORK> {
                           ],
                         ),
                       ],
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.bolt,
+                      color: varaibles.getDifficultyColor(userAccuracy),
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Difficulty: ${varaibles.getDifficultyLevel(userAccuracy)}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: varaibles.getDifficultyColor(userAccuracy),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -405,7 +420,7 @@ class _NETWORKState extends State<NETWORK> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                    MaterialPageRoute(
+                                  MaterialPageRoute(
                                     builder: (context) => AIBOT(
                                       question.question,
                                       ' ${question.option1} ${question.option2} ${question.option3} ${question.option4}  ',

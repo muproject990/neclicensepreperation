@@ -265,6 +265,24 @@ class _TOCState extends State<TOC> {
                     ),
                   ],
                 ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.bolt,
+                      color: varaibles.getDifficultyColor(userAccuracy),
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Difficulty: ${varaibles.getDifficultyLevel(userAccuracy)}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: varaibles.getDifficultyColor(userAccuracy),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
             ValueListenableBuilder<String>(
