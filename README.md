@@ -23,13 +23,10 @@ screenshot 🖼️
 
 ![image](https://github.com/user-attachments/assets/476b93af-2b16-48d7-a90c-3fc83ca1c0a3)
 
-![image](https://github.com/user-attachments/assets/be2f0416-8813-4080-87d9-8f21289e7861)
+![image](https://github.com/user-attachments/assets/bf9d97a1-51fb-492b-bda5-6dee56ba2e2a)
+![image](https://github.com/user-attachments/assets/3c55a1cd-fa7c-40e4-ae84-4d4ba3b54b57)
+![image](https://github.com/user-attachments/assets/7cedb30f-190b-4a04-b185-bd9e59fc0e5a)
+![image](https://github.com/user-attachments/assets/567a6e41-918a-440e-b7ac-80f44dc663b2)
+![image](https://github.com/user-attachments/assets/8b3ee587-b798-4223-89e4-817939933bb3)
 
-![image](https://github.com/user-attachments/assets/88d88800-8b60-4479-b7e1-f8fbd00c8f8c)
-
-![image](https://github.com/user-attachments/assets/6f764c01-6d68-4402-87b8-ba08858df8d5)
-![image](https://github.com/user-attachments/assets/9ebdd6e5-5baa-4bdd-9417-027c5202f30a)
-![image](https://github.com/user-attachments/assets/73df64b8-defa-421a-a944-915b4d0d90b8)
-![image](https://github.com/user-attachments/assets/0dc5f3a6-30e9-499f-8099-d8dbeef4636c)
-
-
+![image](https://github.com/user-attachments/assets/a106ffc0-1366-49e2-8893-c2ad849f9e54)
