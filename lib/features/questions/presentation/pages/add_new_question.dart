@@ -7,7 +7,7 @@ import 'package:neclicensepreperation/core/common/widgets/loader.dart';
 import 'package:neclicensepreperation/core/utils/show_snackbar.dart';
 import 'package:neclicensepreperation/core/utils/topics.dart';
 import 'package:neclicensepreperation/features/questions/presentation/bloc/question_bloc.dart';
-import 'package:neclicensepreperation/features/questions/widgets/question_editor.dart';
+import 'package:neclicensepreperation/features/questions/presentation/widgets/question_editor.dart';
 
 class AddNewQuestion extends StatefulWidget {
   static route() =>

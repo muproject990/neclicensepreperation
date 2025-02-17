@@ -10,7 +10,7 @@ import 'package:neclicensepreperation/features/questions/presentation/pages/topi
 import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/Programming.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/ProjectPlanning.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/topics/DL/TOC.dart';
-import 'package:neclicensepreperation/features/questions/widgets/gradient_button.dart';
+import 'package:neclicensepreperation/features/questions/presentation/widgets/gradient_button.dart';
 
 class MCQMainPage extends StatefulWidget {
   static route() =>

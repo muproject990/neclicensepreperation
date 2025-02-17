@@ -30,8 +30,10 @@ class GradientBtn extends StatelessWidget {
             shadowColor: AppPallete.transparentColor),
         child: Text(
           buttonText,
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
-            fontSize: 17,
+            fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
         ),

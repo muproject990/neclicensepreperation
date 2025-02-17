@@ -12,9 +12,9 @@ import 'package:neclicensepreperation/features/questions/presentation/pages/AI_C
 import 'package:neclicensepreperation/features/questions/presentation/pages/bottombar/stats.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/main_page_mcq.dart';
 import 'package:neclicensepreperation/features/questions/presentation/pages/varaibles.dart';
-import 'package:neclicensepreperation/features/questions/widgets/floating_btn.dart';
-import 'package:neclicensepreperation/features/questions/widgets/optionbutton.dart';
-import 'package:neclicensepreperation/features/questions/widgets/videoplayer.dart';
+import 'package:neclicensepreperation/features/questions/presentation/widgets/floating_btn.dart';
+import 'package:neclicensepreperation/features/questions/presentation/widgets/optionbutton.dart';
+import 'package:neclicensepreperation/features/questions/presentation/widgets/videoplayer.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
