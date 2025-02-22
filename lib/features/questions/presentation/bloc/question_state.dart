@@ -18,6 +18,7 @@ final class QuestionFailure extends QuestionState {
 final class QuestionUploadSuccess extends QuestionState {}
 
 final class QuestionDisplaySuccess extends QuestionState {
+  @override
   final List<Question> questions;
 
   QuestionDisplaySuccess(this.questions);

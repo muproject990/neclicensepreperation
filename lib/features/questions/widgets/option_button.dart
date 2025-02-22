@@ -6,11 +6,11 @@ class OptionButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const OptionButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.isSelected,
     required this.onPressed, required bool isCorrect,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

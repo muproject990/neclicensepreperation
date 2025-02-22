@@ -223,8 +223,8 @@ class _AIState extends State<AI> {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.speed, size: 16, color: Colors.white70),
-                            SizedBox(width: 5),
+                            const Icon(Icons.speed, size: 16, color: Colors.white70),
+                            const SizedBox(width: 5),
                             Text(
                               'Accuracy: ${userAccuracy.toStringAsFixed(1)}%',
                               style: TextStyle(
@@ -302,7 +302,7 @@ class _AIState extends State<AI> {
                             ? Colors.red
                             : Colors.white,
                         size: 20),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text(
                       value,
                       style: TextStyle(
@@ -533,7 +533,7 @@ class _AIState extends State<AI> {
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
       final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/${data}$userId.txt');
+      final statsFile = File('${directory.path}/$data$userId.txt');
 
       double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
       await statsFile.writeAsString(
@@ -555,7 +555,7 @@ class _AIState extends State<AI> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Enter Desired Number of Questions"),
+          title: const Text("Enter Desired Number of Questions"),
           content: TextField(
             keyboardType: TextInputType.number,
             onChanged: (value) {
@@ -567,7 +567,7 @@ class _AIState extends State<AI> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close dialog without saving
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
             TextButton(
               onPressed: () {
@@ -579,7 +579,7 @@ class _AIState extends State<AI> {
                 }
                 Navigator.of(context).pop(); // Close dialog and save
               },
-              child: Text("Start Quiz"),
+              child: const Text("Start Quiz"),
             ),
           ],
         );

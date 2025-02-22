@@ -8,13 +8,13 @@ class OptionButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const OptionButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.isSelected,
     required this.isCorrect,
     required this.isDisabled, // Disable when an answer is selected
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -223,8 +223,8 @@ class _ProjectState extends State<Project> {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.speed, size: 16, color: Colors.white70),
-                            SizedBox(width: 5),
+                            const Icon(Icons.speed, size: 16, color: Colors.white70),
+                            const SizedBox(width: 5),
                             Text(
                               'Accuracy: ${userAccuracy.toStringAsFixed(1)}%',
                               style: TextStyle(
@@ -288,7 +288,7 @@ class _ProjectState extends State<Project> {
             ValueListenableBuilder<String>(
               valueListenable: varaibles.timerDisplay,
               builder: (context, value, child) => Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(20),
@@ -300,7 +300,7 @@ class _ProjectState extends State<Project> {
                             ? Colors.red
                             : Colors.white,
                         size: 20),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text(
                       value,
                       style: TextStyle(
@@ -531,7 +531,7 @@ class _ProjectState extends State<Project> {
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
       final userId = appUserState.user.id;
-      final statsFile = File('${directory.path}/${data}$userId.txt');
+      final statsFile = File('${directory.path}/$data$userId.txt');
 
       double percentageCorrect = (totalCorrectAnswers / totalQuestions) * 100;
       await statsFile.writeAsString(
@@ -553,7 +553,7 @@ class _ProjectState extends State<Project> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Enter Desired Number of Questions"),
+          title: const Text("Enter Desired Number of Questions"),
           content: TextField(
             keyboardType: TextInputType.number,
             onChanged: (value) {
@@ -565,7 +565,7 @@ class _ProjectState extends State<Project> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close dialog without saving
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
             TextButton(
               onPressed: () {
@@ -577,7 +577,7 @@ class _ProjectState extends State<Project> {
                 }
                 Navigator.of(context).pop(); // Close dialog and save
               },
-              child: Text("Start Quiz"),
+              child: const Text("Start Quiz"),
             ),
           ],
         );

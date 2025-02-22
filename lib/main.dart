@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:neclicensepreperation/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:neclicensepreperation/core/common/cubits/main_mcq/correctAns_cubit.dart';
+import 'package:neclicensepreperation/core/secrets/supabase_secret.dart';
 import 'package:neclicensepreperation/core/theme.dart';
 import 'package:neclicensepreperation/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:neclicensepreperation/features/auth/presentation/signup_page.dart';
@@ -12,7 +13,7 @@ import 'package:neclicensepreperation/init_dependencies.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Gemini.init(apiKey: 'AIzaSyBMeRZYOZcYWN3nbLJXsbR_XFTxhdfIpjQ');
+  Gemini.init(apiKey: AppSecrets.geminiApi);
 
   await initDependencies();
 
